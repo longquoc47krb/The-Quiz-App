@@ -23,4 +23,25 @@ This Quiz app is built using React with TypeScript for the frontend, NestJS for 
 - Admin dashboard: Admin users have access to a dashboard where they can manage quizzes and view user results.
 
 ## Project Structure
+quiz-app/
+├─ backend/
+│ ├─ src/
+│ │ ├─ controllers/
+│ │ ├─ models/
+│ │ ├─ services/
+│ │ ├─ ...
+│ │ └─ main.ts
+│ ├─ package.json
+│ └─ ...
+├─ frontend/
+│ ├─ public/
+│ ├─ src/
+│ │ ├─ components/
+│ │ ├─ pages/
+│ │ ├─ services/
+│ │ ├─ ...
+│ │ └─ index.tsx
+│ ├─ package.json
+│ └─ ...
+└─ README.md
 
