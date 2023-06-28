@@ -25,23 +25,24 @@ This Quiz app is built using React with TypeScript for the frontend, NestJS for 
 ## Project Structure
 quiz-app/
 ├─ backend/
-│ ├─ src/
-│ │ ├─ controllers/
-│ │ ├─ models/
-│ │ ├─ services/
-│ │ ├─ ...
-│ │ └─ main.ts
-│ ├─ package.json
-│ └─ ...
+│   ├─ src/
+│   │   ├─ controllers/
+│   │   ├─ models/
+│   │   ├─ services/
+│   │   ├─ ...
+│   │   └─ main.ts
+│   ├─ package.json
+│   └─ ...
 ├─ frontend/
-│ ├─ public/
-│ ├─ src/
-│ │ ├─ components/
-│ │ ├─ pages/
-│ │ ├─ services/
-│ │ ├─ ...
-│ │ └─ index.tsx
-│ ├─ package.json
-│ └─ ...
+│   ├─ public/
+│   ├─ src/
+│   │   ├─ components/
+│   │   ├─ pages/
+│   │   ├─ services/
+│   │   ├─ ...
+│   │   └─ index.tsx
+│   ├─ package.json
+│   └─ ...
 └─ README.md
+
 
