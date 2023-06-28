@@ -1,25 +1,26 @@
-# Quiz App (Multi-Question Choice)
+# Quiz App - Multi-Choice Questions
 
-This is a quiz app that allows users to test their knowledge by answering multiple-choice questions. The app provides a user-friendly interface, a variety of questions, and immediate feedback on the correctness of answers.
+## Introduction
 
-## Features
-
-- Multiple-choice questions: The app presents a series of questions with multiple answer options.
-- Score tracking: The app keeps track of the user's score as they answer questions.
-- Instant feedback: After each question, the app provides immediate feedback on whether the answer was correct or not.
-- Randomized questions: The questions are presented in a randomized order to ensure a fresh experience with each attempt.
-- Timer: The app may include a timer to add a time-based challenge to the quiz.
-- High scores: The app can store and display high scores achieved by users.
+This Quiz app is built using React with TypeScript for the frontend, NestJS for the backend, and MySQL for the database. The app allows users to take quizzes consisting of multiple-choice questions.
 
 ## Technologies Used
 
-- **Front-end**: HTML, CSS, JavaScript
-- **Back-end**: (Optional) Node.js, Express.js
-- **Database**: (Optional) MongoDB, MySQL
+- Frontend:
+  - React
+  - TypeScript
 
-## Installation
+- Backend:
+  - NestJS
+  - MySQL
 
-1. Clone the repository:
+## Features
 
-   ```shell
-   git clone https://github.com/your-username/quiz-app.git
+- User authentication: Users can create an account and log in to the app.
+- Quiz creation: Admin users can create quizzes by adding multiple-choice questions.
+- Quiz taking: Users can take quizzes and select their answers for each question.
+- Quiz results: Users can view their quiz results after submitting the quiz.
+- Admin dashboard: Admin users have access to a dashboard where they can manage quizzes and view user results.
+
+## Project Structure
+
