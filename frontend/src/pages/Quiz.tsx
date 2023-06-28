@@ -12,18 +12,10 @@ const QuizPage = () => {
     data?.find(function (quiz: Quiz) {
       return quiz.id === Number(quizId);
     });
-  console.log({ quiz });
-  const handleAnswerSelected = (selectedIndex: number) => {
-    console.log("Selected answer index:", selectedIndex);
-  };
-  console.log({ data, quiz, quizId });
   return (
     <div>
       <h1 className="text-white font-bold">{quiz.name}</h1>
-      <MultipleChoiceQuestion
-        answers={quiz.questions}
-        onAnswerSelected={handleAnswerSelected}
-      />
+      <MultipleChoiceQuestion quiz={quiz} />
     </div>
   );
 };

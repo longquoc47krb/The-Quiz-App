@@ -12,3 +12,7 @@ export const useFetchQuizzes = () => {
     staleTime: 0,
   });
 };
+export const fetchQuizById = async (id: string) => {
+  const response = await axiosClient.get<Quiz>(`/quizzes/${id}`);
+  return response;
+};

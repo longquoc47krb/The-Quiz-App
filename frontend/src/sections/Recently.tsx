@@ -5,11 +5,11 @@ import { useFetchQuizzes } from "../apis/quizServices";
 
 function Recently() {
   const { data } = useFetchQuizzes();
-  console.log({ data });
   return (
     <div className="test-wrapper">
       {data?.map((item: TestProps, index: number) => (
         <Test
+          id={item.id}
           name={item.name}
           key={index}
           questions={item.questions}

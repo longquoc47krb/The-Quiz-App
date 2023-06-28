@@ -30,7 +30,6 @@ const Search: React.FC<{ data: Quiz[] }> = ({ data }) => {
     setSearchResults([suggestion]);
     setSuggestions([]);
   };
-  console.log({ searchResults });
   return (
     <div className="group">
       <svg className="icon" aria-hidden="true" viewBox="0 0 24 24">

@@ -19,7 +19,7 @@ export interface HeaderProps {
   user: User;
 }
 export interface TestProps {
-  // id: number;
+  id: number;
   name: string;
   questions: number[];
   author: string;

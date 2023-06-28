@@ -1,19 +1,22 @@
 import React from "react";
 import { TestProps, User } from "../interfaces";
 import { useFetchUsers } from "../apis/userServices";
+import { useNavigate } from "react-router-dom";
 
 function Test(props: TestProps) {
-  const { name, questions, author } = props;
+  const { name, questions, author, id } = props;
   const { data, isLoading } = useFetchUsers();
-
+  const navigate = useNavigate();
   const authorInfo =
     !isLoading &&
     data?.find(function (user: User) {
       return user.email === author;
     });
-  console.log({ authorInfo });
   return (
-    <div className="test-container">
+    <div
+      className="test-container cursor-pointer"
+      onClick={() => navigate(`/quiz/${id}`)}
+    >
       <div>
         <h1 className="text-2xl font-semibold line-clamp-2">{name}</h1>
         <h2 className="font-medium text-gray-500">
