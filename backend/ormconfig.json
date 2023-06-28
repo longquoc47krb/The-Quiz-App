@@ -1,0 +1,15 @@
+{
+  "type": "mysql",
+  "host": "127.0.0.1",
+  "port": 3307,
+  "username": "longq",
+  "password": "123456",
+  "database": "quizapp",
+  "entities": [
+    "D:\\LearningCode\\multi-choice-questions-app\\backend\\dist\\**\\*entity{.ts,.js}"
+  ],
+  "autoLoadEntities": true,
+  "synchronize": false,
+  "logging": true,
+  "logger": "file"
+}

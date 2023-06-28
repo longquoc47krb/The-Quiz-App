@@ -1,10 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { UserRole } from 'src/configs/enum';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
-import { hash } from 'bcryptjs';
+import { hash, compare } from 'bcryptjs';
 
 
-@Entity()
+@Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -36,5 +36,8 @@ export class User {
       return;
     }
     this.password = await hash(this.password, 10);
+  }
+  async validatePassword(password: string): Promise<boolean> {
+    return compare(password, this.password);
   }
 }

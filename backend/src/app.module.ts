@@ -12,8 +12,8 @@ import { AccessControlModule } from 'nest-access-control';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config'; import { User } from './user/user.entity';
 import { TYPEORM_CONFIG } from './configs/constants';
-import dataConfig from './configs/data.config';
 import { roles } from './app.roles';
+import databaseConfig from './configs/database.config';
 @Module({
   imports: [UserModule, ConfigModule.forRoot(), TypeOrmModule.forRootAsync({
     inject: [ConfigService],
@@ -22,7 +22,7 @@ import { roles } from './app.roles';
   }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [dataConfig],
+      load: [databaseConfig],
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`, // .env.development
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()

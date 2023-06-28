@@ -5,6 +5,7 @@ import { AppModule } from './app.module';
 import { initSwagger } from './app.swagger';
 import { ConfigService } from '@nestjs/config';
 import { SERVER_PORT } from './configs/constants';
+import generateTypeormConfigFile from './scripts/generateTypeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +14,7 @@ async function bootstrap() {
   const port = parseInt(config.get<string>(SERVER_PORT), 10) || 8080;
 
   initSwagger(app);
-
+  generateTypeormConfigFile(config);
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

@@ -1,26 +1,44 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
-import { UserRole } from 'src/configs/enum';
-
+import { JwtService } from '@nestjs/jwt';
+import { LoginUserDTO } from './dtos/loginUser.dto';
+import { RegisterUserDTO } from './dtos/registerUser.dto';
+import { UserRepository } from './user.repository';
 @Injectable()
 export class UserService {
-    constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-    ) { }
+    constructor(private readonly userRepository: UserRepository, private jwtService: JwtService) { }
 
-    async registerAccount(name: string, username: string, email: string, password: string): Promise<User> {
-        const user = new User();
-        user.name = name;
-        user.username = username;
-        user.email = email;
-        user.password = password;
-        user.role = UserRole.USER; // Set the default role as 'user'
-
-        return this.userRepository.save(user);
+    async registerUser(registerUserDTO: RegisterUserDTO): Promise<void> {
+        // Implement your registration logic here
+        // Example: Save the user to the database using the user repository
+        await this.userRepository.createUser(registerUserDTO);
     }
+    async login(loginUserDTO: LoginUserDTO): Promise<string> {
+        const { email, password, username } = loginUserDTO;
+        let user: any;
 
+        // Find the user by email or username
+        if (email) {
+            user = await this.userRepository.findByEmailOrUsername(email, username);
+        } else if (username) {
+            user = await this.userRepository.findByEmailOrUsername(email, username);
+        } else {
+            throw new Error('Email or username must be provided');
+        }
+
+        if (!user) {
+            throw new Error('Invalid credentials');
+        }
+
+        // Verify the password
+        const isPasswordValid = await user.validatePassword(password);
+
+        if (!isPasswordValid) {
+            throw new Error('Invalid credentials');
+        }
+
+        // Generate and return the JWT token
+        const token = this.jwtService.sign({ userId: user.id });
+        return token;
+    }
 }
