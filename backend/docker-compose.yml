@@ -1,0 +1,14 @@
+version: '2.18.1'
+services:
+  mysql:
+    image: mysql:8.0.29
+    ports:
+      - '3307:3306'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: quizapp
+      MYSQL_USER: longq
+      MYSQL_PASSWORD: 123456
+    volumes:
+      - ./data/mysql:/var/lib/mysql

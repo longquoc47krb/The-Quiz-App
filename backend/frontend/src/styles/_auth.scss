@@ -1,0 +1,36 @@
+.auth {
+  &-container {
+    width: $formWidth;
+    background: $secondaryColor;
+    border-radius: 25px;
+    padding: 2rem;
+  }
+}
+.form-group {
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  label {
+    display: block;
+    font-size: 1.2rem;
+    color: rgb(199, 197, 197);
+    margin-bottom: 0.5rem;
+  }
+}
+.or-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.divider-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #ccc;
+}
+
+.or-text {
+  margin: 0 10px;
+  font-size: 14px;
+  color: #999;
+}
