@@ -1,44 +1,64 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    BadRequestException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDTO } from './dtos/loginUser.dto';
 import { RegisterUserDTO } from './dtos/registerUser.dto';
+import { User } from './user.entity';
 import { UserRepository } from './user.repository';
+import { compare } from 'bcryptjs';
+import { JwtPayload } from 'src/interface/jwt-payload';
+import { roles } from '../app.roles';
 @Injectable()
 export class UserService {
     constructor(private readonly userRepository: UserRepository, private jwtService: JwtService) { }
 
-    async registerUser(registerUserDTO: RegisterUserDTO): Promise<void> {
-        // Implement your registration logic here
-        // Example: Save the user to the database using the user repository
-        await this.userRepository.createUser(registerUserDTO);
-    }
-    async login(loginUserDTO: LoginUserDTO): Promise<string> {
-        const { email, password, username } = loginUserDTO;
-        let user: any;
+    async validateUser(identifier: string, pass: string): Promise<any> {
+        const user = await this.userRepository.findByEmailOrUsername(identifier);
 
-        // Find the user by email or username
-        if (email) {
-            user = await this.userRepository.findByEmailOrUsername(email, username);
-        } else if (username) {
-            user = await this.userRepository.findByEmailOrUsername(email, username);
-        } else {
-            throw new Error('Email or username must be provided');
+        if (user && (await compare(pass, user.password))) {
+            const { password, ...rest } = user;
+            return rest;
         }
+
+        return null;
+    }
+    async registerUser(registerUserDTO: RegisterUserDTO): Promise<void> {
+        await this.userRepository.createUser(registerUserDTO);
+
+    }
+    async login(loginDto: LoginUserDTO) {
+        const { identifier, password } = loginDto;
+        const user = await this.validateUser(identifier, password);
 
         if (!user) {
-            throw new Error('Invalid credentials');
+            throw new UnauthorizedException('Invalid credentials');
         }
 
-        // Verify the password
-        const isPasswordValid = await user.validatePassword(password);
+        const payload = { sub: user.id, username: user.username };
+        const token = this.jwtService.sign(payload);
+        return { token };
+    }
+    async getOne(id: number, userEntity?: User) {
+        const user = await this.userRepository
+            .findOne(id)
+            .then(u => (!userEntity ? u : !!u && userEntity.id === u.id ? u : null));
 
-        if (!isPasswordValid) {
-            throw new Error('Invalid credentials');
+        if (!user)
+            throw new NotFoundException('User does not exists or unauthorized');
+
+        return user;
+    }
+    async checkUserExists(user: RegisterUserDTO) {
+        const { email, username } = user;
+        const userExist = await this.userRepository.findByEmailOrUsername(email || username);
+        if (userExist) {
+            return true;
         }
-
-        // Generate and return the JWT token
-        const token = this.jwtService.sign({ userId: user.id });
-        return token;
+        return false;
     }
 }

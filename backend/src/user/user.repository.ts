@@ -8,13 +8,28 @@ import { RegisterUserDTO } from './dtos/registerUser.dto';
 
 @Injectable()
 export class UserRepository {
+    findOne(id: number) {
+        return this.userRepository.createQueryBuilder('user')
+            .where('user.id = :id', { id })
+            .getOne();
+    }
+    getUserByEmail(email: string) {
+        return this.userRepository.createQueryBuilder('user')
+            .where('user.email = :email', { email })
+            .getOne();
+    }
+    getUserByUsername(username: string) {
+        return this.userRepository.createQueryBuilder('user')
+            .where('user.username = :username', { username })
+            .getOne();
+    }
     constructor(
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
     ) { }
-    async findByEmailOrUsername(email: string, username: string): Promise<User | undefined> {
+    async findByEmailOrUsername(identifier: string): Promise<User | undefined> {
         return this.userRepository.createQueryBuilder('user')
-            .where('user.email = :email OR user.username = :username', { email, username })
+            .where('user.email = :identifier OR user.username = :identifier', { identifier })
             .getOne();
     }
     async createUser(registerUserDTO: RegisterUserDTO): Promise<void> {
@@ -29,5 +44,6 @@ export class UserRepository {
         user.avatar = DEFAULT_USER_AVATAR;
 
         await this.userRepository.save(user);
+
     }
 }
