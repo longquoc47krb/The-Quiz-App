@@ -11,29 +11,7 @@ import { LocalAuthGuard } from 'src/auth/local-auth.guard';
 export class UserController {
     constructor(private userService: UserService) { }
 
-    @UseGuards(LocalAuthGuard)
-    @ApiOperation({ summary: 'Login account' })
-    @Post('login')
-    async login(@Body() loginDto: LoginUserDTO) {
-        try {
-            const token = await this.userService.login(loginDto);
-            return { token };
-        } catch (error) {
-            throw new UnauthorizedException(error.message);
-        }
 
-    }
-
-    @ApiOperation({ summary: 'Register a new user account' })
-    @Post('register')
-    async registerUser(@Body() registerUserDTO: RegisterUserDTO) {
-        const isExist = await this.userService.checkUserExists(registerUserDTO)
-        if (isExist) {
-            return { message: 'Email/username existed' };
-        }
-        await this.userService.registerUser(registerUserDTO);
-        return { message: 'User registered' };
-    }
 
 }
 

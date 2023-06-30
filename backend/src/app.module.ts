@@ -13,13 +13,18 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config'; import { User } from './user/user.entity';
 import { TYPEORM_CONFIG } from './configs/constants';
 import { roles } from './app.roles';
+import { AuthModule } from './auth/auth.module';
+import { QuizModule } from './quiz/quiz.module';
+import { QuestionModule } from './question/question.module';
 import databaseConfig from './configs/database.config';
 @Module({
-  imports: [UserModule, ConfigModule.forRoot(), TypeOrmModule.forRootAsync({
-    inject: [ConfigService],
-    useFactory: (config: ConfigService) =>
-      config.get<TypeOrmModuleOptions>(TYPEORM_CONFIG),
-  }),
+  imports: [
+    UserModule,
+    ConfigModule.forRoot(), TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) =>
+        config.get<TypeOrmModuleOptions>(TYPEORM_CONFIG),
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig],
@@ -32,6 +37,9 @@ import databaseConfig from './configs/database.config';
 
     }),
     AccessControlModule.forRoles(roles),
+    AuthModule,
+    QuizModule,
+    QuestionModule,
   ],
   controllers: [AppController],
   providers: [AppService, QuestionService, QuizService, ResultService],

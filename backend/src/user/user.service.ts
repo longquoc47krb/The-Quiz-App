@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import {
     Injectable,
@@ -15,10 +16,10 @@ import { JwtPayload } from 'src/interface/jwt-payload';
 import { roles } from '../app.roles';
 @Injectable()
 export class UserService {
-    constructor(private readonly userRepository: UserRepository, private jwtService: JwtService) { }
+    constructor(private readonly userRepository: UserRepository) { }
 
-    async validateUser(identifier: string, pass: string): Promise<any> {
-        const user = await this.userRepository.findByEmailOrUsername(identifier);
+    async validateUser(username: string, pass: string): Promise<any> {
+        const user = await this.userRepository.getUserByUsername(username);
 
         if (user && (await compare(pass, user.password))) {
             const { password, ...rest } = user;
@@ -26,22 +27,6 @@ export class UserService {
         }
 
         return null;
-    }
-    async registerUser(registerUserDTO: RegisterUserDTO): Promise<void> {
-        await this.userRepository.createUser(registerUserDTO);
-
-    }
-    async login(loginDto: LoginUserDTO) {
-        const { identifier, password } = loginDto;
-        const user = await this.validateUser(identifier, password);
-
-        if (!user) {
-            throw new UnauthorizedException('Invalid credentials');
-        }
-
-        const payload = { sub: user.id, username: user.username };
-        const token = this.jwtService.sign(payload);
-        return { token };
     }
     async getOne(id: number, userEntity?: User) {
         const user = await this.userRepository
@@ -55,8 +40,9 @@ export class UserService {
     }
     async checkUserExists(user: RegisterUserDTO) {
         const { email, username } = user;
-        const userExist = await this.userRepository.findByEmailOrUsername(email || username);
-        if (userExist) {
+        const userByEmailExist = await this.userRepository.getUserByEmail(email);
+        const userByUsernameExist = await this.userRepository.getUserByUsername(username);
+        if (userByEmailExist || userByUsernameExist) {
             return true;
         }
         return false;

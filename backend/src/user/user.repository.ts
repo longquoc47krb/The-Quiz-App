@@ -8,6 +8,10 @@ import { RegisterUserDTO } from './dtos/registerUser.dto';
 
 @Injectable()
 export class UserRepository {
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) { }
     findOne(id: number) {
         return this.userRepository.createQueryBuilder('user')
             .where('user.id = :id', { id })
@@ -23,10 +27,7 @@ export class UserRepository {
             .where('user.username = :username', { username })
             .getOne();
     }
-    constructor(
-        @InjectRepository(User)
-        private readonly userRepository: Repository<User>,
-    ) { }
+
     async findByEmailOrUsername(identifier: string): Promise<User | undefined> {
         return this.userRepository.createQueryBuilder('user')
             .where('user.email = :identifier OR user.username = :identifier', { identifier })
@@ -41,7 +42,6 @@ export class UserRepository {
         user.email = email;
         user.password = password;
         user.role = role;
-        user.avatar = DEFAULT_USER_AVATAR;
 
         await this.userRepository.save(user);
 

@@ -1,7 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { UserRole } from 'src/configs/enum';
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, BeforeUpdate, ManyToMany, JoinTable } from 'typeorm';
 import { hash, compare } from 'bcryptjs';
+import { Quiz } from 'src/quiz/quiz.entity';
+import { DEFAULT_USER_AVATAR } from 'src/configs/constants';
 
 
 @Entity('user')
@@ -11,11 +13,44 @@ export class User {
 
   @Column()
   name: string;
-  @Column()
+  @Column({ unique: true })
   username: string;
 
-  @Column()
+  @Column({ unique: true })
   email: string;
+
+  @Column({ nullable: true })
+  dateOfBirth: Date;
+
+  @Column({ default: 0 })
+  score: number;
+
+  @Column({ default: 1 })
+  level: number;
+
+  @ManyToMany(() => Quiz)
+  @JoinTable()
+  completedQuizzes: Quiz[];
+
+  @ManyToMany(() => Quiz)
+  @JoinTable()
+  favoriteQuizzes: Quiz[];
+
+  @ManyToMany(() => User)
+  @JoinTable()
+  friends: User[];
+
+  @Column({ nullable: true })
+  settings: string;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
+
+  @Column({ nullable: true })
+  lastLogin: Date;
+
+  @Column({ default: true })
+  active: boolean;
 
   @Column()
   password: string;
@@ -23,11 +58,9 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @Column({ default: "" })
+  @Column({ default: DEFAULT_USER_AVATAR })
   avatar: string;
-
-  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
-  createdAt: Date;
+  createdQuizzes: any;
 
   @BeforeInsert()
   @BeforeUpdate()
