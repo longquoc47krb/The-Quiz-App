@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DEFAULT_USER_AVATAR } from 'src/configs/constants';
-import { RegisterUserDTO } from './dtos/registerUser.dto';
+import { AppRoles } from 'src/app.roles';
+import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserRepository {
@@ -33,15 +34,15 @@ export class UserRepository {
             .where('user.email = :identifier OR user.username = :identifier', { identifier })
             .getOne();
     }
-    async createUser(registerUserDTO: RegisterUserDTO): Promise<void> {
-        const { name, username, email, password, role } = registerUserDTO;
+    async createUser(createUserDto: CreateUserDto): Promise<void> {
+        const { name, username, email, password } = createUserDto;
 
         const user = new User();
         user.name = name;
         user.username = username;
         user.email = email;
         user.password = password;
-        user.role = role;
+        user.roles = [AppRoles.USER];
 
         await this.userRepository.save(user);
 

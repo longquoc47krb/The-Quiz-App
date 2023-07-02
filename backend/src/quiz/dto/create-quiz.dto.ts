@@ -1,12 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsNotEmpty, IsString } from "class-validator";
 import { QuizCategory } from "src/common/category.enum";
-import { Question } from "src/question/question.entity";
-import { User } from "src/user/user.entity";
+import { Question } from "src/question/entities/question.entity";
 
-/* eslint-disable prettier/prettier */
 export class CreateQuizDto {
     @ApiProperty({ example: 'Quiz Title', description: 'The title of the quiz' })
     @IsString()
@@ -22,14 +20,21 @@ export class CreateQuizDto {
     @IsNotEmpty()
     category: QuizCategory;
 
-    @ApiProperty({ type: User, description: 'The author of the quiz' })
-    @ValidateNested()
-    @Type(() => User)
-    author: User;
-
-    @ApiProperty({ type: [Question], description: 'The questions of the quiz' })
+    @ApiProperty({
+        example: [
+            {
+                text: 'What is the capital of France?',
+                options: ['Paris', 'London', 'Berlin', 'Madrid'],
+                correctOption: 'Paris'
+            },
+            {
+                text: 'Which planet is known as the Red Planet?',
+                options: ['Mars', 'Jupiter', 'Venus', 'Saturn'],
+                correctOption: 'Mars'
+            },
+        ], description: 'The questions of the quiz'
+    })
+    @IsNotEmpty()
     @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => Question)
     questions: Question[];
 }

@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Quiz } from 'src/quiz/quiz.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Quiz } from "src/quiz/entities/quiz.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity('question')
+
 export class Question {
     @PrimaryGeneratedColumn()
     id: number;
@@ -14,9 +15,10 @@ export class Question {
     options: string[];
 
     @Column()
-    correctOption: number;
+    correctOption: string;
 
     @ManyToOne(() => Quiz, quiz => quiz.questions)
     @JoinColumn({ name: 'quizId' })
-    quiz: Quiz;
+    quizId: number;
+
 }

@@ -15,6 +15,9 @@ async function bootstrap() {
 
   initSwagger(app);
   generateTypeormConfigFile(config);
+
+  // Configure CORS
+  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

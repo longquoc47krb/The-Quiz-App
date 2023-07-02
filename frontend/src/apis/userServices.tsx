@@ -3,10 +3,13 @@ import axiosClient from "../configs/axiosClient";
 import { User } from "../interfaces";
 
 const fetchUsers = async () => {
-  const response = await axiosClient.get<User[]>("/users");
+  const response = await axiosClient.get<User[]>("/user");
   return response;
 };
-
+export const fetchUserById = async (id: string) => {
+  const response = await axiosClient.get<User>(`/user/${id}`);
+  return response;
+};
 export const useFetchUsers = () => {
   return useQuery(["fetchUsers"], fetchUsers, {
     staleTime: 0,

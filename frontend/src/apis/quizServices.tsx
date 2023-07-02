@@ -3,7 +3,7 @@ import axiosClient from "../configs/axiosClient";
 import { Quiz } from "../interfaces";
 
 const fetchQuizzes = async () => {
-  const response = await axiosClient.get<Quiz[]>("/quizzes");
+  const response = await axiosClient.get<Quiz[]>("/quiz");
   return response;
 };
 
@@ -13,6 +13,6 @@ export const useFetchQuizzes = () => {
   });
 };
 export const fetchQuizById = async (id: string) => {
-  const response = await axiosClient.get<Quiz>(`/quizzes/${id}`);
+  const response = await axiosClient.get<Quiz>(`/quiz/${id}`);
   return response;
 };

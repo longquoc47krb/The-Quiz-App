@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { UserRole } from 'src/configs/enum';
-import { IsString, IsEmail, Length, IsEnum } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsArray, IsEmail, IsEnum, IsString, Length } from "class-validator";
+import { AppRoles } from "src/app.roles";
+import { EnumToString } from "src/common/helpers/enumToString";
 
-export class RegisterUserDTO {
+export class CreateUserDto {
     @ApiProperty({ example: 'John Doe', description: 'The name of the user' })
     @IsString()
     name: string;
@@ -21,7 +22,11 @@ export class RegisterUserDTO {
     @Length(6, 20)
     password: string;
 
-    @ApiProperty({ example: UserRole.USER, enum: UserRole, description: 'The role of the user' })
-    @IsEnum(UserRole)
-    role: UserRole;
+    @ApiProperty({ example: [AppRoles.USER], description: 'The roles of the user' })
+    @IsArray()
+    @IsEnum(AppRoles, {
+        each: true,
+        message: `must be a valid role value, ${EnumToString(AppRoles)}`,
+    })
+    roles: string[];
 }

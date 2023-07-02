@@ -5,7 +5,6 @@ interface ErrorResponse {
 }
 
 const axiosClient: AxiosInstance = axios.create({
-  // baseURL: `${process.env.REACT_APP_API_HEROKU_SERVER}/api/`,
   baseURL: import.meta.env.VITE_BASE_URL,
   // withCredentials: true,
   timeout: 10000,

@@ -3,7 +3,7 @@ import HomePage from "../pages/HomePage";
 import DashboardPage from "../pages/DashboardPage";
 import { Navigate, Route, Routes } from "react-router-dom";
 import RegisterPage from "../pages/RegisterPage";
-import Quiz from "../pages/Quiz";
+import QuizPage from "../pages/QuizPage";
 
 function getTokenFromCookie() {
   const cookies = document.cookie.split("; ");
@@ -24,7 +24,7 @@ const routes = () => {
         <Routes>
           <Route path="/home" element={<HomePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/quiz/:quizId" element={<Quiz />} />
+          <Route path="/quiz/:quizId" element={<QuizPage />} />
           {/* Add more routes for other pages */}
           <Route
             path="*"

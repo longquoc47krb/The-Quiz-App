@@ -2,18 +2,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserService } from './user/user.service';
-import { QuestionService } from './question/question.service';
-import { QuizService } from './quiz/quiz.service';
-import { ResultService } from './result/result.service';
-import { UserModule } from './user/user.module';
 import * as Joi from '@hapi/joi';
 import { AccessControlModule } from 'nest-access-control';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config'; import { User } from './user/user.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TYPEORM_CONFIG } from './configs/constants';
 import { roles } from './app.roles';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
 import { QuizModule } from './quiz/quiz.module';
 import { QuestionModule } from './question/question.module';
 import databaseConfig from './configs/database.config';
@@ -42,6 +38,6 @@ import databaseConfig from './configs/database.config';
     QuestionModule,
   ],
   controllers: [AppController],
-  providers: [AppService, QuestionService, QuizService, ResultService],
+  providers: [AppService],
 })
 export class AppModule { }
