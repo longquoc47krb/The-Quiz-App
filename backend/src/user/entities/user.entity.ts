@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, BeforeUpdate, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, BeforeUpdate, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { hash, compare } from 'bcryptjs';
 import { Quiz } from 'src/quiz/entities/quiz.entity';
 import { DEFAULT_USER_AVATAR } from 'src/configs/constants';
+import { QuizSession } from 'src/quiz-session/entities/quiz-session.entity';
 
 
 @Entity('user')
@@ -60,6 +61,9 @@ export class User {
     @Column({ default: DEFAULT_USER_AVATAR })
     avatar: string;
     createdQuizzes: any;
+
+    @OneToMany(() => QuizSession, quizSession => quizSession.user)
+    quizSessions: QuizSession[];
 
     @BeforeInsert()
     @BeforeUpdate()

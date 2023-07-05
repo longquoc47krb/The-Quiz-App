@@ -16,8 +16,7 @@ function getTokenFromCookie() {
   return null;
 }
 const routes = () => {
-  // const token = getTokenFromCookie();
-  const token = 1;
+  const token = getTokenFromCookie();
   return (
     <>
       {token ? (

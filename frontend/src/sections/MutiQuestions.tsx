@@ -48,8 +48,8 @@ const MultiQuestions = () => {
         } else {
           // End of the quiz
         }
-      }, 3000);
-    }, 3000);
+      }, 1000);
+    }, 1000);
   };
   const checkAnswer = (answer: string) => {
     if (answer === quiz?.questions[currentQuestionIndex].correctOption) {

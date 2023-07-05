@@ -13,9 +13,8 @@ export class UserService {
   create(createUserDto: CreateUserDto) {
     return 'This action adds a new user';
   }
-  async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.userRepository.getUserByUsername(username);
-
+  async validateUser(email: string, pass: string) {
+    const user = await this.userRepository.getUserByEmail(email);
     if (user && (await compare(pass, user.password))) {
       const { password, ...rest } = user;
       return rest;

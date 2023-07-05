@@ -44,7 +44,10 @@ export interface UserDto {
   email: string;
   roles: string[];
 }
-
+export interface LoginUserDto {
+  identifier: string;
+  password: string;
+}
 export interface HeaderProps {
   user: User;
 }

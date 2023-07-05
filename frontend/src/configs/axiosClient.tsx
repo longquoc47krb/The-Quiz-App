@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
+import { getTokenFromCookies } from "../utils";
 
 interface ErrorResponse {
   message: string;
@@ -6,11 +7,12 @@ interface ErrorResponse {
 
 const axiosClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
-  // withCredentials: true,
+  withCredentials: true,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
+    Authorization: `Bearer ${getTokenFromCookies()}`,
   },
 });
 

@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { QuizModule } from './quiz/quiz.module';
 import { QuestionModule } from './question/question.module';
+import { QuizSessionModule } from './quiz-session/quiz-session.module';
 import databaseConfig from './configs/database.config';
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import databaseConfig from './configs/database.config';
     AuthModule,
     QuizModule,
     QuestionModule,
+    QuizSessionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

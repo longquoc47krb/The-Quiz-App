@@ -1,10 +1,11 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect, useRef } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
+import { login } from "../apis/authServices";
 export interface LoginFormValues {
-  emailOrUsername: string;
+  identifier: string;
   password: string;
 }
 
@@ -14,14 +15,29 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>();
-  const handleFormSubmit = (data: LoginFormValues) => {
-    console.log("Login form data:", data);
+  const navigate = useNavigate();
+  const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
+    // Handle form submission
+    const { identifier, password } = data;
+    const loginDto = { identifier, password };
+    const response: any = await login(loginDto);
+    if (response.status === 200) {
+      const { token } = response.data;
+      localStorage.setItem("token", token);
+      navigate("/");
+    }
   };
   const navigate = useNavigate();
   //   const handleGoogleLogin = () => {
   //     console.log("Logging in with Google"); // Perform Google login logic here
   //   };
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
   return (
     <div className="flex justify-center items-center h-full w-full">
       <div className="auth-wrapper">
@@ -29,16 +45,16 @@ const LoginPage: React.FC = () => {
           <h1 className="font-semibold text-yellow-400 text-4xl text-center mb-2">
             Login Page
           </h1>
-          <form onSubmit={handleSubmit(handleFormSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="form-group">
               <label>Email</label>
               <input
                 type="text"
                 className="input"
-                {...register("emailOrUsername", { required: true })}
+                {...register("identifier", { required: "Email is required" })}
               />
-              {errors.emailOrUsername && (
-                <span className="error">Email or username is required</span>
+              {errors.identifier && (
+                <span className="error">{errors.identifier.message}</span>
               )}
             </div>
             <div className="form-group">
@@ -46,10 +62,16 @@ const LoginPage: React.FC = () => {
               <input
                 className="input"
                 type="password"
-                {...register("password", { required: true, minLength: 6 })}
+                {...register("password", {
+                  required: "Password is required",
+                  minLength: {
+                    value: 6,
+                    message: "Password must be at least 6 characters long",
+                  },
+                })}
               />
               {errors.password && (
-                <span className="error">Password is required</span>
+                <span className="error">{errors.password.message}</span>
               )}
             </div>
             <div className="form-group">

@@ -14,8 +14,8 @@ export class AuthService {
 
     }
     async login(loginDto: LoginUserDTO) {
-        const { username, password } = loginDto;
-        const user = await this.userService.validateUser(username, password);
+        const { email, password } = loginDto;
+        const user = await this.userService.validateUser(email, password);
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
