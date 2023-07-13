@@ -12,17 +12,12 @@ export class UserController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+    return this.userService.createUser(createUserDto);
   }
 
   @Get()
   findAll() {
     return this.userService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
   }
 
   @Patch(':id')
@@ -33,5 +28,21 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+  @Get(":id")
+  findById(@Param('id') id: string) {
+    return this.userService.getOne(+id)
+  }
+  @Get(":email")
+  findByEmail(@Param('email') email: string) {
+    return this.userService.findByEmail(email)
+  }
+  @Get(":username")
+  findByUsername(@Param('username') username: string) {
+    return this.userService.findByUsername(username)
+  }
+  @Get(":identifier")
+  findByIdentifier(@Param('identifier') identifier: string) {
+    return this.userService.findByEmailOrUsername(identifier);
   }
 }

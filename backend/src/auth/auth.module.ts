@@ -3,13 +3,11 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from 'src/strategies/jwt.strategy';
-import { UserRepository } from 'src/user/user.repository';
 import { UserService } from 'src/user/user.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { LocalStrategy } from 'src/strategies/local.strategy';
 import { UserModule } from 'src/user/user.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { JWT_SECRET } from 'src/configs/constants';
 
@@ -26,6 +24,6 @@ import { JWT_SECRET } from 'src/configs/constants';
         }),
     ],
     controllers: [AuthController],
-    providers: [AuthService, UserService, LocalStrategy, JwtStrategy],
+    providers: [AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule { }

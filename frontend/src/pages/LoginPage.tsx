@@ -27,7 +27,6 @@ const LoginPage: React.FC = () => {
       navigate("/");
     }
   };
-  const navigate = useNavigate();
   //   const handleGoogleLogin = () => {
   //     console.log("Logging in with Google"); // Perform Google login logic here
   //   };

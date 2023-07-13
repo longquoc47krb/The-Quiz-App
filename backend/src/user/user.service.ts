@@ -3,28 +3,34 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRepository } from './user.repository';
+import { Repository, getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { User } from './entities/user.entity';
+import { AppRoles } from 'src/app.roles';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) { }
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-  async validateUser(email: string, pass: string) {
-    const user = await this.userRepository.getUserByEmail(email);
-    if (user && (await compare(pass, user.password))) {
-      const { password, ...rest } = user;
-      return rest;
-    }
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>
+  ) { }
+  async createUser(createUserDto: CreateUserDto): Promise<void> {
+    const { name, username, email, password } = createUserDto;
 
-    return null;
+    const user = new User();
+    user.name = name;
+    user.username = username;
+    user.email = email;
+    user.password = password;
+    user.roles = [AppRoles.USER];
+
+    await this.userRepository.save(user);
+
   }
   async getOne(id: number, userEntity?: User) {
     const user = await this.userRepository
-      .findOne(id)
+      .findOne({ where: { id } })
       .then(u => (!userEntity ? u : !!u && userEntity.id === u.id ? u : null));
 
     if (!user)
@@ -32,10 +38,27 @@ export class UserService {
 
     return user;
   }
+  async findByEmailOrUsername(identifier: string) {
+    const user = await this.userRepository.createQueryBuilder('user').where('user.username = :identifier', { identifier }).orWhere('user.email = :identifier', { identifier }).getOne();
+    return user;
+  }
+  async findByUsername(username: string) {
+    const user = await this.userRepository.createQueryBuilder('user').where('user.username = :username', { username }).getOne()
+    return user;
+  }
+  async validateUser(email: string, pass: string) {
+    const user = await this.findByEmail(email);
+    if (user && (await compare(pass, user.password))) {
+      const { password, ...rest } = user;
+      return rest;
+    }
+
+    return null;
+  }
   async checkUserExists(user: CreateUserDto) {
     const { email, username } = user;
-    const userByEmailExist = await this.userRepository.getUserByEmail(email);
-    const userByUsernameExist = await this.userRepository.getUserByUsername(username);
+    const userByEmailExist = await this.userRepository.findOne({ where: { email } });
+    const userByUsernameExist = this.userRepository.findOne({ where: { username } });
     if (userByEmailExist || userByUsernameExist) {
       return true;
     }
@@ -44,11 +67,9 @@ export class UserService {
   findAll() {
     return `This action returns all user`;
   }
-
-  async findOne(id: number) {
-    const user = await this.userRepository.findOne(id);
-    const { password, ...rest } = user;
-    return rest;
+  async findByEmail(email: string) {
+    const user = await this.userRepository.createQueryBuilder('user').where('user.email = :email', { email }).getOne()
+    return user;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

@@ -9,8 +9,8 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         super();
     }
 
-    async validate(identifier: string, password: string) {
-        const user = await this.userService.validateUser(identifier, password);
+    async validate(email: string, password: string) {
+        const user = await this.userService.validateUser(email, password);
         if (!user) {
             throw new UnauthorizedException('Login username/email or password does not match.');
         }

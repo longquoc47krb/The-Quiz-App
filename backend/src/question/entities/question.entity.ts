@@ -17,6 +17,9 @@ export class Question {
     @Column()
     correctOption: string;
 
+    @Column()
+    explain: string;
+
     @ManyToOne(() => Quiz, quiz => quiz.questions)
     @JoinColumn({ name: 'quizId' })
     quizId: number;
