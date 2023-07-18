@@ -1,19 +1,26 @@
-/* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
+
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import * as Joi from '@hapi/joi';
 import { AccessControlModule } from 'nest-access-control';
+import { WinstonModule } from 'nest-winston';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TYPEORM_CONFIG } from './configs/constants';
 import { roles } from './app.roles';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { QuizModule } from './quiz/quiz.module';
-import { QuestionModule } from './question/question.module';
-import { QuizSessionModule } from './quiz-session/quiz-session.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
+import { QuizModule } from './modules/quiz/quiz.module';
+import { QuestionModule } from './modules/question/question.module';
+import { QuizSessionModule } from './modules/quiz-session/quiz-session.module';
 import databaseConfig from './configs/database.config';
+import { SharedModule } from './modules/shared/shared.module';
+import { UtilsModule } from './utils/utils.module';
+import { JwtTokenMiddleware, LoggerInterceptor } from './utils';
+import { loggerConf } from './logger';
+import { JwtModule } from '@nestjs/jwt';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 @Module({
   imports: [
     UserModule,
@@ -33,13 +40,29 @@ import databaseConfig from './configs/database.config';
       }),
 
     }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '60s' },
+    }),
     AccessControlModule.forRoles(roles),
     AuthModule,
     QuizModule,
     QuestionModule,
     QuizSessionModule,
+    SharedModule,
+    UtilsModule,
+    WinstonModule.forRoot(loggerConf),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_INTERCEPTOR,
+    useClass: LoggerInterceptor,
+  },],
 })
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtTokenMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}

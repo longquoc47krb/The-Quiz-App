@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+
 import { RolesBuilder } from 'nest-access-control';
 
 export enum AppRoles {

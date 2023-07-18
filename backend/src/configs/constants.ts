@@ -1,6 +1,6 @@
-/* eslint-disable prettier/prettier */
+
 export const SERVER_PORT = 'PORT';
-export const JWT_SECRET = 'JWT_SECRET';
+export const JWT_SECRET = 'myStrongSecret';
 /**
  * Esta variable nos devolvera la configuracion de typeorm
  */

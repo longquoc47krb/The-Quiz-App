@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { join } from 'path';
@@ -11,9 +11,9 @@ function typeormModuleOptions(): TypeOrmModuleOptions {
         username: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
-        entities: [join(__dirname, '../**/*entity{.ts,.js}')],
+        entities: [join(__dirname, '../modules/**/entities/*entity{.ts,.js}')],
         autoLoadEntities: true,
-        synchronize: true,
+        synchronize: false,
         logging: true,
         logger: 'file',
 

@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+
 /**
  * Converts an enum into a String
  * @param _enum Enum

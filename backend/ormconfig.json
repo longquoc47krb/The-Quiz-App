@@ -6,10 +6,10 @@
   "password": "123456",
   "database": "quizapp",
   "entities": [
-    "D:\\LearningCode\\multi-choice-questions-app\\backend\\dist\\**\\*entity{.ts,.js}"
+    "D:\\LearningCode\\multi-choice-questions-app\\backend\\dist\\modules\\**\\entities\\*entity{.ts,.js}"
   ],
   "autoLoadEntities": true,
-  "synchronize": true,
+  "synchronize": false,
   "logging": true,
   "logger": "file"
 }
