@@ -1,7 +1,7 @@
 
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { QuizCategory } from "src/common/category.enum";
 import { Question } from "src/modules/question/entities/question.entity";
 
@@ -25,16 +25,22 @@ export class CreateQuizDto {
             {
                 text: 'What is the capital of France?',
                 options: ['Paris', 'London', 'Berlin', 'Madrid'],
-                correctOption: 'Paris'
+                correctOption: 'Paris',
+                explain: 'Paris'
             },
             {
                 text: 'Which planet is known as the Red Planet?',
                 options: ['Mars', 'Jupiter', 'Venus', 'Saturn'],
-                correctOption: 'Mars'
+                correctOption: 'Mars',
+                explain: 'Mars'
             },
         ], description: 'The questions of the quiz'
     })
     @IsNotEmpty()
     @IsArray()
     questions: Question[];
+    @ApiProperty({ example: 1, description: 'The authorId of the quiz' })
+    @IsNumber()
+    authorId: number;
+
 }

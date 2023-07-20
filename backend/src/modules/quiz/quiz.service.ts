@@ -1,14 +1,16 @@
 
 import { Injectable } from '@nestjs/common';
-import { CreateQuizDto } from './dto/create-quiz.dto';
-import { UpdateQuizDto } from './dto/update-quiz.dto';
-import { Repository, getConnection } from 'typeorm';
-import { Quiz } from './entities/quiz.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuizCategory } from 'src/common/category.enum';
 import { Question } from 'src/modules/question/entities/question.entity';
-import { User } from 'src/modules/user/entities/user.entity';
+import { Repository } from 'typeorm';
+import { UserResponseDTO } from '../user/dto/user-response.dto';
 import { UserService } from '../user/user.service';
+import { CreateQuizDto } from './dto/create-quiz.dto';
+import { UpdateQuizDto } from './dto/update-quiz.dto';
+import { Quiz } from './entities/quiz.entity';
+import { ResponseDto } from 'src/utils/interface/response.dto';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class QuizService {
@@ -18,32 +20,36 @@ export class QuizService {
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
     private userService: UserService) { }
-  async create(createQuizDto: CreateQuizDto, author: User): Promise<Quiz> {
+  async create(createQuizDto: CreateQuizDto) {
     const { category, questions } = createQuizDto;
-    const quiz = await this.quizRepository.create({ ...createQuizDto, author })
+    const quiz = await this.quizRepository.create(createQuizDto)
     if (!(category in QuizCategory)) {
       throw new Error(`Invalid category value: ${category}`);
     }
 
     const savedQuestions = [];
+    const uniqueQuestionTexts = [];
     for (const questionData of questions) {
+      if (uniqueQuestionTexts.includes(questionData.text)) {
+        throw new Error(`Duplicated question found: "${questionData.text}"`);
+      }
       const question = new Question();
       question.text = questionData.text;
       question.options = questionData.options;
       question.correctOption = questionData.correctOption;
       question.quizId = quiz.id;
-
+      question.explain = questionData.explain;
       const savedQuestion = await this.questionRepository.save(question);
       savedQuestions.push(savedQuestion);
     }
     quiz.questions = savedQuestions;
-    const savedQuiz = await this.quizRepository.save(quiz);
-    return savedQuiz;
+    await this.quizRepository.save(quiz);
+    return ResponseDto.createSuccess('Successfully saved quiz');
   }
 
   async findAll() {
     const quizzes = await this.quizRepository.find({
-      relations: ['author', 'questions'],
+      relations: ['questions'],
     });
     return quizzes;
   }

@@ -1,10 +1,16 @@
 
 
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { QuizService } from './quiz.service';
 import { QuizResult } from 'src/utils/interface/quiz-result';
+import { CreateQuizDto } from './dto/create-quiz.dto';
+import { AuthUser, Roles, RolesGuard } from 'src/utils';
+import { Role } from 'src/configs/enum';
+import { UserResponseDTO } from '../user/dto/user-response.dto';
+import { User } from 'src/utils/decorator/user.decorator';
+import { User as UserEntity } from '../user/entities/user.entity';
 
 @ApiTags('Quiz')
 
@@ -12,16 +18,14 @@ import { QuizResult } from 'src/utils/interface/quiz-result';
 export class QuizController {
   constructor(private readonly quizService: QuizService) { }
 
+  @Post()
   @ApiOperation({ summary: 'Create new quiz' })
-  // @Auth({
-  //   resource: AppResource.QUIZ,
-  //   action: 'create',
-  //   possession: 'own',
-  // })
-  // @Post()
-  // create(@Body() createQuizDto: CreateQuizDto, @User() user: UserDto) {
-  //   return this.quizService.create(createQuizDto, user);
-  // }
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(Role.User)
+  create(@Body() createQuizDto: CreateQuizDto) {
+    return this.quizService.create(createQuizDto);
+  }
 
   @Get()
   findAll() {

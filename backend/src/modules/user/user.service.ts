@@ -9,6 +9,8 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { UserResponseDTO } from './dto/user-response.dto';
+import { Role } from 'src/configs/enum';
 @Injectable()
 export class UserService {
   constructor(
@@ -23,7 +25,7 @@ export class UserService {
     user.username = username;
     user.email = email;
     user.password = await this.hashPassword(password);
-    user.roles = [AppRoles.USER];
+    user.roles = [Role.User];
 
     await this.userRepository.save(user);
 
@@ -43,7 +45,7 @@ export class UserService {
     const user = await this.userRepository.createQueryBuilder('user').where('user.username = :identifier', { identifier }).orWhere('user.email = :identifier', { identifier }).getOne();
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
-    return mapUserToUserResponseDTO(user);
+    return (user);
   }
   async findByUsername(username: string) {
     if (typeof username !== 'string' || username.trim() === '') {
@@ -80,7 +82,8 @@ export class UserService {
   }
   async findByEmail(email: string) {
     const user = await this.userRepository.createQueryBuilder('user').where('user.email = :email', { email }).getOne()
-    return mapUserToUserResponseDTO(user);
+    // return mapUserToUserResponseDTO(user);
+    return (user);
 
   }
 

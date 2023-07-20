@@ -1,6 +1,6 @@
 
 export const SERVER_PORT = 'PORT';
-export const JWT_SECRET = 'myStrongSecret';
+export const JWT_SECRET = 'QuocLong123456';
 /**
  * Esta variable nos devolvera la configuracion de typeorm
  */

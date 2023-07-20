@@ -1,16 +1,18 @@
 
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PassportModule } from '@nestjs/passport';
+import { JwtService } from '@nestjs/jwt';
+import { SharedModule } from '../shared/shared.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), PassportModule.register({ defaultStrategy: 'jwt' }),],
+  imports: [TypeOrmModule.forFeature([User]),
+  ],
   controllers: [UserController],
-  providers: [UserService, Repository<User>],
-  exports: [UserService, Repository<User>],
+  providers: [UserService, Repository<User>, JwtService],
+  exports: [UserService],
 })
 export class UserModule { }

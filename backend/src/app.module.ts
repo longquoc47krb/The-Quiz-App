@@ -7,7 +7,7 @@ import { AccessControlModule } from 'nest-access-control';
 import { WinstonModule } from 'nest-winston';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TYPEORM_CONFIG } from './configs/constants';
+import { JWT_SECRET, TYPEORM_CONFIG } from './configs/constants';
 import { roles } from './app.roles';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
@@ -17,10 +17,11 @@ import { QuizSessionModule } from './modules/quiz-session/quiz-session.module';
 import databaseConfig from './configs/database.config';
 import { SharedModule } from './modules/shared/shared.module';
 import { UtilsModule } from './utils/utils.module';
-import { JwtTokenMiddleware, LoggerInterceptor } from './utils';
+import { JwtTokenMiddleware, LoggerInterceptor, RolesGuard } from './utils';
 import { loggerConf } from './logger';
 import { JwtModule } from '@nestjs/jwt';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+
 @Module({
   imports: [
     UserModule,
@@ -41,15 +42,15 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 
     }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '60s' },
+      secret: `${process.env.JWT_SECRET_KEY}`,
+      signOptions: { expiresIn: '24h' },
     }),
     AccessControlModule.forRoles(roles),
+    SharedModule,
     AuthModule,
     QuizModule,
     QuestionModule,
     QuizSessionModule,
-    SharedModule,
     UtilsModule,
     WinstonModule.forRoot(loggerConf),
   ],
@@ -57,12 +58,16 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
   providers: [AppService, {
     provide: APP_INTERCEPTOR,
     useClass: LoggerInterceptor,
-  },],
+  }, {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JwtTokenMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
+
   }
 }

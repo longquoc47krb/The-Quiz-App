@@ -6,7 +6,7 @@ export interface User {
     roles: string[];
     dateOfBirth: Date;
     score: number;
-    level: string;
+    level: number;
     completedQuizzes: number;
     favoriteQuizzes: string[];
     friends: string[];
@@ -17,6 +17,4 @@ export interface User {
     createdQuizzes: number;
     quizSessions: number;
     password: string;
-    hashPassword: () => void;
-    validatePassword: (password: string) => boolean;
 }

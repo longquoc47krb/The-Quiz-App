@@ -7,7 +7,6 @@ import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { LoginUserDTO } from './dto/login-credential.dto';
 import { Logger } from 'winston';
 import { TokenDto } from './dto/token.dto';
-import { JWT_SECRET } from '../../configs/constants';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -24,7 +23,6 @@ export class AuthController {
         try {
             return await this.authService.login(loginDto);
         } catch (error) {
-            console.log(process.env.JWT_SECRET)
             this.logger.warn('Login attempt failed', loginDto);
             throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
         }

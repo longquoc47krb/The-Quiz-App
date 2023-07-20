@@ -5,6 +5,7 @@ import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
 import { DEFAULT_USER_AVATAR } from 'src/configs/constants';
 import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
 import { Exclude } from 'class-transformer';
+import { Role } from 'src/configs/enum';
 
 
 @Entity('user')
@@ -55,7 +56,7 @@ export class User {
     password: string;
 
     @Column({ type: 'simple-array' })
-    roles: string[];
+    roles: Role[];
 
     @Column({ default: DEFAULT_USER_AVATAR })
     avatar: string;

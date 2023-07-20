@@ -1,10 +1,13 @@
 
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Role } from 'src/configs/enum';
+import { Roles, RolesGuard } from 'src/utils';
+import { User } from 'src/utils/decorator/user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { User as UserEntity } from './entities/user.entity';
+import { UserService } from './user.service';
 
 @ApiTags('User')
 @Controller('user')
@@ -28,6 +31,20 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+  @Get('/me')
+  @ApiBearerAuth()
+  @Roles(Role.User)
+  @UseGuards(RolesGuard)
+  async getMe(
+    @User() user: UserEntity,
+  ): Promise<UserEntity> {
+    try {
+      return await this.userService.findByEmail(user.email);
+    } catch (error) {
+      console.log({ user })
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
   @Get(":id")
   findById(@Param('id') id: string) {

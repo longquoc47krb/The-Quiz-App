@@ -1,9 +1,9 @@
 @import "variables";
 
 header {
-  display: grid;
+  display: flex;
   position: relative;
-  grid-template-columns: 0vw 15vw 50vw 5vw;
+  // grid-template-columns: 0vw 15vw 50vw 5vw;
   justify-content: space-between;
   background: $secondaryColor;
   width: 100%;

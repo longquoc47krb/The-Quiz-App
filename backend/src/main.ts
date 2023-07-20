@@ -15,15 +15,16 @@ async function bootstrap() {
 
   initSwagger(app);
   generateTypeormConfigFile(config);
-
+  app.enableCors({
+    origin: '*', // Replace with your frontend URL
+  });
   // Configure CORS
-  app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
     }),
   );
-
+  app.useLogger(logger);
   await app.listen(port);
   logger.log(`Server is running at ${await app.getUrl()}`);
 }

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
 import { login } from "../apis/authServices";
+import { saveTokenToCookies } from "../utils";
 export interface LoginFormValues {
   identifier: string;
   password: string;
@@ -21,22 +22,14 @@ const LoginPage: React.FC = () => {
     const { identifier, password } = data;
     const loginDto = { identifier, password };
     const response: any = await login(loginDto);
-    if (response.status === 200) {
-      const { token } = response.data;
-      localStorage.setItem("token", token);
-      navigate("/");
-    }
+    const { accessToken } = response.data;
+    saveTokenToCookies(accessToken);
+    navigate("/home");
   };
   //   const handleGoogleLogin = () => {
   //     console.log("Logging in with Google"); // Perform Google login logic here
   //   };
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
   return (
     <div className="flex justify-center items-center h-full w-full">
       <div className="auth-wrapper">

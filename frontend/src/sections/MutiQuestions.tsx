@@ -30,7 +30,6 @@ const MultiQuestions = () => {
     "test:",
     yourAnswer === quiz?.questions[currentQuestionIndex].correctOption
   );
-  console.log("score:", score);
   const handleOptionSelect = (optionIndex: any) => {
     setSelectedOption(optionIndex);
     setTimeout(() => {

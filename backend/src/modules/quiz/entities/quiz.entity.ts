@@ -27,9 +27,8 @@ export class Quiz {
     @JoinTable()
     participants: User[];
 
-    @ManyToOne(() => User, user => user.createdQuizzes)
-    @JoinColumn({ name: 'author' })
-    author: User; // Assuming the authorId is of type 'number'
+    @Column({ name: 'authorId' }) // Use the name 'authorId' to match the column in the database
+    authorId: number;
 
 
     @Column({ default: 0 })

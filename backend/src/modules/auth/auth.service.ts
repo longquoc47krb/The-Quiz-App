@@ -18,19 +18,16 @@ export class AuthService {
     }
     async authenticate(token: string): Promise<any> {
         try {
-            // Giải mã token và lấy payload
             const payload = this.jwtService.verify(token);
-            // Xử lý và trả về thông tin người dùng từ payload
             const user = await this.userService.getOne(payload.userId);
             return user;
         } catch (error) {
-            // Xử lý lỗi khi không thể giải mã token hoặc xác thực người dùng
             throw new Error('Authentication failed');
         }
     }
-    async login(loginDto: LoginUserDTO) {
-        const { email, password } = loginDto;
-        const user = await this.userService.validateUser(email, password);
+    async login(loginDto: LoginUserDTO): Promise<TokenDto> {
+        const { identifier, password } = loginDto;
+        const user = await this.userService.findByEmailOrUsername(identifier);
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
@@ -38,35 +35,29 @@ export class AuthService {
         if (!user.active) {
             throw new Error('Inactive user');
         }
-
+        const isMatched = this.userService.comparePassword(password, user);
+        if (!isMatched) {
+            throw new Error('Invalid credentials');
+        }
         const authToken: TokenDto = this.generateAuthToken(user);
         return Promise.resolve(authToken);
     }
-    /**
-  * Generate Auth Token
-  * @param user
-  */
     private generateAuthToken(user: UserResponseDTO): TokenDto {
 
         const accessToken = this.jwtService.sign({
-            sub: () => user.email,
+            sub: user.id,
             type: 'access',
             email: user.email,
             roles: user.roles,
-            userId: user.id,
         });
 
         const refreshToken = this.jwtService.sign({
-            sub: () => user.email,
+            sub: user.id,
             type: 'refresh',
-            userId: user.id,
         });
 
         return { accessToken, refreshToken };
     }
-    /**
-   * refresh token
-   */
     async refreshToken(token: RefreshTokenDto): Promise<TokenDto> {
 
         let payload: any;

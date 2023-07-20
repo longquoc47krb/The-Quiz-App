@@ -4,19 +4,10 @@ import DashboardPage from "../pages/DashboardPage";
 import { Navigate, Route, Routes } from "react-router-dom";
 import RegisterPage from "../pages/RegisterPage";
 import QuizPage from "../pages/QuizPage";
+import { getTokenFromCookies } from "../utils";
 
-function getTokenFromCookie() {
-  const cookies = document.cookie.split("; ");
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].split("=");
-    if (cookie[0] === "token") {
-      return cookie[1];
-    }
-  }
-  return null;
-}
 const routes = () => {
-  const token = getTokenFromCookie();
+  const token = getTokenFromCookies();
   return (
     <>
       {token ? (

@@ -10,6 +10,10 @@ export const fetchUserById = async (id: string) => {
   const response = await axiosClient.get<User>(`/user/${id}`);
   return response;
 };
+export const getMe = async () => {
+  const response = await axiosClient.get<User>(`/user/me`);
+  return response.data;
+};
 export const useFetchUsers = () => {
   return useQuery(["fetchUsers"], fetchUsers, {
     staleTime: 0,

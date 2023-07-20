@@ -18,6 +18,25 @@ export interface User {
   avatar: string;
   createdQuizzes: any;
 }
+export interface UserResponseDTO {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  roles: Role[];
+  dateOfBirth: Date;
+  score: number;
+  level: number;
+  completedQuizzes: Quiz[];
+  favoriteQuizzes: Quiz[];
+  friends: User[];
+  createdAt: Date;
+  lastLogin: Date;
+  active: boolean;
+  avatar: string;
+  createdQuizzes: any;
+  quizSessions: QuizSession[];
+}
 export interface Question {
   id: number;
   text: string;
@@ -43,13 +62,14 @@ export interface UserDto {
   username: string;
   email: string;
   roles: string[];
+  avatar: string;
 }
 export interface LoginUserDto {
   identifier: string;
   password: string;
 }
 export interface HeaderProps {
-  user: User;
+  user: UserDto;
 }
 export interface QuizProps {
   id: number;
@@ -70,4 +90,16 @@ export interface DropdownItem {
 
 export interface MenuBarProps {
   profileItems: DropdownItem[];
+}
+
+export enum Role {
+  User = "USER",
+  Admin = "ADMIN",
+}
+export interface QuizSession {
+  id: number;
+  user: User;
+  quiz: Quiz;
+  startTime: Date;
+  endTime: Date;
 }
