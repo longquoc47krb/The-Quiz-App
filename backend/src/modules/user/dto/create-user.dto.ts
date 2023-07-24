@@ -3,6 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsEmail, IsEnum, IsString, Length } from "class-validator";
 import { AppRoles } from "src/app.roles";
 import { EnumToString } from "src/common/helpers/enumToString";
+import { LoginType } from "src/configs/enum";
 
 export class CreateUserDto {
     @ApiProperty({ example: 'John Doe', description: 'The name of the user' })
@@ -29,4 +30,11 @@ export class CreateUserDto {
         message: `must be a valid role value, ${EnumToString(AppRoles)}`,
     })
     roles: string[];
+    @ApiProperty({ example: [LoginType.EmailPassword], description: 'The login type of the user' })
+    @IsArray()
+    @IsEnum(LoginType, {
+        each: true,
+        message: `must be a valid login type value, ${EnumToString(LoginType)}`,
+    })
+    loginType: LoginType;
 }

@@ -2,13 +2,15 @@
 import React from "react";
 import { HeaderProps } from "../interfaces";
 import { useState } from "react";
-
+import { clearAccessTokenInCookie } from "../utils";
+import { redirect } from "react-router-dom";
 const Header: React.FC<HeaderProps> = ({ user }) => {
   const { name, avatar } = user;
   const [toggle, setToggle] = useState(false);
   // const { data, isLoading } = useFetchQuizzes();
   const handleLogout = () => {
-    // Handle logout logic here
+    clearAccessTokenInCookie();
+    redirect("/home");
   };
 
   return (
@@ -24,7 +26,12 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         <ul className="bg-gray-100 p-4 absolute top-12 right-12">
           <li className="block cursor-pointer hover:bg-slate-300">Profile</li>
           <li className="block cursor-pointer  hover:bg-slate-300">Settings</li>
-          <li className="block cursor-pointer  hover:bg-slate-300">Log out</li>
+          <li
+            className="block cursor-pointer  hover:bg-slate-300"
+            onClick={handleLogout}
+          >
+            Log out
+          </li>
         </ul>
       )}
     </header>

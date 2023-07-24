@@ -42,7 +42,7 @@ export class UserController {
     try {
       return await this.userService.findByEmail(user.email);
     } catch (error) {
-      console.log({ user })
+
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }

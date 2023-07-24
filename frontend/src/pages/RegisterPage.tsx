@@ -66,7 +66,7 @@ const RegisterPage: React.FC = () => {
           </div>
           <div className="form-group flex items-center justify-center">
             <p className="text-gray-200 text-center ">Already a user? </p>
-            <a onClick={() => navigate("/log-in")}>Sign In</a>
+            <a onClick={() => navigate("/login")}>Sign In</a>
           </div>
         </form>
       </div>

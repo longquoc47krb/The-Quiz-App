@@ -8,6 +8,7 @@ import { getTokenFromCookies } from "../utils";
 
 const routes = () => {
   const token = getTokenFromCookies();
+  console.log({ token });
   return (
     <>
       {token ? (
@@ -23,12 +24,12 @@ const routes = () => {
         </Routes>
       ) : (
         <Routes>
-          <Route path="/log-in" element={<LoginPage />} />
-          <Route path="/sign-up" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
           {/* Add more routes for other pages */}
           <Route
             path="*"
-            element={<Navigate to="/log-in" replace={true} />}
+            element={<Navigate to="/login" replace={true} />}
           />{" "}
         </Routes>
       )}

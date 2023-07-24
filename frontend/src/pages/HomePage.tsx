@@ -14,7 +14,9 @@ const HomePage: React.FC = () => {
     }
     getUser();
   }, []);
-  console.log({ user });
+  if (!user) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <Header user={user} />

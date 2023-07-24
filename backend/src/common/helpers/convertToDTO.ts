@@ -17,7 +17,7 @@ export function convertUsersToDTO(users: User[]) {
         userResponseDTO.friends = user.friends;
         userResponseDTO.level = user.level;
         userResponseDTO.avatar = user.avatar;
-
+        userResponseDTO.loginType = user.loginType;
         return userResponseDTO;
     });
 
@@ -41,7 +41,8 @@ export function mapUserToUserResponseDTO(user) {
         active: user.active,
         avatar: user.avatar,
         createdQuizzes: user.createdQuizzes,
-        quizSessions: user.quizSessions
+        quizSessions: user.quizSessions,
+        loginType: user.loginType
     };
 
     return userResponse;

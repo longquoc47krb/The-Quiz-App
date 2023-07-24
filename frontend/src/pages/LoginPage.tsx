@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
 import { BsFacebook } from "react-icons/bs";
+import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 import { login } from "../apis/authServices";
-import { saveTokenToCookies } from "../utils";
+import { getTokenFromCookies, saveTokenToCookies } from "../utils";
+import { redirect } from "react-router-dom";
 export interface LoginFormValues {
   identifier: string;
   password: string;
@@ -16,7 +17,13 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>();
+  const token = getTokenFromCookies();
   const navigate = useNavigate();
+  useEffect(() => {
+    if (token) {
+      navigate("/home");
+    }
+  }, [token]);
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     // Handle form submission
     const { identifier, password } = data;
@@ -24,11 +31,11 @@ const LoginPage: React.FC = () => {
     const response: any = await login(loginDto);
     const { accessToken } = response.data;
     saveTokenToCookies(accessToken);
-    navigate("/home");
+    window.open(import.meta.env.VITE_BROWSER_URL + "/home", "_blank");
   };
-  //   const handleGoogleLogin = () => {
-  //     console.log("Logging in with Google"); // Perform Google login logic here
-  //   };
+  const handleGoogleLogin = () => {
+    window.open(import.meta.env.VITE_GOOGLE_OAUTH, "_blank");
+  };
 
   return (
     <div className="flex justify-center items-center h-full w-full">
@@ -79,7 +86,10 @@ const LoginPage: React.FC = () => {
               <span className="or-text">or</span>
               <span className="divider-line"></span>
             </div>
-            <button className="bg-slate-200 flex items-center justify-center gap-x-2 w-full mt-4">
+            <button
+              className="bg-slate-200 flex items-center justify-center gap-x-2 w-full mt-4"
+              onClick={handleGoogleLogin}
+            >
               <FcGoogle />
               <span>Login with Google</span>
             </button>
@@ -89,7 +99,7 @@ const LoginPage: React.FC = () => {
             </button>
             <div className="form-group flex items-center justify-center">
               <p className="text-gray-200">Need an account? </p>
-              <a onClick={() => navigate("/sign-up")}>Register</a>
+              <a onClick={() => navigate("/signup")}>Register</a>
             </div>
           </form>
         </div>

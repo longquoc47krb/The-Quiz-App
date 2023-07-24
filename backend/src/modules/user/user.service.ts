@@ -10,7 +10,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { UserResponseDTO } from './dto/user-response.dto';
-import { Role } from 'src/configs/enum';
+import { LoginType, Role } from 'src/configs/enum';
+import { CheckUserExistenceDTO } from './dto/user-existence.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -18,14 +19,15 @@ export class UserService {
     private userRepository: Repository<User>
   ) { }
   async createUser(createUserDto: CreateUserDto): Promise<void> {
-    const { name, username, email, password } = createUserDto;
-
+    const { name, username, email, password, loginType } = createUserDto;
     const user = new User();
     user.name = name;
     user.username = username;
     user.email = email;
-    user.password = await this.hashPassword(password);
     user.roles = [Role.User];
+    user.password = await this.hashPassword(password);
+    user.loginType = loginType;
+
 
     await this.userRepository.save(user);
 
@@ -65,12 +67,10 @@ export class UserService {
 
     return null;
   }
-  async checkUserExists(user: CreateUserDto) {
+  async checkUserExists(user: CheckUserExistenceDTO) {
     const { email, username } = user;
     const userByEmailExist = await this.userRepository.findOne({ where: { email } });
     const userByUsernameExist = await this.userRepository.findOne({ where: { username } });
-    console.log("userByUsernameExist:", userByUsernameExist)
-    console.log("userByEmailExist:", userByEmailExist)
     if (userByEmailExist || userByUsernameExist) {
       return true;
     }

@@ -5,7 +5,7 @@ import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
 import { DEFAULT_USER_AVATAR } from 'src/configs/constants';
 import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
 import { Exclude } from 'class-transformer';
-import { Role } from 'src/configs/enum';
+import { LoginType, Role } from 'src/configs/enum';
 
 
 @Entity('user')
@@ -51,8 +51,7 @@ export class User {
     @Column({ default: true })
     active: boolean;
 
-    @Exclude()
-    @Column()
+    @Column({ nullable: true })
     password: string;
 
     @Column({ type: 'simple-array' })
@@ -64,4 +63,6 @@ export class User {
 
     @OneToMany(() => QuizSession, quizSession => quizSession.user)
     quizSessions: QuizSession[];
+    @Column({ default: LoginType.EmailPassword })
+    loginType: LoginType;
 }

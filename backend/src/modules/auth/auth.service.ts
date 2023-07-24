@@ -42,13 +42,14 @@ export class AuthService {
         const authToken: TokenDto = this.generateAuthToken(user);
         return Promise.resolve(authToken);
     }
-    private generateAuthToken(user: UserResponseDTO): TokenDto {
+    public generateAuthToken(user: UserResponseDTO): TokenDto {
 
         const accessToken = this.jwtService.sign({
             sub: user.id,
             type: 'access',
             email: user.email,
             roles: user.roles,
+            loginType: user.loginType
         });
 
         const refreshToken = this.jwtService.sign({
