@@ -1,11 +1,11 @@
 
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Role } from 'src/configs/enum';
 import { Roles, RolesGuard } from 'src/utils';
 import { User } from 'src/utils/decorator/user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 import { User as UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 
@@ -24,7 +24,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDTO) {
     return this.userService.update(+id, updateUserDto);
   }
 

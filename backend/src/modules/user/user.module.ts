@@ -6,13 +6,12 @@ import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
-import { SharedModule } from '../shared/shared.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]),
   ],
   controllers: [UserController],
   providers: [UserService, Repository<User>, JwtService],
-  exports: [UserService],
+  exports: [UserService, Repository<User>],
 })
 export class UserModule { }

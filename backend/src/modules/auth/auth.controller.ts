@@ -12,6 +12,8 @@ import { JWT_SECRET } from 'src/configs/constants';
 import jwt from 'jsonwebtoken';
 import { LoginType } from 'src/configs/enum';
 import { CheckUserExistenceDTO } from '../user/dto/user-existence.dto';
+import { MailService } from '../mail/mail.service';
+import { UpdateUserDTO } from '../user/dto/update-user.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -20,6 +22,7 @@ export class AuthController {
         private readonly logger: Logger,
         private authService: AuthService,
         private userService: UserService,
+        private readonly mailService: MailService
     ) { }
     @ApiOperation({ summary: 'Login account' })
     @Post('login')
@@ -47,6 +50,7 @@ export class AuthController {
             throw new BadRequestException('User already registered with email');
         }
         await this.authService.registerUser({ loginType: LoginType.EmailPassword, ...rest });
+        await this.mailService.sendWelcomeEmail(registerUserDTO.email);
         return { message: 'User registered' };
     }
     @Get('google')
@@ -58,21 +62,32 @@ export class AuthController {
     @Get('google/callback')
     @UseGuards(AuthGuard('google'))
     async googleLoginCallback(@Req() req, @Res() res) {
-        // Handle the callback after Google has authenticated the user.
-        // The user information will be available in req.user.
         const user = req.user;
-        const { loginType, ...rest } = user;
+        const { lastLogin, ...rest } = user;
         const checkUser: CheckUserExistenceDTO = {
             email: user.email,
             username: user.username
         }
         const isExist = await this.userService.checkUserExists(checkUser)
-        if (isExist) {
-            throw new BadRequestException('User already registered with email');
+        if (!isExist) {
+            const createNewUser: CreateUserDto = {
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                password: '',
+                avatar: user.avatar,
+                roles: user.roles,
+                loginType: user.loginType,
+            }
+            this.logger.info('Created account successfully');
+            await this.mailService.sendWelcomeEmail(user.email);
+            await this.userService.createUser(createNewUser)
         }
-        const createNewUser: CreateUserDto = { loginType: LoginType.Google, ...rest }
-        // await this.userService.createUser(createNewUser);
-        console.log({ createNewUser })
+        const updateUser: UpdateUserDTO = {
+            lastLogin: new Date(),
+            ...rest
+        }
+        await this.userService.update(user.id, updateUser);
         const token = this.authService.generateAuthToken(user);
         const { accessToken } = token;
         res.redirect(`${process.env.REACT_LOCAL_URL}auth?token=${accessToken}`);

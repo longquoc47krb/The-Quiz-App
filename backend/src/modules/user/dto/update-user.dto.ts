@@ -1,34 +1,81 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEmail, IsOptional, IsDateString } from 'class-validator';
-
-export class UpdateUserDto {
-    @ApiProperty({
-        description: 'The name of the user.',
-        example: 'John Doe',
-    })
-    @IsString()
-    name: string;
-
-    @ApiProperty({
-        description: 'The email address of the user.',
-        example: 'johndoe@example.com',
-    })
-    @IsEmail()
-    email: string;
-
-    @ApiProperty({
-        description: 'The date of birth of the user. Use ISO 8601 format (YYYY-MM-DD).',
-        nullable: true,
-        example: '1990-01-01',
-    })
-    @IsDateString()
+// update-user.dto.ts
+import { IsEmail, IsOptional, IsString, IsDate, IsInt, Min, IsBoolean, IsArray } from 'class-validator';
+import { LoginType, Role } from 'src/configs/enum';
+import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
+import { User } from '../entities/user.entity';
+import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
+export class UpdateUserDTO {
     @IsOptional()
-    dateOfBirth: string;
-
-    @ApiProperty({
-        description: "The URL of the user's avatar image.",
-        example: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-    })
     @IsString()
-    avatar: string;
+    name?: string;
+
+    @IsOptional()
+    @IsString()
+    username?: string;
+
+    @IsOptional()
+    @IsEmail()
+    email?: string;
+
+    @IsOptional()
+    @IsDate()
+    dateOfBirth?: Date;
+
+    @IsOptional()
+    @IsInt()
+    @Min(0)
+    score?: number;
+
+    @IsOptional()
+    @IsInt()
+    @Min(1)
+    level?: number;
+
+    @IsOptional()
+    @IsArray()
+    completedQuizzes?: Quiz[];
+
+    @IsOptional()
+    @IsArray()
+    favoriteQuizzes?: Quiz[];
+
+    @IsOptional()
+    @IsArray()
+    friends?: User[];
+
+    @IsOptional()
+    @IsDate()
+    createdAt?: Date;
+
+    @IsOptional()
+    @IsDate()
+    lastLogin?: Date;
+
+    @IsOptional()
+    @IsBoolean()
+    active?: boolean;
+
+    @IsOptional()
+    @IsString()
+    password?: string;
+
+    @IsOptional()
+    @IsArray()
+    roles?: Role[];
+
+    @IsOptional()
+    @IsString()
+    avatar?: string;
+
+    @IsOptional()
+    @IsArray()
+    createdQuizzes?: any[]; // Replace 'any' with the appropriate type
+
+    @IsOptional()
+    @IsArray()
+    quizSessions?: QuizSession[]; // Replace 'QuizSession' with the appropriate entity path
+
+    @IsOptional()
+    @IsString()
+    loginType?: LoginType;
 }

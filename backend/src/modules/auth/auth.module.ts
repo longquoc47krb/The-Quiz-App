@@ -4,6 +4,7 @@ import { UserModule } from 'src/modules/user/user.module';
 import { SharedModule } from '../shared/shared.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { MailService } from '../mail/mail.service';
 
 @Module({
     imports: [
@@ -11,6 +12,6 @@ import { AuthService } from './auth.service';
         SharedModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService],
+    providers: [AuthService, MailService],
 })
 export class AuthModule { }

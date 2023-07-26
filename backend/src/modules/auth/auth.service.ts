@@ -6,8 +6,9 @@ import { LoginUserDTO } from 'src/modules/auth/dto/login-credential.dto';
 import { UserService } from 'src/modules/user/user.service';
 import { TokenDto } from './dto/token.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { User } from '../user/entities/user.entity';
 import { UserResponseDTO } from '../user/dto/user-response.dto';
+import { LoginType } from 'src/configs/enum';
+import { UpdateUserDTO } from '../user/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -28,17 +29,26 @@ export class AuthService {
     async login(loginDto: LoginUserDTO): Promise<TokenDto> {
         const { identifier, password } = loginDto;
         const user = await this.userService.findByEmailOrUsername(identifier);
-
+        const { lastLogin, ...rest } = user;
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
         }
         if (!user.active) {
             throw new Error('Inactive user');
         }
+        if (user.loginType !== LoginType.EmailPassword) {
+            throw new Error('Login by Email/Password is not allowed with this email. Please use a different credentials.');
+        }
+
         const isMatched = this.userService.comparePassword(password, user);
         if (!isMatched) {
             throw new Error('Invalid credentials');
         }
+        const updateUser: UpdateUserDTO = {
+            lastLogin: new Date(),
+            ...rest
+        }
+        await this.userService.update(user.id, updateUser);
         const authToken: TokenDto = this.generateAuthToken(user);
         return Promise.resolve(authToken);
     }

@@ -21,6 +21,7 @@ import { JwtTokenMiddleware, LoggerInterceptor, RolesGuard } from './utils';
 import { loggerConf } from './logger';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -44,6 +45,20 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
     JwtModule.register({
       secret: `${process.env.JWT_SECRET_KEY}`,
       signOptions: { expiresIn: '24h' },
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: `${process.env.MAIL_HOST}`, // Replace with your SMTP server address
+        port: 587, // Replace with the desired port (e.g., 465 for secure SSL)
+        secure: false, // Set to true if you are using SSL/TLS
+        auth: {
+          user: `${process.env.MAIL_USER}`, // Replace with your SMTP username
+          pass: `${process.env.MAIL_PASSWORD}`, // Replace with your SMTP password
+        },
+      },
+      defaults: {
+        from: 'your-email@example.com', // Replace with the default sender email address
+      },
     }),
     AccessControlModule.forRoles(roles),
     SharedModule,

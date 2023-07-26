@@ -3,6 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsArray, IsEmail, IsEnum, IsString, Length } from "class-validator";
 import { AppRoles } from "src/app.roles";
 import { EnumToString } from "src/common/helpers/enumToString";
+import { DEFAULT_USER_AVATAR } from "src/configs/constants";
 import { LoginType } from "src/configs/enum";
 
 export class CreateUserDto {
@@ -37,4 +38,7 @@ export class CreateUserDto {
         message: `must be a valid login type value, ${EnumToString(LoginType)}`,
     })
     loginType: LoginType;
+    @ApiProperty({ example: DEFAULT_USER_AVATAR, description: 'The avatar of the user' })
+    @IsString()
+    avatar: string;
 }

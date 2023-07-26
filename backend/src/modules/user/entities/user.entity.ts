@@ -1,11 +1,9 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, BeforeInsert, BeforeUpdate, ManyToMany, JoinTable, OneToMany } from 'typeorm';
-import { hash, compare } from 'bcryptjs';
-import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
 import { DEFAULT_USER_AVATAR } from 'src/configs/constants';
-import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
-import { Exclude } from 'class-transformer';
 import { LoginType, Role } from 'src/configs/enum';
+import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
+import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 
 @Entity('user')

@@ -15,6 +15,6 @@ import { GoogleStrategy } from '../auth/strategies/google.strategy';
     providers: [GoogleStrategy],
     exports: [
         JwtModule,
-    ],
+    ]
 })
 export class SharedModule { }
