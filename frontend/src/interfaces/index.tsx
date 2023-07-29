@@ -1,3 +1,6 @@
+import { LazyExoticComponent } from "react";
+import { Routes } from "../configs/routes";
+
 export interface User {
   id: number;
   name: string;
@@ -68,6 +71,17 @@ export interface LoginUserDto {
   identifier: string;
   password: string;
 }
+export interface CreateUserDto {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+  roles: string[];
+  loginType: string;
+  avatar: string;
+  verified: boolean;
+}
+
 export interface HeaderProps {
   user: UserDto;
 }
@@ -103,3 +117,7 @@ export interface QuizSession {
   startTime: Date;
   endTime: Date;
 }
+export type TRoute = {
+  path: Routes;
+  element: LazyExoticComponent<() => JSX.Element>;
+};

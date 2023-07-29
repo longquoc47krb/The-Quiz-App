@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { fetchQuizById, useFetchQuizzes } from "../apis/quizServices";
-import { Quiz } from "../interfaces";
-import MultipleChoiceQuestion from "../sections/MutiQuestions";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchQuestionById } from "../apis/questionServices";
+import { fetchQuizById } from "../apis/quizServices";
+import MultipleChoiceQuestion from "../sections/MutiQuestions";
 
 const QuizPage = () => {
   const { quizId } = useParams();

@@ -78,4 +78,12 @@ export class UpdateUserDTO {
     @IsOptional()
     @IsString()
     loginType?: LoginType;
+
+    @IsOptional()
+    @IsBoolean()
+    verified?: boolean;
+
+    @IsOptional()
+    @IsString()
+    verificationCode?: string;
 }

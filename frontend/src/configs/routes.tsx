@@ -1,40 +1,57 @@
-import LoginPage from "../pages/LoginPage";
-import HomePage from "../pages/HomePage";
-import DashboardPage from "../pages/DashboardPage";
-import { Navigate, Route, Routes } from "react-router-dom";
-import RegisterPage from "../pages/RegisterPage";
-import QuizPage from "../pages/QuizPage";
-import { getTokenFromCookies } from "../utils";
+import { lazy } from "react";
+import { TRoute } from "../interfaces";
+import LoadingPage from "../pages/LoadingPage";
 
-const routes = () => {
-  const token = getTokenFromCookies();
-  console.log({ token });
-  return (
-    <>
-      {token ? (
-        <Routes>
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/quiz/:quizId" element={<QuizPage />} />
-          {/* Add more routes for other pages */}
-          <Route
-            path="*"
-            element={<Navigate to="/home" replace={true} />}
-          />{" "}
-        </Routes>
-      ) : (
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<RegisterPage />} />
-          {/* Add more routes for other pages */}
-          <Route
-            path="*"
-            element={<Navigate to="/login" replace={true} />}
-          />{" "}
-        </Routes>
-      )}
-    </>
-  );
-};
+const HomePage = lazy(() => import("../pages/HomePage"));
+const SigninPage = lazy(() => import("../pages/LoginPage"));
+const QuizPage = lazy(() => import("../pages/QuizPage"));
+const OAuthPage = lazy(() => import("../pages/OAuthPage"));
+const SignUpPage = lazy(() => import("../pages/RegisterPage"));
+const DashboardPage = lazy(() => import("../pages/DashboardPage"));
 
-export default routes;
+export enum Routes {
+  SignIn = "/login",
+  SignUp = "/signup",
+  ResetPassword = "/reset-password",
+  Home = "/",
+  Quiz = "/quiz/:id",
+  Profile = "/profile",
+  Product = "/product/:id",
+  OAuth = "/auth",
+}
+export const authRoutes = [
+  {
+    path: Routes.SignIn,
+    element: SigninPage,
+  },
+  {
+    path: Routes.SignUp,
+    element: SignUpPage,
+  },
+];
+
+export const publicRoutes = [
+  {
+    path: Routes.Home,
+    element: HomePage,
+  },
+  {
+    path: Routes.OAuth,
+    element: OAuthPage,
+  },
+  {
+    path: "/loading",
+    element: LoadingPage,
+  },
+];
+
+export const privateRoutes = [
+  {
+    path: Routes.Quiz,
+    element: QuizPage,
+  },
+  // {
+  //   path: Routes.Profile,
+  //   element: ProfilePage,
+  // },
+];

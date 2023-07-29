@@ -13,7 +13,7 @@ function typeormModuleOptions(): TypeOrmModuleOptions {
         database: process.env.DATABASE_NAME,
         entities: [join(__dirname, '../modules/**/entities/*entity{.ts,.js}')],
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: true,
         logging: true,
         logger: 'file',
 

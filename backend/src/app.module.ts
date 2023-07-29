@@ -22,7 +22,8 @@ import { loggerConf } from './logger';
 import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
-
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { join } from 'path';
 @Module({
   imports: [
     UserModule,
@@ -57,7 +58,14 @@ import { MailerModule } from '@nestjs-modules/mailer';
         },
       },
       defaults: {
-        from: 'your-email@example.com', // Replace with the default sender email address
+        from: `${process.env.MAIL_USER}`, // Replace with the default sender email address
+      },
+      template: {
+        dir: join(__dirname, '..', 'assets/templates'),
+        adapter: new PugAdapter(),
+        options: {
+          strict: true,
+        },
       },
     }),
     AccessControlModule.forRoles(roles),

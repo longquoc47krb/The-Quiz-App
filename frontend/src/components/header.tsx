@@ -1,27 +1,40 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import React from "react";
-import { HeaderProps } from "../interfaces";
-import { useState } from "react";
-import { clearAccessTokenInCookie } from "../utils";
-import { redirect } from "react-router-dom";
-const Header: React.FC<HeaderProps> = ({ user }) => {
-  const { name, avatar } = user;
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import { logout } from "../store/slices/authSlice";
+const Header = () => {
   const [toggle, setToggle] = useState(false);
-  // const { data, isLoading } = useFetchQuizzes();
+  const { user, removeCookie, dispatch } = useAuth();
+  const navigate = useNavigate();
   const handleLogout = () => {
-    clearAccessTokenInCookie();
-    redirect("/home");
+    removeCookie("accessToken");
+    dispatch(logout());
+    navigate("/");
   };
-
+  const handleLogin = () => {
+    navigate("/login");
+  };
+  console.log({ user });
   return (
     <header>
-      <h1 className="font-bold text-white text-3xl">{name}</h1>
-      <img
-        src={avatar}
-        alt="avatar"
-        className="w-12 h-12 rounded-full"
-        onClick={() => setToggle(!toggle)}
-      />
+      <div className="flex items-center justify-end w-full">
+        {user ? (
+          <div className="text-gray-200 font-medium text-base flex items-center gap-x-4">
+            <img
+              src={user.avatar}
+              alt="avatar"
+              className="w-12 h-12 rounded-full"
+              onClick={() => setToggle(!toggle)}
+            />
+            <span className="text-white">{user.name}</span>
+          </div>
+        ) : (
+          <span className="text-white cursor-pointer" onClick={handleLogin}>
+            Login
+          </span>
+        )}
+      </div>
       {toggle && (
         <ul className="bg-gray-100 p-4 absolute top-12 right-12">
           <li className="block cursor-pointer hover:bg-slate-300">Profile</li>

@@ -8,8 +8,6 @@ import { LoginUserDTO } from './dto/login-credential.dto';
 import { Logger } from 'winston';
 import { TokenDto } from './dto/token.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { JWT_SECRET } from 'src/configs/constants';
-import jwt from 'jsonwebtoken';
 import { LoginType } from 'src/configs/enum';
 import { CheckUserExistenceDTO } from '../user/dto/user-existence.dto';
 import { MailService } from '../mail/mail.service';
@@ -49,8 +47,8 @@ export class AuthController {
         if (isExist) {
             throw new BadRequestException('User already registered with email');
         }
-        await this.authService.registerUser({ loginType: LoginType.EmailPassword, ...rest });
-        await this.mailService.sendWelcomeEmail(registerUserDTO.email);
+        await this.authService.registerUser({ loginType: LoginType.EmailPassword, verified: false, ...rest });
+        await this.mailService.sendWelcomeEmail(registerUserDTO.email, registerUserDTO.username);
         return { message: 'User registered' };
     }
     @Get('google')
@@ -78,18 +76,19 @@ export class AuthController {
                 avatar: user.avatar,
                 roles: user.roles,
                 loginType: user.loginType,
+                verified: true
             }
             this.logger.info('Created account successfully');
-            await this.mailService.sendWelcomeEmail(user.email);
+            await this.mailService.sendWelcomeEmail(user.email, user.username);
             await this.userService.createUser(createNewUser)
         }
         const updateUser: UpdateUserDTO = {
             lastLogin: new Date(),
-            ...rest
         }
         await this.userService.update(user.id, updateUser);
         const token = this.authService.generateAuthToken(user);
         const { accessToken } = token;
-        res.redirect(`${process.env.REACT_LOCAL_URL}auth?token=${accessToken}`);
+        res.redirect(`${process.env.APP_URL}auth?token=${accessToken}`);
+
     }
 }

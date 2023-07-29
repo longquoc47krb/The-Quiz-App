@@ -9,7 +9,7 @@
     "D:\\LearningCode\\multi-choice-questions-app\\backend\\dist\\modules\\**\\entities\\*entity{.ts,.js}"
   ],
   "autoLoadEntities": true,
-  "synchronize": false,
+  "synchronize": true,
   "logging": true,
   "logger": "file"
 }

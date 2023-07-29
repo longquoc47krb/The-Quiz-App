@@ -63,4 +63,8 @@ export class User {
     quizSessions: QuizSession[];
     @Column({ default: LoginType.EmailPassword })
     loginType: LoginType;
+    @Column({ default: false })
+    verified: boolean;
+    @Column({ nullable: true })
+    verificationCode: string;
 }

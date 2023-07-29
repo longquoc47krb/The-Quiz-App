@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { BsFacebook } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 import { login } from "../apis/authServices";
-import { getTokenFromCookies, saveTokenToCookies } from "../utils";
-import { redirect } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
+import { useCookies } from "react-cookie";
+import useAuth from "../hooks/useAuth";
+import { EXPIRATION_DATE } from "../common/constants";
 export interface LoginFormValues {
   identifier: string;
   password: string;
@@ -17,21 +19,35 @@ const LoginPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>();
-  const token = getTokenFromCookies();
+  const { cookies, setCookie } = useAuth();
+  const [token, setAccessToken] = useState(null);
   const navigate = useNavigate();
   useEffect(() => {
-    if (token) {
-      navigate("/home");
+    // Check if the 'accessToken' cookie exists and its value
+    const accessTokenCookie = cookies["accessToken"];
+    console.log({ accessTokenCookie });
+    if (!accessTokenCookie || accessTokenCookie !== "true") {
+      // navigate("/dashboard");
     }
-  }, [token]);
+  }, [cookies]);
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     // Handle form submission
     const { identifier, password } = data;
     const loginDto = { identifier, password };
-    const response: any = await login(loginDto);
-    const { accessToken } = response.data;
-    saveTokenToCookies(accessToken);
-    window.open(import.meta.env.VITE_BROWSER_URL + "/home", "_blank");
+    try {
+      const response: any = await login(loginDto);
+      const { accessToken } = response.data;
+      // Set the accessToken cookie with an expiration date of 7 days from now
+
+      setCookie("accessToken", accessToken, {
+        path: "/",
+        expires: EXPIRATION_DATE,
+      });
+      setAccessToken(accessToken);
+      toast.success("Login successful!"); // Display success toast
+    } catch (error) {
+      toast.error("Login failed. Please check your credentials."); // Display error toast
+    }
   };
   const handleGoogleLogin = () => {
     window.open(import.meta.env.VITE_GOOGLE_OAUTH, "_blank");
@@ -73,6 +89,7 @@ const LoginPage: React.FC = () => {
                 <span className="error">{errors.password.message}</span>
               )}
             </div>
+            <Toaster />
             <div className="form-group">
               <p className="text-gray-200 text-right">
                 <a href="">Forgot password?</a>

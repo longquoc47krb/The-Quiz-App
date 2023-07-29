@@ -1,6 +1,6 @@
 
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsEmail, IsEnum, IsString, Length } from "class-validator";
+import { IsArray, IsBoolean, IsEmail, IsEnum, IsString, Length } from "class-validator";
 import { AppRoles } from "src/app.roles";
 import { EnumToString } from "src/common/helpers/enumToString";
 import { DEFAULT_USER_AVATAR } from "src/configs/constants";
@@ -41,4 +41,7 @@ export class CreateUserDto {
     @ApiProperty({ example: DEFAULT_USER_AVATAR, description: 'The avatar of the user' })
     @IsString()
     avatar: string;
+    @ApiProperty({ example: false, description: 'The verification of email' })
+    @IsBoolean()
+    verified: boolean;
 }

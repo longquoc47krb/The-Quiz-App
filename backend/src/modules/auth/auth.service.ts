@@ -98,4 +98,23 @@ export class AuthService {
         const authToken = this.generateAuthToken(user);
         return Promise.resolve(authToken);
     }
+    async verifyEmail(verificationToken: string): Promise<boolean> {
+        const user = await this.userService.findByVerificationCode(verificationToken)
+
+        if (user) {
+            user.verified = true;
+            user.verificationCode = null;
+            const updateUser: UpdateUserDTO = {
+                verified: true,
+                verificationCode: null
+            }
+            await this.userService.update(user.id, updateUser);
+            return true;
+        }
+        return false;
+    }
+    private generateVerificationToken(): string {
+        const token = Math.floor(100000 + Math.random() * 900000);
+        return String(token);
+    }
 }

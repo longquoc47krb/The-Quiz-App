@@ -22,7 +22,7 @@ export class UserService {
     private userRepository: Repository<User>
   ) { }
   async createUser(createUserDto: CreateUserDto): Promise<void> {
-    const { name, username, email, password, loginType, avatar } = createUserDto;
+    const { name, username, email, password, loginType, avatar, verified } = createUserDto;
     const user = new User();
     user.name = name;
     user.username = username;
@@ -31,7 +31,7 @@ export class UserService {
     user.avatar = avatar;
     user.password = loginType === LoginType.EmailPassword ? await this.hashPassword(password) : "";
     user.loginType = loginType;
-
+    user.verified = verified;
     console.log({ createUserDto })
     await this.userRepository.save(user);
 
@@ -44,11 +44,16 @@ export class UserService {
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
 
-    return mapUserToUserResponseDTO(user);
+    return user;
   }
   async findByEmailOrUsername(identifier: string) {
-    // const user = await this.userRepository.createQueryBuilder('user').where('user.username = :identifier', { identifier }).orWhere('user.email = :identifier', { identifier }).getOne();
     const user = await this.userRepository.createQueryBuilder('user').where('user.username = :identifier', { identifier }).orWhere('user.email = :identifier', { identifier }).getOne();
+    if (!user)
+      throw new NotFoundException('User does not exists or unauthorized');
+    return (user);
+  }
+  async findByVerificationCode(verificationCode: string) {
+    const user = await this.userRepository.createQueryBuilder('user').where('user.verificationCode = :verificationCode', { verificationCode }).getOne();
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
     return (user);
@@ -132,6 +137,12 @@ export class UserService {
     }
     if (updateUserDto.lastLogin) {
       user.lastLogin = updateUserDto.lastLogin;
+    }
+    if (updateUserDto.verified) {
+      user.verified = updateUserDto.verified;
+    }
+    if (updateUserDto.verificationCode) {
+      user.verificationCode = updateUserDto.verificationCode;
     }
 
     // Similarly, update other properties as needed

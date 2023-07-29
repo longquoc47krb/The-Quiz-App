@@ -1,0 +1,10 @@
+doctype html
+html
+  head
+    title Email Verification
+  body
+    p Hello,
+    p Please click the following link to verify your email:
+    a(href=`${APP_URL}/verify?code=${code}`) Verify Email
+    p If you didn't request this verification, you can ignore this email.
+    p Thank you.

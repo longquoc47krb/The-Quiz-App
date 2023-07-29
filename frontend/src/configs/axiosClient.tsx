@@ -1,10 +1,5 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from "axios";
-import { getTokenFromCookies } from "../utils";
-
-interface ErrorResponse {
-  message: string;
-}
-
+import axios, { AxiosInstance } from "axios";
+import Cookies from "js-cookie";
 const axiosClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   // withCredentials: true,
@@ -12,7 +7,7 @@ const axiosClient: AxiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
-    Authorization: `Bearer ${getTokenFromCookies()}`,
+    Authorization: `Bearer ${Cookies.get("accessToken")}`,
   },
 });
 
