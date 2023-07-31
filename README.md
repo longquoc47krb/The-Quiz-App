@@ -7,7 +7,7 @@ This Quiz app is built using React with TypeScript for the frontend, NestJS for 
 ## Technologies Used
 
 - Frontend:
-  - React
+  - Next.js
   - TypeScript
 
 - Backend:
