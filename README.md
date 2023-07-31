@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This Quiz app is built using React with TypeScript for the frontend, NestJS for the backend, and MySQL for the database. The app allows users to take quizzes consisting of multiple-choice questions.
+This Quiz app is built using Next.js with TypeScript for the frontend, NestJS for the backend, and MySQL for the database. The app allows users to take quizzes consisting of multiple-choice questions.
 
 ## Technologies Used
 
