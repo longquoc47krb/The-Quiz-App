@@ -4,6 +4,7 @@ import { LoginType, Role } from 'src/configs/enum';
 import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
 import { User } from '../entities/user.entity';
 import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
+import { Token } from 'src/modules/token/entities/token.entity';
 export class UpdateUserDTO {
     @IsOptional()
     @IsString()
@@ -84,6 +85,5 @@ export class UpdateUserDTO {
     verified?: boolean;
 
     @IsOptional()
-    @IsString()
-    verificationCode?: string;
+    verificationToken?: Token;
 }

@@ -3,6 +3,7 @@
 header {
   display: flex;
   position: relative;
+  min-height: 3.5rem;
   // grid-template-columns: 0vw 15vw 50vw 5vw;
   justify-content: space-between;
   background: $secondaryColor;

@@ -1,3 +1,4 @@
+/* eslint-disable no-inner-declarations */
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { getMe } from '../apis/userServices';
@@ -8,13 +9,7 @@ const useAuth = () => {
     const user = useSelector(userSelector);
     const dispatch = useDispatch()
     const [cookies, setCookie, removeCookie] = useCookies(["accessToken"]);
-    useEffect(() => {
-        async function fetchMe() {
-            const response: any = await getMe();
-            dispatch(login(response))
-        }
-        fetchMe()
-    }, [cookies])
+
     return { user, cookies, setCookie, removeCookie, dispatch };
 };
 

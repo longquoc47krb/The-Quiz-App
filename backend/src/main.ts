@@ -6,6 +6,7 @@ import { initSwagger } from './app.swagger';
 import { ConfigService } from '@nestjs/config';
 import { SERVER_PORT } from './configs/constants';
 import generateTypeormConfigFile from './scripts/generateTypeorm';
+import { CustomExceptionFilter } from './exception';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +16,8 @@ async function bootstrap() {
 
   initSwagger(app);
   generateTypeormConfigFile(config);
+
+  app.useGlobalFilters(new CustomExceptionFilter());
   app.enableCors({
     origin: '*', // Replace with your frontend URL
   });

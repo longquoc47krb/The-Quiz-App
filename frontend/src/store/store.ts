@@ -3,6 +3,7 @@ import quizReducer from './slices/quizSlice';
 import authReducer from './slices/authSlice';
 import storage from 'redux-persist/lib/storage';
 import { persistStore, persistReducer } from "redux-persist";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 const quizPersistConfig = {
     key: "quiz",
@@ -22,10 +23,12 @@ const authPersistedReducer = persistReducer(
     authPersistConfig,
     authReducer
 );
-const store = configureStore({
+export const store = configureStore({
     reducer: {
         quiz: quizPersistedReducer,
         auth: authPersistedReducer,
     },
 });
-export default store;
+
+export const persistor = persistStore(store);
+setupListeners(store.dispatch);

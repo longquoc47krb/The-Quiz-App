@@ -5,3 +5,4 @@ export function getRandomItemFromArray(array: string[]) {
     // Return the random item from the array
     return array[randomIndex];
 }
+export * from "./validate/index"

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { RANDOM_AVATAR } from "../common/constants";
-import { getRandomItemFromArray } from "../utils";
+
+import { yupResolver } from "@hookform/resolvers/yup";
 import { IoDiceSharp } from "react-icons/io5";
-import { CreateUserDto } from "../interfaces";
+import ErrorMessage from "../components/error-message";
+import { CreateUserDto, LoginType, Role } from "../interfaces";
+import { getRandomItemFromArray, validateSchema } from "../utils";
 interface RegisterFormValues {
   name: string;
   username: string;
@@ -15,10 +18,14 @@ interface RegisterFormValues {
 
 const RegisterPage: React.FC = () => {
   const {
+    getValues,
+    control,
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormValues>();
+  } = useForm<RegisterFormValues>({
+    resolver: yupResolver(validateSchema),
+  });
   const [avatar, setAvatar] = useState("");
   const [random, setRandomize] = useState(false);
   useEffect(() => {
@@ -28,16 +35,31 @@ const RegisterPage: React.FC = () => {
       )}`
     );
   }, [random]);
-  const handleFormSubmit = (data: RegisterFormValues) => {
-    const registerUser : CreateUserDto = {
+  const onSubmit: SubmitHandler<RegisterFormValues> = async (data) => {
+    console.log({ data });
+    const registerUser: CreateUserDto = {
       avatar,
       email: data.email,
-      name: 
-    }
+      name: data.name,
+      username: data.username,
+      loginType: LoginType.EmailPassword,
+      password: data.password,
+      roles: [Role.User],
+      verified: false,
+    };
+    console.log({ registerUser });
   };
   const navigate = useNavigate();
+
+  const isLengthValid = getValues("password")?.length >= 8;
+  const hasUppercase = /[A-Z]/.test(getValues("password"));
+  const hasLowercase = /[a-z]/.test(getValues("password"));
+  const hasNumber = /\d/.test(getValues("password"));
+  const hasSpecialCharacter = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(
+    getValues("password")
+  );
   return (
-    <div className="flex justify-center items-center w-full h-full">
+    <div className="flex justify-center items-center">
       <div className="auth-container">
         <h1 className="font-semibold text-yellow-400 text-4xl text-center mb-2">
           Register Page
@@ -60,68 +82,115 @@ const RegisterPage: React.FC = () => {
             color="red"
           />
         </div>
-        <form onSubmit={handleSubmit(handleFormSubmit)}>
-          <div className="form-group">
-            <label>Name</label>
-            <input
-              type="text"
-              className="input"
-              {...register("name", { required: true })}
-            />
-            {errors.name && (
-              <span className="error">{errors.name.message}</span>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="name"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <div className="form-group">
+                <label>Name</label>
+                <input {...field} type="text" className="input" />
+                <ErrorMessage error={errors.name?.message} />
+              </div>
             )}
-          </div>
-          <div className="form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              className="input"
-              {...register("username", { required: true })}
-            />
-            {errors.username && (
-              <span className="error">{errors.username.message}</span>
+          />
+          <Controller
+            name="username"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <div className="form-group">
+                <label>Username</label>
+                <input {...field} type="text" className="input" />
+                <ErrorMessage error={errors.username?.message} />
+              </div>
             )}
-          </div>
-          <div className="form-group">
-            {" "}
-            <label>Email</label>
-            <input
-              className="input"
-              type="email"
-              {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
-            />
-            {errors.email && (
-              <span className="error">{errors.email.message}</span>
+          />
+          <Controller
+            name="email"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <div className="form-group">
+                <label>Email</label>
+                <input {...field} type="text" className="input" />
+                <ErrorMessage error={errors.email?.message} />
+              </div>
             )}
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <input
-              className="input"
-              type="password"
-              {...register("password", { required: true, minLength: 6 })}
-            />
-            {errors.password && (
-              <span className="error">{errors.password.message}</span>
+          />
+          <Controller
+            name="password"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <div className="form-group">
+                <label>Password</label>
+                <input
+                  className="input"
+                  type="password"
+                  {...register("password", { required: true, minLength: 6 })}
+                />
+                <ErrorMessage error={errors.password?.message} />
+                <ul className="password-cases">
+                  <li
+                    className={`block ${
+                      isLengthValid ? "text-green-500" : "error"
+                    }`}
+                  >
+                    {isLengthValid ? "✅" : "⛔"}At least 8 characters
+                  </li>
+                  <li
+                    className={`block ${
+                      hasUppercase ? "text-green-500" : "error"
+                    }`}
+                  >
+                    {hasUppercase ? "✅" : "⛔"}Contains at least one uppercase
+                    letter
+                  </li>
+                  <li
+                    className={`block ${
+                      hasLowercase ? "text-green-500" : "error"
+                    }`}
+                  >
+                    {hasLowercase ? "✅" : "⛔"}Contains at least one lowercase
+                    letter
+                  </li>
+                  <li
+                    className={`block ${
+                      hasNumber ? "text-green-500" : "error"
+                    }`}
+                  >
+                    {hasNumber ? "✅" : "⛔"}Contains at least one number
+                  </li>
+                  <li
+                    className={`block ${
+                      hasSpecialCharacter ? "text-green-500" : "error"
+                    }`}
+                  >
+                    {hasSpecialCharacter ? "✅" : "⛔"}Contains at least one
+                    special character
+                  </li>
+                </ul>
+              </div>
             )}
-          </div>
-          <div className="form-group">
-            <label>Confirm password</label>
-            <input
-              className="input"
-              type="password"
-              {...register("confirmPassword", { required: true, minLength: 6 })}
-            />
-            {errors.confirmPassword && (
-              <span className="error">{errors.confirmPassword.message}</span>
+          />
+          <Controller
+            name="confirmPassword"
+            control={control}
+            defaultValue=""
+            render={({ field }) => (
+              <div className="form-group">
+                <label>Confirm password</label>
+                <input {...field} type="text" className="input" />
+                <ErrorMessage error={errors.confirmPassword?.message} />
+              </div>
             )}
-          </div>
-          <div className="mt-8">
-            <button className="primary-button" type="submit">
-              Register
-            </button>
-          </div>
+          />
+
+          <button className="primary-button" type="submit">
+            Register
+          </button>
           <div className="form-group flex items-center justify-center">
             <p className="text-gray-200 text-center ">Already a user? </p>
             <a onClick={() => navigate("/login")}>Sign In</a>

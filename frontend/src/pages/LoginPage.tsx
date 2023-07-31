@@ -17,23 +17,16 @@ const LoginPage: React.FC = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitted },
   } = useForm<LoginFormValues>();
+  console.log({ errors, isSubmitted });
   const { cookies, setCookie } = useAuth();
-  const [token, setAccessToken] = useState(null);
   const navigate = useNavigate();
-  useEffect(() => {
-    // Check if the 'accessToken' cookie exists and its value
-    const accessTokenCookie = cookies["accessToken"];
-    console.log({ accessTokenCookie });
-    if (!accessTokenCookie || accessTokenCookie !== "true") {
-      // navigate("/dashboard");
-    }
-  }, [cookies]);
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     // Handle form submission
     const { identifier, password } = data;
     const loginDto = { identifier, password };
+    console.log({ loginDto });
     try {
       const response: any = await login(loginDto);
       const { accessToken } = response.data;
@@ -43,7 +36,6 @@ const LoginPage: React.FC = () => {
         path: "/",
         expires: EXPIRATION_DATE,
       });
-      setAccessToken(accessToken);
       toast.success("Login successful!"); // Display success toast
     } catch (error) {
       toast.error("Login failed. Please check your credentials."); // Display error toast
@@ -54,7 +46,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-full w-full">
+    <div className="flex justify-center items-center h-full w-full max-w-screen-md">
       <div className="auth-wrapper">
         <div className="auth-container">
           <h1 className="font-semibold text-yellow-400 text-4xl text-center mb-2">

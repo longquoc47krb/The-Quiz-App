@@ -13,11 +13,13 @@ import { UserResponseDTO } from './dto/user-response.dto';
 import { LoginType, Role } from 'src/configs/enum';
 import { CheckUserExistenceDTO } from './dto/user-existence.dto';
 import { Logger } from 'winston';
+import { TokenService } from '../token/token.service';
 @Injectable()
 export class UserService {
   constructor(
     @Inject('winston')
     private readonly logger: Logger,
+    private tokenService: TokenService,
     @InjectRepository(User)
     private userRepository: Repository<User>
   ) { }
@@ -52,17 +54,17 @@ export class UserService {
       throw new NotFoundException('User does not exists or unauthorized');
     return (user);
   }
-  async findByVerificationCode(verificationCode: string) {
-    const user = await this.userRepository.createQueryBuilder('user').where('user.verificationCode = :verificationCode', { verificationCode }).getOne();
+  async findByVerificationCode(verificationToken: string) {
+    const user = await this.tokenService.findUserByToken(verificationToken);
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
-    return (user);
+    return user;
   }
   async findByUsername(username: string) {
     if (typeof username !== 'string' || username.trim() === '') {
       throw new Error('Invalid username');
     }
-    const user = await this.userRepository.createQueryBuilder('user').where("user.username = :username", { username }).getOne();
+    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect("user.verificationToken", "token").where("user.username = :username", { username }).getOne();
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
     return mapUserToUserResponseDTO(user);
@@ -90,20 +92,17 @@ export class UserService {
     return convertUsersToDTO(users);
   }
   async findByEmail(email: string) {
-    const user = await this.userRepository.createQueryBuilder('user').where('user.email = :email', { email }).getOne()
+    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect("user.verificationToken", "token").where('user.email = :email', { email }).getOne()
     // return mapUserToUserResponseDTO(user);
     return (user);
 
   }
-
   async update(id: number, updateUserDto: UpdateUserDTO): Promise<User> {
     const user = await this.getOne(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
-    }
-
-    // Apply the updates from the UpdateUserDTO
+    }  // Apply the updates from the UpdateUserDTO
     if (updateUserDto.name) {
       user.name = updateUserDto.name;
     }
@@ -141,8 +140,8 @@ export class UserService {
     if (updateUserDto.verified) {
       user.verified = updateUserDto.verified;
     }
-    if (updateUserDto.verificationCode) {
-      user.verificationCode = updateUserDto.verificationCode;
+    if (updateUserDto.verificationToken) {
+      user.verificationToken = updateUserDto.verificationToken;
     }
 
     // Similarly, update other properties as needed

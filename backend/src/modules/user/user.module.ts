@@ -6,9 +6,11 @@ import { User } from './entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { TokenService } from '../token/token.service';
+import { TokenModule } from '../token/token.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]),
+  imports: [TypeOrmModule.forFeature([User]), TokenModule
   ],
   controllers: [UserController],
   providers: [UserService, Repository<User>, JwtService],

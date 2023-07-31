@@ -3,6 +3,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Logger } from 'winston';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
+import { Token } from '../token/entities/token.entity';
 
 @Injectable()
 export class MailService {
@@ -22,16 +23,17 @@ export class MailService {
         });
         this.logger.info('Sent email successfully', email);
     }
-    async sendVerificationEmail(email: string, verificationCode: string) {
+    async sendVerificationEmail(email: string, verificationCode: Token) {
         await this.mailerService.sendMail({
             to: email,
             subject: 'Email Verification',
-            template: 'src/views/verify-email.pug',
+            template: 'verify-email',
             context: {
-                code: verificationCode,
+                url: process.env.APP_URL,
+                code: verificationCode.token,
                 // You can add more template variables if needed
             },
-            sender: `"Quizaka" <${process.env.MAIL_USER}>`
+            from: `Quizaka <${process.env.MAIL_USER}>`,
         });
     }
 }

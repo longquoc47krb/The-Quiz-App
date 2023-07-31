@@ -7,6 +7,9 @@
   color: white;
   font-weight: 500;
   width: 100%;
+  &:hover {
+    background: $borderPrimaryColor;
+  }
 }
 .input {
   background-color: rgb(228, 221, 221);

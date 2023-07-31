@@ -1,10 +1,32 @@
+//- verify-email.pug
 doctype html
-html
+html(lang="en")
   head
-    title Email Verification
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Verify Your Email
   body
-    p Hello,
-    p Please click the following link to verify your email:
-    a(href=`${APP_URL}/verify?code=${code}`) Verify Email
-    p If you didn't request this verification, you can ignore this email.
-    p Thank you.
+    div(style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;")
+      h1(style="color: #e5034c; text-align: center; padding-top: 40px;") Email Verification
+      p(style="font-size: 16px; text-align: center; padding: 20px 0;")
+        | Thank you for signing up with Quizaka!
+        br
+        | Please verify your email by clicking on the link below:
+      div(style="background-color: #f2f2f2; padding: 20px; text-align: center;")
+        a(href=`${url}verify?code=${code}`, style="display: block; margin-bottom: 20px; font-size: 24px; color: #e5034c; text-decoration: none;", id="verificationLink")
+          | Verify Email
+        p(style="font-size: 14px; color: #999;")
+          | Alternatively, you can copy and paste the following URL into your browser's address bar:
+        p(style="font-size: 14px; word-break: break-all; background-color: #f5f5f5; padding: 8px; margin: 8px 0;")
+          | #{url}verify?code=#{code}
+      p(style="font-size: 16px; text-align: center; padding-top: 20px;")
+        | If you did not sign up for Quizaka, please ignore this email.
+      p(style="font-size: 14px; text-align: center; padding-top: 20px; color: #999;")
+        | This email is generated automatically. Please do not reply.
+
+      // JavaScript to handle redirection
+      script.
+        const verificationLink = document.getElementById('verificationLink');
+        verificationLink.addEventListener('click', () => {
+          window.location.href = `${url}verify?code=${code}`;
+        });

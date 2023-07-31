@@ -1,5 +1,5 @@
 
-import { Controller, Post, Body, UnauthorizedException, BadRequestException, UseGuards, Inject, ClassSerializerInterceptor, UseInterceptors, HttpException, HttpStatus, Get, Req, Res } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException, BadRequestException, UseGuards, Inject, ClassSerializerInterceptor, UseInterceptors, HttpException, HttpStatus, Get, Req, Res, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserService } from 'src/modules/user/user.service';
 import { AuthService } from './auth.service';
@@ -91,4 +91,17 @@ export class AuthController {
         res.redirect(`${process.env.APP_URL}auth?token=${accessToken}`);
 
     }
+    @ApiOperation({ summary: 'Send verify link to email' })
+    @Post('send-verification-email')
+    async sendEmail(@Query('email') email: string) {
+        await this.authService.sendVerificationEmail(email);
+        return { message: 'Sent verification email successfully', success: true };
+    }
+    @ApiOperation({ summary: 'Verify email' })
+    @Post('verify-email')
+    async verifyEmail(@Query('code') code: string) {
+        await this.authService.verifyEmail(code)
+        return { message: 'Verified email', success: true };
+    }
+
 }

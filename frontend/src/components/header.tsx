@@ -1,11 +1,13 @@
+/* eslint-disable no-inner-declarations */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import { logout } from "../store/slices/authSlice";
+import { login, logout } from "../store/slices/authSlice";
+import { getMe } from "../apis/userServices";
 const Header = () => {
   const [toggle, setToggle] = useState(false);
-  const { user, removeCookie, dispatch } = useAuth();
+  const { user, removeCookie, dispatch, cookies } = useAuth();
   const navigate = useNavigate();
   const handleLogout = () => {
     removeCookie("accessToken");
@@ -15,6 +17,16 @@ const Header = () => {
   const handleLogin = () => {
     navigate("/login");
   };
+  useEffect(() => {
+    if (!user) {
+      async function fetchMe() {
+        const response: any = await getMe();
+        dispatch(login(response));
+        setToggle(false);
+      }
+      fetchMe();
+    }
+  }, []);
   console.log({ user });
   return (
     <header>
@@ -35,8 +47,8 @@ const Header = () => {
           </span>
         )}
       </div>
-      {toggle && (
-        <ul className="bg-gray-100 p-4 absolute top-12 right-12">
+      {toggle && user && (
+        <ul className="bg-gray-100 p-4 absolute top-14 right-12">
           <li className="block cursor-pointer hover:bg-slate-300">Profile</li>
           <li className="block cursor-pointer  hover:bg-slate-300">Settings</li>
           <li

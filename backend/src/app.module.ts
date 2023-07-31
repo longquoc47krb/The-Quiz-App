@@ -24,6 +24,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { join } from 'path';
+import { TokenModule } from './modules/token/token.module';
 @Module({
   imports: [
     UserModule,
@@ -75,6 +76,7 @@ import { join } from 'path';
     QuestionModule,
     QuizSessionModule,
     UtilsModule,
+    TokenModule,
     WinstonModule.forRoot(loggerConf),
   ],
   controllers: [AppController],

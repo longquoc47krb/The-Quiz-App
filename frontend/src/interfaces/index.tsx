@@ -1,6 +1,11 @@
 import { LazyExoticComponent } from "react";
 import { Routes } from "../configs/routes";
 
+export enum LoginType {
+  Google = "GOOGLE",
+  Facebook = "FACEBOOK",
+  EmailPassword = "EMAIL_PASSWORD",
+}
 export interface User {
   id: number;
   name: string;

@@ -1,18 +1,28 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
-import { LoginUserDTO } from 'src/modules/auth/dto/login-credential.dto';
-import { UserService } from 'src/modules/user/user.service';
-import { TokenDto } from './dto/token.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { UserResponseDTO } from '../user/dto/user-response.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 import { LoginType } from 'src/configs/enum';
+import { CustomException } from 'src/exception';
+import { LoginUserDTO } from 'src/modules/auth/dto/login-credential.dto';
+import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
+import { UserService } from 'src/modules/user/user.service';
+import { Repository } from 'typeorm';
+import { MailService } from '../mail/mail.service';
+import { Token } from '../token/entities/token.entity';
+import { TokenService } from '../token/token.service';
 import { UpdateUserDTO } from '../user/dto/update-user.dto';
+import { UserResponseDTO } from '../user/dto/user-response.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { TokenDto } from './dto/token.dto';
+import { UpdateTokenDto } from '../token/dto/update-token.dto';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService, private jwtService: JwtService) { }
+    constructor(
+        private userService: UserService, private jwtService: JwtService,
+        private tokenService: TokenService, private mailService: MailService) { }
     async registerUser(registerUserDTO: CreateUserDto): Promise<void> {
         await this.userService.createUser(registerUserDTO);
 
@@ -34,15 +44,15 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials');
         }
         if (!user.active) {
-            throw new Error('Inactive user');
+            throw new CustomException('Inactive user', HttpStatus.BAD_REQUEST);
         }
         if (user.loginType !== LoginType.EmailPassword) {
-            throw new Error('Login by Email/Password is not allowed with this email. Please use a different credentials.');
+            throw new CustomException('Login by Email/Password is not allowed with this email. Please use a different credentials.', HttpStatus.BAD_REQUEST);
         }
 
         const isMatched = this.userService.comparePassword(password, user);
         if (!isMatched) {
-            throw new Error('Invalid credentials');
+            throw new CustomException('Invalid credentials', HttpStatus.BAD_REQUEST);
         }
         const updateUser: UpdateUserDTO = {
             lastLogin: new Date(),
@@ -98,23 +108,79 @@ export class AuthService {
         const authToken = this.generateAuthToken(user);
         return Promise.resolve(authToken);
     }
-    async verifyEmail(verificationToken: string): Promise<boolean> {
-        const user = await this.userService.findByVerificationCode(verificationToken)
+    async sendVerificationEmail(email: string) {
+        try {
+            const user = await this.userService.findByEmail(email);
 
-        if (user) {
-            user.verified = true;
-            user.verificationCode = null;
-            const updateUser: UpdateUserDTO = {
-                verified: true,
-                verificationCode: null
+            const existedToken = await this.tokenService.findByUserId(user.id);
+
+            const expirationDate = new Date();
+            expirationDate.setMinutes(expirationDate.getMinutes() + 15);
+            if (user.verified) {
+                throw new CustomException('Email is verified', HttpStatus.FORBIDDEN);
             }
-            await this.userService.update(user.id, updateUser);
-            return true;
+
+            const randomToken = this.generateVerificationToken();
+            if (!existedToken) {
+                const verificationToken = new Token();
+                verificationToken.token = randomToken;
+                verificationToken.user = user;
+                verificationToken.expirationDate = expirationDate;
+                await this.tokenService.create(verificationToken);
+
+                // Associate the token with the user
+                user.verificationToken = verificationToken;
+                const updateUser: UpdateUserDTO = {
+                    verificationToken: user.verificationToken
+                };
+
+                // Step 7: Send the verification email and update the user with the verification token
+                await this.userService.update(user.id, updateUser);
+                // await this.mailService.sendVerificationEmail(user.email, user.verificationToken);
+            }
+            const updateToken: UpdateTokenDto = {
+                token: randomToken,
+                expirationDate: expirationDate
+            };
+            console.log("code:", user.verificationToken.token)
+            await this.tokenService.update(existedToken.id, updateToken);
+
+        } catch (error) {
+            console.error("Error sending verification email:", error);
+            throw error;
         }
-        return false;
+    }
+    async verifyEmail(code: string) {
+        const user = await this.userService.findByVerificationCode(code);
+        if (!user) {
+            throw new CustomException('Inactive user', HttpStatus.BAD_REQUEST);
+
+        }
+
+        if (user.verified) {
+            throw new CustomException('User is already verified', HttpStatus.BAD_REQUEST);
+        }
+        const token = await this.tokenService.findByUserId(user.id);
+        const currentTime = new Date();
+        if (!token) {
+            throw new CustomException('Verification token not found', HttpStatus.BAD_REQUEST);
+        }
+
+        if (currentTime > token.expirationDate) {
+            throw new CustomException('Expired token', HttpStatus.BAD_REQUEST);
+        }
+        const update: UpdateUserDTO = {
+            verified: true
+        }
+        await this.userService.update(user.id, update)
     }
     private generateVerificationToken(): string {
-        const token = Math.floor(100000 + Math.random() * 900000);
-        return String(token);
+        const charset = "0123456789";
+        let otp = "";
+        for (let i = 0; i < 6; i++) {
+            const randomIndex = Math.floor(Math.random() * 6);
+            otp += charset[randomIndex];
+        }
+        return otp;
     }
 }
