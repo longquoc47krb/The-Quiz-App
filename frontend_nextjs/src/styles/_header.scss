@@ -1,0 +1,20 @@
+@import "variables";
+
+header {
+  display: flex;
+  position: relative;
+  min-height: 3.5rem;
+  // grid-template-columns: 0vw 15vw 50vw 5vw;
+  justify-content: space-between;
+  background: $secondaryColor;
+  width: 100%;
+  height: auto;
+  padding: 0.5rem 1rem;
+  border-bottom: 0.5px solid $borderSecondaryColor;
+  img:hover ~ .dropdown-content {
+    position: absolute;
+    top: 4rem;
+    right: 2rem;
+    display: block;
+  }
+}

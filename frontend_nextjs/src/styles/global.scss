@@ -1,0 +1,15 @@
+@import "variables";
+@import "common";
+@import "auth";
+@import "header";
+@import "search";
+@import "menuBar";
+@import "home";
+@import "test";
+@import "quiz";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  background-color: $darkBackground;
+}
