@@ -54,10 +54,10 @@ export interface Quiz {
   id: number;
   title: string;
   description: string;
-  category: string;
+  category: QuizCategory;
   questions: Question[];
   participants: User[];
-  author: UserDto;
+  author: User;
   totalParticipants: number;
   createdAt: Date;
 }
@@ -85,13 +85,13 @@ export interface CreateUserDto {
 }
 
 export interface HeaderProps {
-  user: UserDto;
+  user: User;
 }
 export interface QuizProps {
   id: number;
-  name: string;
+  title: string;
   questions: any;
-  author: string;
+  author: User;
   category: string;
 }
 export interface MenuItem {
@@ -118,4 +118,12 @@ export interface QuizSession {
   quiz: Quiz;
   startTime: Date;
   endTime: Date;
+}
+export enum QuizCategory {
+  SPORTS = 'Sports',
+  SCIENCE = 'Science and Technology',
+  HISTORY = 'History',
+  ARTS = 'Art and Artists',
+  GENERAL = 'General Knowledge',
+  MOVIES = 'Movies and TV Shows',
 }

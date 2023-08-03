@@ -11,6 +11,7 @@ import { Role } from 'src/configs/enum';
 import { UserResponseDTO } from '../user/dto/user-response.dto';
 import { User } from 'src/utils/decorator/user.decorator';
 import { User as UserEntity } from '../user/entities/user.entity';
+import { userInfo } from 'os';
 
 @ApiTags('Quiz')
 
@@ -23,8 +24,8 @@ export class QuizController {
   @ApiBearerAuth()
   @UseGuards(RolesGuard)
   @Roles(Role.User)
-  create(@Body() createQuizDto: CreateQuizDto) {
-    return this.quizService.create(createQuizDto);
+  create(@Body() createQuizDto: CreateQuizDto, @User() user: UserEntity) {
+    return this.quizService.create(createQuizDto, user);
   }
 
   @Get()

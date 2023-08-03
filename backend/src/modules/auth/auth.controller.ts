@@ -38,18 +38,35 @@ export class AuthController {
     @Post('register')
     @UseInterceptors(ClassSerializerInterceptor)
     async registerUser(@Body() registerUserDTO: CreateUserDto) {
-        const { loginType, ...rest } = registerUserDTO;
-        const checkUser: CheckUserExistenceDTO = {
-            email: registerUserDTO.email,
-            username: registerUserDTO.username
+        try {
+            const { loginType, ...rest } = registerUserDTO;
+            const checkUser: CheckUserExistenceDTO = {
+                email: registerUserDTO.email,
+                username: registerUserDTO.username,
+            };
+
+            const isExist = await this.userService.checkUserExists(checkUser);
+
+            if (isExist) {
+                return { message: 'User already registered with email', success: false };
+            }
+
+            await this.authService.registerUser({
+                loginType: LoginType.EmailPassword,
+                verified: false,
+                ...rest,
+            });
+
+            await this.mailService.sendWelcomeEmail(
+                registerUserDTO.email,
+                registerUserDTO.username,
+            );
+
+            return { message: 'User registered', success: true };
+        } catch (error) {
+            // Handle any errors that occur during the registration process
+            throw new BadRequestException('Failed to register user');
         }
-        const isExist = await this.userService.checkUserExists(checkUser)
-        if (isExist) {
-            throw new BadRequestException('User already registered with email');
-        }
-        await this.authService.registerUser({ loginType: LoginType.EmailPassword, verified: false, ...rest });
-        await this.mailService.sendWelcomeEmail(registerUserDTO.email, registerUserDTO.username);
-        return { message: 'User registered' };
     }
     @Get('google')
     @UseGuards(AuthGuard('google'))
@@ -91,17 +108,25 @@ export class AuthController {
         res.redirect(`${process.env.APP_URL}auth?token=${accessToken}`);
 
     }
-    @ApiOperation({ summary: 'Send verify link to email' })
-    @Post('send-verification-email')
-    async sendEmail(@Query('email') email: string) {
-        await this.authService.sendVerificationEmail(email);
-        return { message: 'Sent verification email successfully', success: true };
-    }
     @ApiOperation({ summary: 'Verify email' })
     @Post('verify-email')
     async verifyEmail(@Query('code') code: string) {
         await this.authService.verifyEmail(code)
         return { message: 'Verified email', success: true };
     }
+    @ApiOperation({ summary: 'Send token to email' })
+    @Post('send-token-email')
+    async sendTokenToEmail(@Query('email') email: string, @Query('type') type: string) {
+        await this.authService.sendTokenToEmail(email, type);
+        return { message: 'Sent reset email successfully', success: true };
+    }
+    @ApiOperation({ summary: 'Reset password' })
+    @Post('reset-password')
+    async resetPassword(@Query('code') code: string) {
+        await this.authService.resetPassword(code)
+        // res.redirect(`${process.env.APP_URL}new-password`);
+        return { message: 'Reset password successfully', success: true };
+    }
+
 
 }

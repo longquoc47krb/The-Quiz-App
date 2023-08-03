@@ -4,7 +4,7 @@ import { LoginType, Role } from 'src/configs/enum';
 import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
 import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
 import { Token } from 'src/modules/token/entities/token.entity';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 
 @Entity('user')
@@ -51,7 +51,10 @@ export class User {
     loginType: LoginType;
     @Column({ default: false })
     verified: boolean;
-    @OneToOne(() => Token, verificationToken => verificationToken.user)
-    @JoinTable()
-    verificationToken: Token;
+    @OneToOne(() => Token, token => token.user)
+    @JoinColumn({ name: 'token_id' })
+    token: Token;
+
+    @OneToMany(() => Quiz, quiz => quiz.author)
+    quizzes: Quiz[];
 }

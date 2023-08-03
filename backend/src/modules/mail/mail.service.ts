@@ -23,15 +23,29 @@ export class MailService {
         });
         this.logger.info('Sent email successfully', email);
     }
-    async sendVerificationEmail(email: string, verificationCode: Token) {
+    async sendVerificationEmail(email: string, token: Token) {
         await this.mailerService.sendMail({
             to: email,
             subject: 'Email Verification',
             template: 'verify-email',
             context: {
                 url: process.env.APP_URL,
-                code: verificationCode.token,
+                code: token.token,
                 // You can add more template variables if needed
+            },
+            from: `Quizaka <${process.env.MAIL_USER}>`,
+        });
+    }
+    async sendResetPasswordMail(email: string, token: Token) {
+        const user = await this.userService.findByEmail(email);
+        await this.mailerService.sendMail({
+            to: email,
+            subject: 'Reset Password',
+            template: 'reset-password',
+            context: {
+                url: process.env.APP_URL,
+                name: user.name,
+                code: token.token,
             },
             from: `Quizaka <${process.env.MAIL_USER}>`,
         });

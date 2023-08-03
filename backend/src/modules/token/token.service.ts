@@ -1,11 +1,12 @@
 import { join } from 'path';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOperator, Repository } from 'typeorm';
 import { UpdateTokenDto } from './dto/update-token.dto';
 import { Token } from './entities/token.entity';
 import { Logger } from 'winston';
 import { CreateTokenDTO } from './dto/create-token.dto';
+import { User } from '../user/entities/user.entity';
 
 @Injectable()
 export class TokenService {
@@ -20,7 +21,7 @@ export class TokenService {
     initialToken.token = token;
     initialToken.user = user;
     initialToken.expirationDate = expirationDate;
-    await this.tokenRepository.save(user);
+    await this.tokenRepository.save(initialToken);
   }
 
   findAll() {
@@ -34,7 +35,13 @@ export class TokenService {
     return token;
   }
   async findByUserId(userId: number) {
-    const token = await this.tokenRepository.createQueryBuilder('token').leftJoinAndSelect('token.user', 'user').where('token.userId = :userId', { userId }).getOne()
+    const token = await this.tokenRepository.findOne({
+      where: {
+        user: {
+          id: userId
+        }
+      }, relations: ['user']
+    })
     return token
 
   }
@@ -64,5 +71,14 @@ export class TokenService {
 
   remove(id: number) {
     return `This action removes a #${id} token`;
+  }
+  generateVerificationToken(): string {
+    const charset = "0123456789";
+    let otp = "";
+    for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * 6);
+      otp += charset[randomIndex];
+    }
+    return otp;
   }
 }

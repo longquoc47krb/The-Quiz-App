@@ -85,5 +85,5 @@ export class UpdateUserDTO {
     verified?: boolean;
 
     @IsOptional()
-    verificationToken?: Token;
+    token?: Token;
 }

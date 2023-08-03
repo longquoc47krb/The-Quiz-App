@@ -23,7 +23,7 @@ export function convertUsersToDTO(users: User[]) {
 
     return userResponseDTOs;
 }
-export function mapUserToUserResponseDTO(user) {
+export function mapUserToUserResponseDTO(user: User) {
     const userResponse = {
         id: user.id,
         name: user.name,
@@ -42,7 +42,8 @@ export function mapUserToUserResponseDTO(user) {
         avatar: user.avatar,
         createdQuizzes: user.createdQuizzes,
         quizSessions: user.quizSessions,
-        loginType: user.loginType
+        loginType: user.loginType,
+        token: user.token
     };
 
     return userResponse;

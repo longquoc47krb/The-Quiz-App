@@ -3,7 +3,7 @@ import { QuizCategory } from "src/common/category.enum";
 import { Question } from "src/modules/question/entities/question.entity";
 import { User } from "src/modules/user/entities/user.entity";
 import { QuizSession } from "src/modules/quiz-session/entities/quiz-session.entity";
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('quiz')
 export class Quiz {
@@ -27,9 +27,6 @@ export class Quiz {
     @JoinTable()
     participants: User[];
 
-    @Column({ name: 'authorId' }) // Use the name 'authorId' to match the column in the database
-    authorId: number;
-
 
     @Column({ default: 0 })
     totalParticipants: number;
@@ -39,4 +36,8 @@ export class Quiz {
 
     @OneToMany(() => QuizSession, quizSession => quizSession.quiz)
     quizSessions: QuizSession[];
+
+    @ManyToOne(() => User, user => user.quizzes)
+    @JoinColumn({ name: 'authorId' })
+    author: User;
 }

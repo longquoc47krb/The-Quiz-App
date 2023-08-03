@@ -1,33 +1,31 @@
+/* eslint-disable unused-imports/no-unused-vars */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable simple-import-sort/imports */
+/* eslint-disable import/order */
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/consistent-type-imports */
+/* eslint-disable import/newline-after-import */
 /* eslint-disable no-inner-declarations */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
-import { login, logout } from "../store/slices/authSlice";
-import { getMe } from "../apis/userServices";
+import { useState } from "react";
+import { useRouter } from 'next/router';
+import useAuth from "@/hooks/useAuth";
+import Cookies from "js-cookie";
+
 const Header = () => {
+  const { user, setUser } = useAuth()
   const [toggle, setToggle] = useState(false);
-  const { user, removeCookie, dispatch, cookies } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter();
   const handleLogout = () => {
-    removeCookie("accessToken");
-    dispatch(logout());
-    navigate("/");
+   Cookies.remove("accessToken");
+   setUser(null)
   };
   const handleLogin = () => {
-    navigate("/login");
+    router.push('/login');
   };
-  useEffect(() => {
-    if (!user) {
-      async function fetchMe() {
-        const response: any = await getMe();
-        dispatch(login(response));
-        setToggle(false);
-      }
-      fetchMe();
-    }
-  }, []);
-  console.log({ user });
+  
   return (
     <header>
       <div className="flex items-center justify-end w-full">
@@ -42,7 +40,7 @@ const Header = () => {
             <span className="text-white">{user.name}</span>
           </div>
         ) : (
-          <span className="text-white cursor-pointer" onClick={handleLogin}>
+          <span className="text-white cursor-pointer mr-4" onClick={handleLogin}>
             Login
           </span>
         )}

@@ -1,13 +1,14 @@
 
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, NotFoundException, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/configs/enum';
+import { LoginType, Role } from 'src/configs/enum';
 import { Roles, RolesGuard } from 'src/utils';
 import { User } from 'src/utils/decorator/user.decorator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User as UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
+import { LoginUserDTO } from '../auth/dto/login-credential.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -27,7 +28,25 @@ export class UserController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDTO) {
     return this.userService.update(+id, updateUserDto);
   }
+  @Patch('new-password/:id')
+  async newPassword(@Param('id') id: string, @Body() loginUserDto: LoginUserDTO) {
+    try {
+      const user = await this.userService.findByEmailOrUsername(loginUserDto.identifier)
+      if (user.password === "" && user.loginType === LoginType.EmailPassword) {
+        const password = await this.userService.hashPassword(loginUserDto.password);
+        const updateUserDto: UpdateUserDTO = {
+          password
+        }
+        return await this.userService.update(+id, updateUserDto);
+      }
+      throw new NotFoundException('User cannot be update new password')
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
 
+
+
+  }
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

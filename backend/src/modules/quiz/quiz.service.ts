@@ -20,9 +20,11 @@ export class QuizService {
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
     private userService: UserService) { }
-  async create(createQuizDto: CreateQuizDto) {
+  async create(createQuizDto: CreateQuizDto, userJwt: User) {
     const { category, questions } = createQuizDto;
-    const quiz = await this.quizRepository.create(createQuizDto)
+    const user: User = await this.userService.findByEmail(userJwt.email);
+    console.log({ ...createQuizDto, author: user })
+    const quiz = await this.quizRepository.create({ ...createQuizDto, author: user })
     if (!(category in QuizCategory)) {
       throw new Error(`Invalid category value: ${category}`);
     }
@@ -48,15 +50,16 @@ export class QuizService {
   }
 
   async findAll() {
-    const quizzes = await this.quizRepository.find({
-      relations: ['questions'],
-    });
+    const quizzes = await this.quizRepository.createQueryBuilder('quiz').leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user').getMany()
+    // const quizzes = await this.quizRepository.find({
+    //   relations: ['questions', ],
+    // });
     return quizzes;
   }
 
   findOne(id: number) {
     return this.quizRepository.createQueryBuilder('quiz')
-      .leftJoinAndSelect('quiz.questions', 'questions')
+      .leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user')
       .where('quiz.id = :id', { id })
       .getOne();
   }

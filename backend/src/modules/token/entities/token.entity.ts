@@ -1,5 +1,5 @@
 import { User } from 'src/modules/user/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, JoinColumn, OneToOne, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Token {
@@ -9,8 +9,8 @@ export class Token {
     @Column({ nullable: true })
     token: string;
 
-    @OneToOne(() => User, user => user.verificationToken)
-    @JoinColumn()
+    @ManyToOne(() => User, user => user.token)
+    @JoinColumn({ name: 'user_id' })
     user: User;
 
     @Column({ nullable: true })

@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable simple-import-sort/imports */
 /* eslint-disable prettier/prettier */
@@ -5,17 +8,19 @@
 /* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import { yupResolver } from '@hookform/resolvers/yup';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { SubmitHandler, Controller, useForm } from 'react-hook-form';
 import { IoDiceSharp } from "react-icons/io5";
+import  {AiFillEyeInvisible, AiFillEye} from 'react-icons/ai';
+import toast, { Toaster } from 'react-hot-toast';
 import ErrorMessage from '@/components/error-message';
 import { getRandomItemFromArray, validateSchema } from '@/utils';
 import { Main } from '@/templates/Main';
 import { Meta } from '@/layouts/Meta';
 import { CreateUserDto, LoginType, Role } from "@/interfaces";
 import { RANDOM_AVATAR } from '@/common/constants';
+import { registerUser } from '@/apis/authServices';
 
 interface RegisterFormValues {
   name: string;
@@ -28,7 +33,14 @@ interface RegisterFormValues {
 const RegisterPage: React.FC = () => {
   const [avatar, setAvatar] = useState('');
   const [random, setRandomize] = useState(false);
-
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [cpasswordVisible, setCPasswordVisible] = useState(false);
+  const togglePasswordVisibility = () => {
+    setPasswordVisible((prevVisible) => !prevVisible);
+  };
+  const toggleCPasswordVisibility = () => {
+    setCPasswordVisible((prevVisible) => !prevVisible);
+  };
   const router = useRouter();
   useEffect(() => {
     setAvatar(
@@ -48,28 +60,45 @@ const RegisterPage: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<RegisterFormValues> = async (data) => {
-    console.log({ data });
-    const registerUser: CreateUserDto = {
-      avatar,
-      email: data.email,
-      name: data.name,
-      username: data.username,
-      loginType: LoginType.EmailPassword,
-      password: data.password,
-      roles: [Role.User],
-      verified: false,
-    };
-    console.log({ registerUser });
+    try {
+      const registerUserRequest: CreateUserDto = {
+        avatar,
+        email: data.email,
+        name: data.name,
+        username: data.username,
+        loginType: [LoginType.EmailPassword],
+        password: data.password,
+        roles: [Role.User],
+        verified: false,
+      };
+  
+      const response = await registerUser(registerUserRequest);
+  
+      // Handle the result here, e.g., show a success message
+      if(response.success){        
+        toast.success(response?.message, {
+          position: 'bottom-center',
+        });
+      }
+    } catch (error) {
+      // Handle any errors that occur during registration
+      toast.error(`Error during registration: ${error.response.data}`);
+      // Show an error message to the user or take appropriate action
+    }
+  
+  
+   
   };
   const isLengthValid = getValues('password')?.length >= 8;
   const hasUppercase = /[A-Z]/.test(getValues('password'));
   const hasLowercase = /[a-z]/.test(getValues('password'));
   const hasNumber = /\d/.test(getValues('password'));
   const hasSpecialCharacter = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(
-    getValues('password'),
-  );
+      getValues('password'),
+    );
+ 
   return (
-    <Main meta={<Meta title="Lorem ipsum" description="Lorem ipsum" />}>
+    <Main meta={<Meta title="Register New Account" description="Register New Account" />}>
     <div className="flex justify-center items-center">
       <div className="auth-container">
         <h1 className="font-semibold text-yellow-400 text-4xl text-center mb-2">
@@ -135,13 +164,20 @@ const RegisterPage: React.FC = () => {
             control={control}
             defaultValue=""
             render={({ field }) => (
-              <div className="form-group">
+              <div className="form-group relative">
                 <label>Password</label>
+                <div className='relative inline-block w-full'>
                 <input
                   className="input"
-                  type="password"
+                  type={passwordVisible ? 'text' : 'password'}
+                  {...field}
                   {...register('password', { required: true, minLength: 6 })}
                 />
+                <button className='bg-transparent hover:bg-transparent w-fit absolute top-1/2 right-2 -translate-y-1/2' type="button" onClick={togglePasswordVisibility}>
+                  {passwordVisible ? <AiFillEyeInvisible/> : <AiFillEye/>}
+                </button>
+                </div>
+               
                 <ErrorMessage error={errors.password?.message} />
                 <ul className="password-cases">
                   <li
@@ -193,21 +229,27 @@ const RegisterPage: React.FC = () => {
             render={({ field }) => (
               <div className="form-group">
                 <label>Confirm password</label>
-                <input {...field} type="text" className="input" />
+                <div className='relative inline-block w-full'>
+                <input {...field} type={cpasswordVisible ? 'text' : 'password'} className="input" />
+                <button className='bg-transparent hover:bg-transparent w-fit absolute top-1/2 right-2 -translate-y-1/2' type="button" onClick={toggleCPasswordVisibility}>
+                  {cpasswordVisible ? <AiFillEyeInvisible/> : <AiFillEye/>}
+                </button>
+                </div>
                 <ErrorMessage error={errors.confirmPassword?.message} />
               </div>
             )}
           />
 
-          <button className="primary-button" type="submit">
+          <button className="primary-button mt-4" type="submit">
             Register
           </button>
           <div className="form-group flex items-center justify-center">
             <p className="text-gray-200 text-center ">Already a user? </p>
-            <Link href="/login">Login</Link>
+            <a className="cursor-pointer" onClick={()=>router.push("/login")}>Login</a>
           </div>
         </form>
       </div>
+      <Toaster />
     </div></Main>
   );
 };

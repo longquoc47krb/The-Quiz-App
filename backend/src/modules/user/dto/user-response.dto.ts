@@ -3,6 +3,7 @@ import { QuizSession } from "src/modules/quiz-session/entities/quiz-session.enti
 import { Quiz } from "src/modules/quiz/entities/quiz.entity";
 import { User } from "../entities/user.entity";
 import { LoginType, Role } from "src/configs/enum";
+import { Token } from "src/modules/token/entities/token.entity";
 
 export class UserResponseDTO {
     id: number;
@@ -23,4 +24,5 @@ export class UserResponseDTO {
     createdQuizzes: any;
     quizSessions: QuizSession[];
     loginType: LoginType;
+    token: Token;
 }

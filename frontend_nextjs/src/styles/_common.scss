@@ -1,14 +1,15 @@
 @import "variables";
 
 .primary-button {
-  background: $primaryColor;
+  background: $primaryColor !important;
+  border-radius: 5px;
   padding: 0.5rem 1rem;
   text-align: center;
   color: white;
   font-weight: 500;
   width: 100%;
   &:hover {
-    background: $borderPrimaryColor;
+    background: $borderPrimaryColor !important;
   }
 }
 .input {

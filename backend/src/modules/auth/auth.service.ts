@@ -3,7 +3,7 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoginType } from 'src/configs/enum';
+import { EmailType, LoginType } from 'src/configs/enum';
 import { CustomException } from 'src/exception';
 import { LoginUserDTO } from 'src/modules/auth/dto/login-credential.dto';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
@@ -50,7 +50,8 @@ export class AuthService {
             throw new CustomException('Login by Email/Password is not allowed with this email. Please use a different credentials.', HttpStatus.BAD_REQUEST);
         }
 
-        const isMatched = this.userService.comparePassword(password, user);
+        const isMatched = await this.userService.comparePassword(password, user);
+        console.log({ isMatched })
         if (!isMatched) {
             throw new CustomException('Invalid credentials', HttpStatus.BAD_REQUEST);
         }
@@ -108,55 +109,69 @@ export class AuthService {
         const authToken = this.generateAuthToken(user);
         return Promise.resolve(authToken);
     }
-    async sendVerificationEmail(email: string) {
-        try {
-            const user = await this.userService.findByEmail(email);
+    async sendTokenToEmail(email: string, type: string) {
+        const user = await this.userService.findByEmail(email);
+        const existToken = await this.tokenService.findByUserId(user.id);
 
-            const existedToken = await this.tokenService.findByUserId(user.id);
+        const expirationDate = new Date();
+        expirationDate.setMinutes(expirationDate.getMinutes() + 15);
+        const randomToken = this.tokenService.generateVerificationToken();
+        if (!existToken) {
+            const token = new Token();
+            token.token = randomToken;
+            token.user = user;
+            token.expirationDate = expirationDate;
+            await this.tokenService.create(token);
 
-            const expirationDate = new Date();
-            expirationDate.setMinutes(expirationDate.getMinutes() + 15);
-            if (user.verified) {
-                throw new CustomException('Email is verified', HttpStatus.FORBIDDEN);
+            const updateUser: UpdateUserDTO = {
+                token
             }
-
-            const randomToken = this.generateVerificationToken();
-            if (!existedToken) {
-                const verificationToken = new Token();
-                verificationToken.token = randomToken;
-                verificationToken.user = user;
-                verificationToken.expirationDate = expirationDate;
-                await this.tokenService.create(verificationToken);
-
-                // Associate the token with the user
-                user.verificationToken = verificationToken;
-                const updateUser: UpdateUserDTO = {
-                    verificationToken: user.verificationToken
-                };
-
-                // Step 7: Send the verification email and update the user with the verification token
-                await this.userService.update(user.id, updateUser);
-                // await this.mailService.sendVerificationEmail(user.email, user.verificationToken);
-            }
-            const updateToken: UpdateTokenDto = {
-                token: randomToken,
-                expirationDate: expirationDate
-            };
-            console.log("code:", user.verificationToken.token)
-            await this.tokenService.update(existedToken.id, updateToken);
-
-        } catch (error) {
-            console.error("Error sending verification email:", error);
-            throw error;
+            await this.userService.update(user.id, updateUser)
+            await this.sendEmailByType(email, token, type);
+            console.log({ user, existToken })
         }
+        const updateToken: UpdateTokenDto = {
+            token: randomToken,
+            expirationDate
+        }
+        const updateUser: UpdateUserDTO = {
+            token: {
+                id: existToken.id,
+                token: randomToken,
+                expirationDate,
+                user
+            }
+        }
+        await this.tokenService.update(existToken.id, updateToken);
+        await this.userService.update(user.id, updateUser);
+        const token = new Token();
+        token.id = existToken.id;
+        token.expirationDate = expirationDate;
+        token.token = randomToken;
+        token.user = user;
+        await this.sendEmailByType(email, token, type);
+
     }
+    async sendEmailByType(email: string, token: Token, type: string) {
+        const user = await this.userService.findByEmail(email);
+        if (type === EmailType.VerifyEmail) {
+            if (user.verified) {
+                return {
+                    message: 'Email is verified',
+                    success: false
+                }
+            }
+            return await this.mailService.sendVerificationEmail(email, token);
+        }
+        return await this.mailService.sendResetPasswordMail(email, token);
+    }
+
     async verifyEmail(code: string) {
         const user = await this.userService.findByVerificationCode(code);
         if (!user) {
             throw new CustomException('Inactive user', HttpStatus.BAD_REQUEST);
 
         }
-
         if (user.verified) {
             throw new CustomException('User is already verified', HttpStatus.BAD_REQUEST);
         }
@@ -174,13 +189,24 @@ export class AuthService {
         }
         await this.userService.update(user.id, update)
     }
-    private generateVerificationToken(): string {
-        const charset = "0123456789";
-        let otp = "";
-        for (let i = 0; i < 6; i++) {
-            const randomIndex = Math.floor(Math.random() * 6);
-            otp += charset[randomIndex];
+    async resetPassword(code: string) {
+        const user = await this.userService.findByVerificationCode(code);
+        if (!user) {
+            throw new CustomException('Inactive user', HttpStatus.BAD_REQUEST);
+
         }
-        return otp;
+        const token = await this.tokenService.findByUserId(user.id);
+        const currentTime = new Date();
+        if (!token) {
+            throw new CustomException('Verification token not found', HttpStatus.BAD_REQUEST);
+        }
+
+        if (currentTime > token.expirationDate) {
+            throw new CustomException('Expired token', HttpStatus.BAD_REQUEST);
+        }
+        const update: UpdateUserDTO = {
+            password: ""
+        }
+        await this.userService.update(user.id, update)
     }
 }

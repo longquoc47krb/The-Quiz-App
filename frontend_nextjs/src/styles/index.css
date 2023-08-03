@@ -1,10 +1,10 @@
 @font-face {
-  font-family: "Chinacat";
-  src: url("../assets/fonts/Chinacat.ttf");
+  font-family: "VNM";
+  src: url("../assets/fonts/VNM.OTF");
   /* Additional font formats can be specified for compatibility. */
 }
 :root {
-  font-family: "Chinacat", sans-serif !important;
+  font-family: "VNM", sans-serif !important;
   line-height: 1.5;
   font-weight: 400;
   overflow-x: hidden;

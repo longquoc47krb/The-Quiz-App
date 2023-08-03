@@ -64,7 +64,7 @@ export class UserService {
     if (typeof username !== 'string' || username.trim() === '') {
       throw new Error('Invalid username');
     }
-    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect("user.verificationToken", "token").where("user.username = :username", { username }).getOne();
+    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect("user.token", "token").where("user.username = :username", { username }).getOne();
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
     return mapUserToUserResponseDTO(user);
@@ -92,7 +92,7 @@ export class UserService {
     return convertUsersToDTO(users);
   }
   async findByEmail(email: string) {
-    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect("user.verificationToken", "token").where('user.email = :email', { email }).getOne()
+    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect("user.token", "token").where('user.email = :email', { email }).getOne()
     // return mapUserToUserResponseDTO(user);
     return (user);
 
@@ -122,6 +122,9 @@ export class UserService {
     if (updateUserDto.score !== undefined) {
       user.score = updateUserDto.score;
     }
+    if (updateUserDto.password !== undefined) {
+      user.password = updateUserDto.password;
+    }
 
     if (updateUserDto.level !== undefined) {
       user.level = updateUserDto.level;
@@ -140,8 +143,8 @@ export class UserService {
     if (updateUserDto.verified) {
       user.verified = updateUserDto.verified;
     }
-    if (updateUserDto.verificationToken) {
-      user.verificationToken = updateUserDto.verificationToken;
+    if (updateUserDto.token) {
+      user.token = updateUserDto.token;
     }
 
     // Similarly, update other properties as needed

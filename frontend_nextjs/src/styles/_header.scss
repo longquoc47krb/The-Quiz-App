@@ -10,7 +10,7 @@ header {
   width: 100%;
   height: auto;
   padding: 0.5rem 1rem;
-  border-bottom: 0.5px solid $borderSecondaryColor;
+  border-bottom: 1px solid $borderSecondaryColor;
   img:hover ~ .dropdown-content {
     position: absolute;
     top: 4rem;

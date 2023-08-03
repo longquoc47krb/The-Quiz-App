@@ -8,3 +8,7 @@ export enum LoginType {
     Facebook = 'FACEBOOK',
     EmailPassword = 'EMAIL_PASSWORD',
 }
+export enum EmailType {
+    VerifyEmail = 'VERIFY_EMAIL',
+    ResetPassword = 'RESET_PASSWORD',
+}
