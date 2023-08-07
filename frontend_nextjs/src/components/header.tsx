@@ -13,6 +13,7 @@ import { useState } from "react";
 import { useRouter } from 'next/router';
 import useAuth from "@/hooks/useAuth";
 import Cookies from "js-cookie";
+import DarkModeSwitch from "./dark-mode-switch";
 
 const Header = () => {
   const { user, setUser } = useAuth()
@@ -27,20 +28,20 @@ const Header = () => {
   };
   
   return (
-    <header>
+    <header className="header">
       <div className="flex items-center justify-end w-full">
+        <DarkModeSwitch/>
         {user ? (
           <div className="text-gray-200 font-medium text-base flex items-center gap-x-4">
             <img
               src={user.avatar}
               alt="avatar"
-              className="w-12 h-12 rounded-full"
+              className="w-10 h-10 rounded-full"
               onClick={() => setToggle(!toggle)}
             />
-            <span className="text-white">{user.name}</span>
           </div>
         ) : (
-          <span className="text-white cursor-pointer mr-4" onClick={handleLogin}>
+          <span className="dark:text-white cursor-pointer mr-4" onClick={handleLogin}>
             Login
           </span>
         )}
@@ -60,5 +61,4 @@ const Header = () => {
     </header>
   );
 };
-
 export default Header;

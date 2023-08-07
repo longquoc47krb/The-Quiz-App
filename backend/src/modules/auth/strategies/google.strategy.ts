@@ -1,11 +1,9 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { config } from 'dotenv';
+import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 
 import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { LoginType, Role } from 'src/configs/enum';
-import { JWT_SECRET } from 'src/configs/constants';
 
 config();
 

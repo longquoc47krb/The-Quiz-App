@@ -1,14 +1,18 @@
-@import "variables";
-@import "common";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "variables";
+@import "common";
 @import "auth";
 @import "header";
 @import "search";
 @import "menuBar";
 @import "home";
 @import "quiz";
-body {
-  background-color: $darkBackground;
+
+@layer base {
+  body {
+    @apply dark:bg-zinc-800
+  }
 }
+

@@ -38,10 +38,9 @@ export class UserService {
     await this.userRepository.save(user);
 
   }
-  async getOne(id: number, userEntity?: User) {
+  async getOne(id: number) {
     const user = await this.userRepository
-      .findOne({ where: { id } })
-      .then(u => (!userEntity ? u : !!u && userEntity.id === u.id ? u : null));
+      .findOne({ where: { id } });
 
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');

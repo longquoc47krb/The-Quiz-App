@@ -18,6 +18,8 @@ import { FcGoogle } from 'react-icons/fc';
 
 import { login } from '@/apis/authServices';
 import { EXPIRATION_DATE } from '@/common/constants';
+import ErrorMessage from '@/components/error-message';
+import withAuth from '@/hocs/withAuth';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 
@@ -61,7 +63,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <Main meta={<Meta title="Login" description="Login" />}>
+    <Main meta={<Meta title="Login" description="Login" />} >
       <div className="flex justify-center items-center h-full w-full">
         <div className="auth-wrapper">
           <div className="auth-container">
@@ -76,9 +78,7 @@ const LoginPage: React.FC = () => {
                   className="input"
                   {...register('identifier', { required: 'Email is required' })}
                 />
-                {errors.identifier && (
-              <span className="error">{errors.identifier.message}</span>
-            )}
+                <ErrorMessage error={errors.identifier?.message} />
               </div>
               <div className="form-group">
                 <label>Password</label>
@@ -94,13 +94,11 @@ const LoginPage: React.FC = () => {
                     },
                   })}
                 />
+                <ErrorMessage error={errors.password?.message} />
                 <button className='bg-transparent hover:bg-transparent w-fit absolute top-1/2 right-2 -translate-y-1/2' type="button" onClick={togglePasswordVisibility}>
                   {passwordVisible ? <AiFillEyeInvisible/> : <AiFillEye/>}
                 </button>
                 </div>
-                {errors.password && (
-              <span className="error">{errors.password.message}</span>
-            )}
               </div>
               <Toaster />
               <div className="form-group">
@@ -108,7 +106,7 @@ const LoginPage: React.FC = () => {
                   <a href="/forgot-password">Forgot password?</a>
                 </p>
               </div>
-              <button className="primary-button" type="submit">
+              <button className="primary-button bg-primary" type="submit">
                 Sign in
               </button>
               <div className="or-divider">
@@ -138,5 +136,4 @@ const LoginPage: React.FC = () => {
     </Main>
   );
 };
-
-export default LoginPage;
+export default withAuth(LoginPage);

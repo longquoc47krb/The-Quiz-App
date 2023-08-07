@@ -3,8 +3,9 @@
   src: url("../assets/fonts/VNM.OTF");
   /* Additional font formats can be specified for compatibility. */
 }
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 :root {
-  font-family: "VNM", sans-serif !important;
+  font-family: 'Nunito', sans-serif !important;
   line-height: 1.5;
   font-weight: 400;
   overflow-x: hidden;

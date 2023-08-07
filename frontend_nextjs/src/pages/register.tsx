@@ -21,6 +21,7 @@ import { Meta } from '@/layouts/Meta';
 import { CreateUserDto, LoginType, Role } from "@/interfaces";
 import { RANDOM_AVATAR } from '@/common/constants';
 import { registerUser } from '@/apis/authServices';
+import withAuth from '@/hocs/withAuth';
 
 interface RegisterFormValues {
   name: string;
@@ -254,4 +255,4 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default RegisterPage;
+export default withAuth(RegisterPage);

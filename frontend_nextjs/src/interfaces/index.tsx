@@ -54,7 +54,7 @@ export interface Quiz {
   id: number;
   title: string;
   description: string;
-  category: QuizCategory;
+  category: string;
   questions: Question[];
   participants: User[];
   author: User;
@@ -126,4 +126,9 @@ export enum QuizCategory {
   ARTS = 'Art and Artists',
   GENERAL = 'General Knowledge',
   MOVIES = 'Movies and TV Shows',
+}
+export interface DecodedUser {
+  userId: number;
+  name: string;
+  roles: string[];
 }

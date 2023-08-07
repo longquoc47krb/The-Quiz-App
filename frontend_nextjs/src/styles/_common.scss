@@ -1,16 +1,12 @@
 @import "variables";
 
 .primary-button {
-  background: $primaryColor !important;
   border-radius: 5px;
   padding: 0.5rem 1rem;
   text-align: center;
   color: white;
   font-weight: 500;
   width: 100%;
-  &:hover {
-    background: $borderPrimaryColor !important;
-  }
 }
 .input {
   background-color: rgb(228, 221, 221);
@@ -19,7 +15,6 @@
   border-radius: 5px;
   outline: none;
   width: 100%;
-  border: 2px solid $borderSecondaryColor;
   position: relative;
 }
 input::placeholder {

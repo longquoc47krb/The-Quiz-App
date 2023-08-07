@@ -9,6 +9,7 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 import { User as UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
 import { LoginUserDTO } from '../auth/dto/login-credential.dto';
+import { UserResponseDTO } from './dto/user-response.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -57,9 +58,10 @@ export class UserController {
   @UseGuards(RolesGuard)
   async getMe(
     @User() user: UserEntity,
-  ): Promise<UserEntity> {
+  ): Promise<UserResponseDTO> {
     try {
-      return await this.userService.findByEmail(user.email);
+      console.log({ user })
+      return await this.userService.getOne(user?.id)
     } catch (error) {
 
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);

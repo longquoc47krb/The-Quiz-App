@@ -66,9 +66,9 @@ export class AuthService {
     public generateAuthToken(user: UserResponseDTO): TokenDto {
 
         const accessToken = this.jwtService.sign({
-            sub: user.id,
+            id: user.id,
             type: 'access',
-            email: user.email,
+            name: user.name,
             roles: user.roles,
             loginType: user.loginType
         });

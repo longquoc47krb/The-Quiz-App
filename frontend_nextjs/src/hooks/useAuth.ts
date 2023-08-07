@@ -2,18 +2,23 @@ import Cookies from 'js-cookie';
 import { useEffect, useState } from 'react';
 
 import { getMe } from '@/apis/userServices';
+import type { User } from '@/interfaces';
 
 const useAuth = () => {
   const accessToken = Cookies.get('accessToken');
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
-    if (accessToken) {
-      const fetchUser = async () => {
-        const userResponse = await getMe();
-        setUser(userResponse);
-      };
-      fetchUser();
+    async function fetchUserData() {
+      try {
+        const userData = await getMe();
+        setUser(userData);
+      } catch (error) {
+        // Handle error if necessary
+        console.error('Error fetching user data:', error);
+      }
     }
+
+    fetchUserData();
   }, []);
   return {
     accessToken,

@@ -1,7 +1,6 @@
 .auth {
   &-container {
     width: $formWidth;
-    background: $secondaryColor;
     border-radius: 25px;
     padding: 0.5rem 1rem;
     margin: 1rem 0;
@@ -34,4 +33,9 @@
   margin: 0 10px;
   font-size: 14px;
   color: #999;
+}
+@layer components {
+  .input-container{
+    @apply border border-gray-300 rounded px-4 py-2 w-full mt-2 dark:text-gray-400;
+  }
 }
