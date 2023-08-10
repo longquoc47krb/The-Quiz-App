@@ -21,14 +21,13 @@ export class QuizService {
     private questionRepository: Repository<Question>,
     private userService: UserService) { }
   async create(createQuizDto: CreateQuizDto, userJwt: User) {
-    const { category, questions } = createQuizDto;
+    const { questions } = createQuizDto;
     const user: User = await this.userService.findByEmail(userJwt.email);
     console.log({ ...createQuizDto, author: user })
-    const quiz = await this.quizRepository.create({ ...createQuizDto, author: user })
-    if (!(category in QuizCategory)) {
-      throw new Error(`Invalid category value: ${category}`);
-    }
-
+    const quiz = await this.quizRepository.create({
+      author: user,
+      ...createQuizDto
+    })
     const savedQuestions = [];
     const uniqueQuestionTexts = [];
     for (const questionData of questions) {
@@ -50,10 +49,10 @@ export class QuizService {
   }
 
   async findAll() {
-    const quizzes = await this.quizRepository.createQueryBuilder('quiz').leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user').getMany()
-    // const quizzes = await this.quizRepository.find({
-    //   relations: ['questions', ],
-    // });
+    // const quizzes = await this.quizRepository.createQueryBuilder('quiz').leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user').getMany()
+    const quizzes = await this.quizRepository.find({
+      relations: ['questions', 'author'],
+    });
     return quizzes;
   }
 
@@ -80,7 +79,7 @@ export class QuizService {
     // Update the quiz properties based on the values in updateQuizDto
     quiz.title = title;
     quiz.description = description;
-    quiz.category = category as QuizCategory
+    quiz.category = category;
     // Update other properties as needed
 
     // Create a new question entity

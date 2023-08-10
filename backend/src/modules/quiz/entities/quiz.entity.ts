@@ -16,8 +16,8 @@ export class Quiz {
     @Column()
     description: string;
 
-    @Column({ type: 'enum', enum: QuizCategory })
-    category: QuizCategory;
+    @Column()
+    category: string;
 
 
     @OneToMany(() => Question, (question) => question.quizId, { cascade: true })
@@ -37,7 +37,11 @@ export class Quiz {
     @OneToMany(() => QuizSession, quizSession => quizSession.quiz)
     quizSessions: QuizSession[];
 
+    @Column({ name: 'authorId' })
+    authorId: string;
+
     @ManyToOne(() => User, user => user.quizzes)
     @JoinColumn({ name: 'authorId' })
     author: User;
+
 }

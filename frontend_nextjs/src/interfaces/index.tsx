@@ -48,6 +48,7 @@ export interface Question {
   options: string[];
   correctOption: string;
   quizId: number;
+  explain: string;
 }
 
 export interface Quiz {
@@ -56,9 +57,9 @@ export interface Quiz {
   description: string;
   category: string;
   questions: Question[];
-  participants: User[];
+  participants?: User[];
   author: User;
-  totalParticipants: number;
+  totalParticipants?: number;
   createdAt: Date;
 }
 export interface UserDto {
@@ -131,4 +132,18 @@ export interface DecodedUser {
   userId: number;
   name: string;
   roles: string[];
+}
+interface CreateQuestionDto {
+  text: string;
+  options: string[];
+  correctOption: string;
+  explain: string;
+}
+
+// Define the interface for the CreateQuizDto
+export interface CreateQuizDto {
+  title: string;
+  description: string;
+  category: string; // Assuming QuizCategory is a string enum or type
+  questions: CreateQuestionDto[];
 }

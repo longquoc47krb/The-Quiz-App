@@ -5,7 +5,7 @@
   .sidebar-item {
     @apply mb-2 text-base cursor-pointer rounded-md w-16 h-16 p-2 font-normal;
     &.active {
-      @apply bg-[#393241] text-white;
+      @apply bg-active text-white;
     }
   }
 

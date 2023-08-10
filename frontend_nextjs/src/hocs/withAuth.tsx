@@ -38,10 +38,6 @@ function withAuth<T extends Props>(
     const { req, res } = ctx;
     // Implement this function to check user authentication
     const { isAuthenticated, user } = await authenticateUser(req, res);
-    console.log({
-      isAuthenticated,
-      user,
-    });
     const serverSideProps: ServerSideProps = {
       isAuthenticated,
     };

@@ -1,11 +1,8 @@
 
 import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
-import { IsArray, IsEmpty, IsNotEmpty, IsNumber, IsObject, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { QuizCategory } from "src/common/category.enum";
 import { CreateQuestionDto } from "src/modules/question/dto/create-question.dto";
-import { Question } from "src/modules/question/entities/question.entity";
-import { User } from "src/modules/user/entities/user.entity";
 
 export class CreateQuizDto {
     @ApiProperty({ example: 'Quiz Title', description: 'The title of the quiz' })
@@ -20,7 +17,7 @@ export class CreateQuizDto {
 
     @ApiProperty({ example: QuizCategory.SCIENCE, description: 'The category of the quiz' })
     @IsNotEmpty()
-    category: QuizCategory;
+    category: string;
 
     @ApiProperty({
         example: [
