@@ -2,20 +2,23 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/button-has-type */
 import { countBy } from 'lodash';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import CongratulationPic from '@/assets/images/200w.webp';
 import { setCurrentQuestion } from '@/middlewares/slices/quizSessionSlice';
 import { checkCorrectAnswer, checkOptionIsCorrectOrNot } from '@/utils';
 
 import Countdown from './countdown';
+import Modal from './modal';
 
 function MultichoiceQuestion({
   title,
   options,
   answer,
-  time,
   explain,
+  time
 }: {
   title: string;
   options: string[];
@@ -32,7 +35,11 @@ function MultichoiceQuestion({
   const currenQuestion = useSelector(
     (state) => state.quizSession.currentQuestion,
   );
+  const router = useRouter()
   const [yourAnswers, setYourAnswers] = useState<string[]>([]);
+  const [startTime, setStartTime] = useState<number>(0);
+  const [timer, setTimer] = useState(0);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const handleNextQuestion = () => {
     // Move to the next question and reset relevant states
     setSelectOption('');
@@ -40,6 +47,10 @@ function MultichoiceQuestion({
     setIsShowExplain(false);
     if (currenQuestion < questions.length - 1) {
       dispatch(setCurrentQuestion(currenQuestion + 1));
+    }
+    if(currenQuestion === questions.length - 1){
+      setIsFinish(true);
+      setModalIsOpen(true);
     }
   };
   console.log({yourAnswers})
@@ -51,16 +62,17 @@ function MultichoiceQuestion({
     setSelectOption(selected);
     setIsCorrect(checkCorrectAnswer(options, answer));
     setIsShowExplain(true);
-    handleNextQuestion();
-    // setTimeout(() => {
-    //   handleNextQuestion();
-    // }, 2000);
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 1500);
   };
   const handleAddYourAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Create a new array with the updated options
     const updatedOptions = [...yourAnswers, {
-      yourAnswer: e.currentTarget.value,
-      correct: checkOptionIsCorrectOrNot(e.currentTarget.value, answer)
+      yourOption: e.currentTarget.value,
+      correct: checkOptionIsCorrectOrNot(e.currentTarget.value, answer),
+      answer, 
+      time: Math.floor(timer / 1000) 
     }];
 
     // Update the state with the new array
@@ -69,8 +81,11 @@ function MultichoiceQuestion({
   const handleFinish = () => {
     dispatch(setCurrentQuestion(0))
     setIsFinish(true)
-    
+    router.push('/')
   }
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
   const validateClassName = (option: string, index: number) => {
     if (selectOption === option) {
       return isCorrect[index] ? 'correct-choice flicker' : 'incorrect-choice';
@@ -84,7 +99,8 @@ function MultichoiceQuestion({
       <h1>
         Question {currenQuestion + 1} of {questions?.length}
       </h1>
-      <Countdown targetTime={time} />
+      <Countdown seconds={time} onCountdownComplete={handleNextQuestion}/>
+   
       <h1 className="dark:text-gray-300">{title}</h1>
       <div className="grid grid-cols-2 gap-4 mt-4">
         {options.map((option, index) => (
@@ -109,7 +125,11 @@ function MultichoiceQuestion({
       {
         currenQuestion === questions?.length - 1 && <button className='bg-red-600 text-white px-4 py-2 rounded-md w-fit mt-4 hover:bg-red-700' onClick={handleFinish}>Finish</button>
       }
-      <h1 className='text-lime-400'>Correct: {numberCorrectAnswer}/{questions?.length}</h1>
+      <Modal isOpen={modalIsOpen} onClose={closeModal}>
+        <img src={CongratulationPic.src} className='w-40 h-40 mx-auto'/>
+        <h2>Result</h2>
+        <p>Correct: {numberCorrectAnswer}/{questions?.length}</p>
+      </Modal>
     </div>
   );
 }

@@ -27,9 +27,13 @@
     "postbuild": "next-sitemap"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.1.1",
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
+    "framer-motion": "^10.15.1",
     "jose": "^4.14.4",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.1",

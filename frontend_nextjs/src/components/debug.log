@@ -19,3 +19,4 @@
 [0809/182805.164:ERROR:registration_protocol_win.cc(107)] CreateFile: The system cannot find the file specified. (0x2)
 [0809/182856.147:ERROR:registration_protocol_win.cc(107)] CreateFile: The system cannot find the file specified. (0x2)
 [0809/200506.438:ERROR:registration_protocol_win.cc(107)] CreateFile: The system cannot find the file specified. (0x2)
+[0810/140322.975:ERROR:registration_protocol_win.cc(135)] TransactNamedPipe: The pipe has been ended. (0x6D)

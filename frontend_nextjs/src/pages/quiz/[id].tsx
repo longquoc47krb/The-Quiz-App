@@ -38,8 +38,8 @@ function QuizDetailPage({ quizData }: QuizDetailPageProps) {
         options={quizData?.questions[currentQuestion]?.options} 
         title={quizData?.questions[currentQuestion]?.text}
         answer={quizData?.questions[currentQuestion]?.correctOption}
-        time={15 * quizData.questions?.length}
         explain={quizData?.questions[currentQuestion]?.explain}
+        time={10 * quizData?.questions?.length}
         /> : <QuizStartForm quizData={quizData}/>
       }
      </Main>

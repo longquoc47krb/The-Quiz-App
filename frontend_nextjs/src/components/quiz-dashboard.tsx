@@ -11,10 +11,10 @@ interface QuizProps {
 }
 
 const QuizDashboard : NextPage<QuizProps> = ({ quizzes }) => {
-  return <div className='w-full h-full flex flex-wrap justify-center'>
+  return <div className='m-4 w-full h-full flex flex-wrap justify-start'>
     {
-      quizzes.map(({ id, title, questions, author, category }: Quiz) => (
-        <QuizEntity  key={id} id={id} title={title} questions={questions} author={author} category={category}/>
+      quizzes.map((props: Quiz) => (
+        <QuizEntity  key={props.id} {...props}/>
       ))
     }
   </div>;
