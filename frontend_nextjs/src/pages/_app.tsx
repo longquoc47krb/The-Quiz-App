@@ -6,14 +6,17 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import Loading from '@/components/loading';
+import { AuthProvider } from '@/hooks/useAuthContext';
 import store, { persistor } from '@/middlewares/store';
 
 const MyApp = ({ Component, pageProps: { ...pageProps } }: AppProps) => {
   return (
     <Provider store={store}>
-      <PersistGate loading={<Loading />} persistor={persistor}>
-        <Component {...pageProps} />
-      </PersistGate>
+      <AuthProvider>
+        <PersistGate loading={<Loading />} persistor={persistor}>
+          <Component {...pageProps} />
+        </PersistGate>
+      </AuthProvider>
     </Provider>
   );
 };

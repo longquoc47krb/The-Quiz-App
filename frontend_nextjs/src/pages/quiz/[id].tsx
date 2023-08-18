@@ -3,26 +3,30 @@
 // pages/quiz/[id].js
 
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import {useSelector  } from 'react-redux';
 
 import { fetchQuizById } from '@/apis/quizServices';
 import Loading from '@/components/loading';
-import MultichoiceQuestion from '@/components/multi-choice-questions';
+import Modal from '@/components/modal';
+import MultichoiceQuestion from '@/components/multi-choice-section';
 import QuizStartForm from '@/components/quiz-start-form';
-import useAuth from '@/hooks/useAuth';
 import type { Quiz } from '@/interfaces';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 
 function QuizDetailPage({ quizData }: QuizDetailPageProps) {
   const router = useRouter();
-  const { user } = useAuth();
   const { id } = router.query;
   const isStart = useSelector(state => state.quizSession.isStart);
   if (!quizData) {
     return <Loading />;
   }
+  const [modalOpen, setModalOpen] = useState(true);
   const currentQuestion = useSelector(state => state.quizSession.currentQuestion)
+  const closeModal = () => {
+    setModalOpen(false);
+  }
   return (
     <Main
       meta={
@@ -32,16 +36,20 @@ function QuizDetailPage({ quizData }: QuizDetailPageProps) {
         />
       }
      >
-      {
-        isStart ?
-        <MultichoiceQuestion 
+      <Modal isOpen={modalOpen} onClose={()=> {
+        closeModal()
+        router.push('/')
+        }}>
+        <QuizStartForm quizData={quizData} onClose={closeModal}/>
+      </Modal>
+        {isStart && <MultichoiceQuestion 
         options={quizData?.questions[currentQuestion]?.options} 
         title={quizData?.questions[currentQuestion]?.text}
         answer={quizData?.questions[currentQuestion]?.correctOption}
         explain={quizData?.questions[currentQuestion]?.explain}
         time={10 * quizData?.questions?.length}
-        /> : <QuizStartForm quizData={quizData}/>
-      }
+        /> }
+       
      </Main>
   );
 }

@@ -1,7 +1,7 @@
 // update-user.dto.ts
 import { IsEmail, IsOptional, IsString, IsDate, IsInt, Min, IsBoolean, IsArray } from 'class-validator';
 import { LoginType, Role } from 'src/configs/enum';
-import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
+
 import { User } from '../entities/user.entity';
 import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
 import { Token } from 'src/modules/token/entities/token.entity';
@@ -71,10 +71,6 @@ export class UpdateUserDTO {
     @IsOptional()
     @IsArray()
     createdQuizzes?: any[]; // Replace 'any' with the appropriate type
-
-    @IsOptional()
-    @IsArray()
-    quizSessions?: QuizSession[]; // Replace 'QuizSession' with the appropriate entity path
 
     @IsOptional()
     @IsString()

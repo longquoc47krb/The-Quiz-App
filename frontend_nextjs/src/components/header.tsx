@@ -9,20 +9,18 @@
 /* eslint-disable import/newline-after-import */
 /* eslint-disable no-inner-declarations */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import useAuth from "@/hooks/useAuth";
-import Cookies from "js-cookie";
 import DarkModeSwitch from "./dark-mode-switch";
+import { useAuth } from "@/hooks/useAuthContext";
 
 const Header = () => {
-  const { user, setUser } = useAuth()
+  const { user, setCurrentUser, removeCurrentUser } = useAuth();
+  useEffect(() => {
+    setCurrentUser();
+  }, []);
   const [toggle, setToggle] = useState(false);
   const router = useRouter();
-  const handleLogout = () => {
-   Cookies.remove("accessToken");
-   setUser(null)
-  };
   const handleLogin = () => {
     router.push('/login');
   };
@@ -47,12 +45,12 @@ const Header = () => {
         )}
       </div>
       {toggle && user && (
-        <ul className="bg-gray-100 p-4 absolute top-14 right-12">
-          <li className="block cursor-pointer hover:bg-slate-300">Profile</li>
-          <li className="block cursor-pointer  hover:bg-slate-300">Settings</li>
+        <ul className="menu-list">
+          <li className="menu-item">Profile</li>
+          <li className="menu-item">Settings</li>
           <li
-            className="block cursor-pointer  hover:bg-slate-300"
-            onClick={handleLogout}
+            className="menu-item"
+            onClick={removeCurrentUser}
           >
             Log out
           </li>

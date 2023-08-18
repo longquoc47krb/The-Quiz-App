@@ -2,8 +2,21 @@ import React from 'react';
 
 function Loading() {
   return (
-    <div className="flex items-center justify-center dark:bg-slate-900 w-screen">
-      <span className="loader" />
+    <div className="flex items-center justify-center bg-slate-900 w-screen h-screen">
+      <div class="peeek-loading">
+        <ul>
+          <li />
+          <li />
+          <li />
+          <li />
+          <li />
+          <li />
+          <li />
+          <li />
+          <li />
+          <li />
+        </ul>
+      </div>
     </div>
   );
 }

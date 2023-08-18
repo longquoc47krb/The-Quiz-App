@@ -1,5 +1,5 @@
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuizCategory } from 'src/common/category.enum';
 import { Question } from 'src/modules/question/entities/question.entity';
@@ -22,12 +22,13 @@ export class QuizService {
     private userService: UserService) { }
   async create(createQuizDto: CreateQuizDto, userJwt: User) {
     const { questions } = createQuizDto;
-    const user: User = await this.userService.findByEmail(userJwt.email);
-    console.log({ ...createQuizDto, author: user })
-    const quiz = await this.quizRepository.create({
-      author: user,
-      ...createQuizDto
-    })
+    const user: User = await this.userService.getOne(userJwt.id)
+    const quiz = new Quiz();
+    quiz.category = createQuizDto.category;
+    quiz.description = createQuizDto.description;
+    quiz.authorId = user.id;
+    quiz.title = createQuizDto.title;
+    console.log({ quiz })
     const savedQuestions = [];
     const uniqueQuestionTexts = [];
     for (const questionData of questions) {
@@ -120,5 +121,22 @@ export class QuizService {
       totalQuestions,
       percentage,
     };
+  }
+  async deleteQuizById(quizId: number): Promise<void> {
+    const quiz = await this.quizRepository
+      .createQueryBuilder('quiz')
+      .leftJoinAndSelect('quiz.questions', 'questions')
+      .where('quiz.id = :quizId', { quizId })
+      .getOne();
+
+    if (!quiz) {
+      throw new NotFoundException(`Quiz with ID ${quizId} not found.`);
+    }
+
+    // Delete related questions first
+    await Promise.all(quiz.questions.map(question => this.questionRepository.remove(question)));
+
+    // Now you can delete the quiz safely
+    await this.quizRepository.remove(quiz);
   }
 }

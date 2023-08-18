@@ -14,7 +14,33 @@ export const QuizCategoryList = [
     'Sports',
     'Science and Technology',
     'History',
+     'Geography',
+     'Mathematics',
     'Art and Artists',
+    'Nature and Environment',
     'General Knowledge',
     'Movies and TV Shows',
+    'Literature and Books',
+    'Famous Personalities'
+
+]
+export const CorrectMessage = [
+  "Well done! That's absolutely correct.",
+"You're right! Great job!",
+"Excellent! You've got it right.",
+"That's the correct answer. Keep up the good work!",
+"You nailed it! Correct!"
+]
+export const IncorrectMessage = [
+  "Oops, that's not quite right. Try again!",
+"Not quite there. Give it another shot!",
+"Close, but not the correct answer. Keep trying!",
+"Unfortunately, that's incorrect. Keep practicing!",
+"Hmm, that's not the right answer. Keep going!"
+]
+export const NoAnswerProvidedMessage = [
+  "It looks like you didn't provide an answer. Please give it a try.",
+"Don't worry if you're unsure. Take your time and give it your best shot.",
+"Feel free to guess if you're not sure about the answer.",
+"Take a moment to think, and when you're ready, go ahead and answer."
 ]

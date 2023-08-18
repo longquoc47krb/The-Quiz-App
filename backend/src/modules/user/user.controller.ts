@@ -58,7 +58,7 @@ export class UserController {
   @UseGuards(RolesGuard)
   async getMe(
     @User() user: UserEntity,
-  ): Promise<UserResponseDTO> {
+  ) {
     try {
       console.log({ user })
       return await this.userService.getOne(user?.id)

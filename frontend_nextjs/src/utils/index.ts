@@ -32,4 +32,67 @@ export const checkOptionIsCorrectOrNot = (
 ) => {
   return option === correctAnswer;
 };
+export function updateAnswers(yourAnswers: any[], questions: any[]) {
+  if (!yourAnswers || !questions) {
+    return;
+  }
+
+  const updatedOptions = [...yourAnswers]; // Copy existing answers
+
+  if (yourAnswers.length !== questions.length) {
+    for (let i = yourAnswers.length; i < questions.length; i++) {
+      updatedOptions.push({
+        yourChoice: '',
+        correct: checkOptionIsCorrectOrNot('', questions[i]?.correctOption),
+        answer: questions[i]?.correctOption,
+        time: 0,
+      });
+    }
+  }
+
+  return updatedOptions;
+}
+export const renderCorrectRatio = (value: number) => {
+  if (value < 50 && value > 10) {
+    return 'text-red-500';
+  }
+  if (value >= 50 && value < 60) {
+    return 'text-orange-500';
+  }
+  if (value >= 60 && value < 80) {
+    return 'text-lime-500';
+  }
+  if (value >= 80) {
+    return 'text-green-500';
+  }
+  return 'text-gray-500';
+};
+export function formatDateToCustomFormat(dateString, timeZone) {
+  const options = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short',
+  };
+
+  const date = new Date(dateString);
+  const formatter = new Intl.DateTimeFormat('en', options);
+
+  if (timeZone) {
+    options.timeZone = timeZone;
+    formatter.timeZone = timeZone;
+  }
+
+  return formatter.format(date);
+}
+export function calculateTimeDifference(dateString1, dateString2) {
+  const date1 = new Date(dateString1);
+  const date2 = new Date(dateString2);
+
+  const timeDifferenceInSeconds = (date1 - date2) / 1000;
+
+  return timeDifferenceInSeconds;
+}
 export * from './validate/index';

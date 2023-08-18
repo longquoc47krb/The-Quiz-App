@@ -8,9 +8,10 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { TokenService } from '../token/token.service';
 import { TokenModule } from '../token/token.module';
+import { Quiz } from '../quiz/entities/quiz.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), TokenModule
+  imports: [TypeOrmModule.forFeature([User, Quiz]), TokenModule
   ],
   controllers: [UserController],
   providers: [UserService, Repository<User>, JwtService],

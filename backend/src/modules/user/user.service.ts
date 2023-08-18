@@ -14,6 +14,7 @@ import { LoginType, Role } from 'src/configs/enum';
 import { CheckUserExistenceDTO } from './dto/user-existence.dto';
 import { Logger } from 'winston';
 import { TokenService } from '../token/token.service';
+import { Quiz } from '../quiz/entities/quiz.entity';
 @Injectable()
 export class UserService {
   constructor(
@@ -21,7 +22,9 @@ export class UserService {
     private readonly logger: Logger,
     private tokenService: TokenService,
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
+    @InjectRepository(Quiz)
+    private quizRepository: Repository<Quiz>
   ) { }
   async createUser(createUserDto: CreateUserDto): Promise<void> {
     const { name, username, email, password, loginType, avatar, verified } = createUserDto;
@@ -39,8 +42,7 @@ export class UserService {
 
   }
   async getOne(id: number) {
-    const user = await this.userRepository
-      .findOne({ where: { id } });
+    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect('user.completedQuizzes', 'quiz').leftJoinAndSelect("user.token", "token").where('user.id = :id', { id }).getOne()
 
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
@@ -87,7 +89,7 @@ export class UserService {
     return false;
   }
   async findAll() {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect('user.completedQuizzes', 'quiz').leftJoinAndSelect("user.token", "token").getMany();
     return convertUsersToDTO(users);
   }
   async findByEmail(email: string) {
@@ -95,6 +97,23 @@ export class UserService {
     // return mapUserToUserResponseDTO(user);
     return (user);
 
+  }
+  async addCompletedQuiz(userId: number, quizId: number): Promise<User> {
+    const user = await this.userRepository.createQueryBuilder('user').leftJoinAndSelect('user.completedQuizzes', 'quiz').where('user.id = :userId', { userId }).getOne();
+    const quiz = await this.quizRepository.createQueryBuilder('quiz')
+      .leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user')
+      .where('quiz.id = :quizId', { quizId })
+      .getOne();
+    if (!user || !quiz) {
+      throw new Error('User or quiz not found.');
+    }
+    if (!user.completedQuizzes) {
+      user.completedQuizzes = [];
+    }
+    if (!user.completedQuizzes.includes(quiz)) {
+      user.completedQuizzes.push(quiz);
+    }
+    return this.userRepository.save(user);
   }
   async update(id: number, updateUserDto: UpdateUserDTO): Promise<User> {
     const user = await this.getOne(id);

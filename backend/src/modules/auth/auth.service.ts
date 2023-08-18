@@ -17,6 +17,9 @@ import { UserResponseDTO } from '../user/dto/user-response.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { TokenDto } from './dto/token.dto';
 import { UpdateTokenDto } from '../token/dto/update-token.dto';
+import { mapUserToUserResponseDTO } from 'src/common/helpers/convertToDTO';
+import moment from 'moment';
+import { getDateInGMTPlus7 } from 'src/common/helpers/Date';
 
 @Injectable()
 export class AuthService {
@@ -60,7 +63,7 @@ export class AuthService {
             ...rest
         }
         await this.userService.update(user.id, updateUser);
-        const authToken: TokenDto = this.generateAuthToken(user);
+        const authToken: TokenDto = this.generateAuthToken(mapUserToUserResponseDTO(user));
         return Promise.resolve(authToken);
     }
     public generateAuthToken(user: UserResponseDTO): TokenDto {
@@ -69,6 +72,7 @@ export class AuthService {
             id: user.id,
             type: 'access',
             name: user.name,
+            email: user.email,
             roles: user.roles,
             loginType: user.loginType
         });
@@ -209,4 +213,8 @@ export class AuthService {
         }
         await this.userService.update(user.id, update)
     }
+}
+
+function getCurrentDateInHoChiMinh(): Date {
+    throw new Error('Function not implemented.');
 }

@@ -11,12 +11,17 @@ interface QuizProps {
 }
 
 const QuizDashboard : NextPage<QuizProps> = ({ quizzes }) => {
-  return <div className='m-4 w-full h-full flex flex-wrap justify-start'>
-    {
-      quizzes.map((props: Quiz) => (
-        <QuizEntity  key={props.id} {...props}/>
-      ))
-    }
+  return <div>
+     { quizzes.length > 0 && <div>
+       <h1 className="m-4 text-2xl text-gray-400 font-medium">Discover</h1>
+           <div className='m-4 w-screen h-full grid grid-cols-[24rem_24rem_24rem] gap-4'>
+        {
+          quizzes.map((props: Quiz) => (
+            <QuizEntity  key={props.id} {...props}/>
+          ))
+        }
+           </div>
+     </div>}
   </div>;
 };
 

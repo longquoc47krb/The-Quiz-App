@@ -22,6 +22,7 @@ import GridPagination from '../grid-pagination';
 import UploadFile from '../upload-file';
 
 const CreateQuizForm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { control, handleSubmit, register, formState: {errors},   getValues,setValue } = useForm<Quiz>({
     defaultValues: {
       title: '',
@@ -83,12 +84,18 @@ const CreateQuizForm = () => {
   const optionsList = getValues('questions');
   const values = getValues();
   const onSubmit: SubmitHandler<CreateQuizDto> = async (data : CreateQuizDto) => {
+    if (step === 2 && isSubmitting) {
     try {
+      
       const response: any = await createQuiz(data);
-      toast.success("Login successful!"); // Display success toast
+      toast.success("Created quiz successful!"); // Display success toast
+      setIsSubmitting(false);
     } catch (error) {
       toast.error("Create quiz failed. Try again"); // Display error toast
+    }finally {
+      setIsSubmitting(false); // Reset the flag after submission (success or failure)
     }
+  }
   };
   
   const goToNextStep = () => {
@@ -142,7 +149,7 @@ const CreateQuizForm = () => {
         </label>
         </div>;
       case 2:
-        return <div className='flex items-center'>
+        return <div className='flex items-start'>
         <div>
           <h3 className="text-xl font-bold mt-4">Questions:</h3>
           <UploadFile onDataUpload={handleDataUpload}/>
@@ -215,9 +222,8 @@ const CreateQuizForm = () => {
             Add Question
           </button>
         </div>
-        <div>
+        <div className="mt-8">
           <GridPagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} handleNextPage={handleNextPage} handlePrevPage={handlePrevPage}/>
-          
         </div>
         </div>;
       default:
@@ -253,6 +259,7 @@ const CreateQuizForm = () => {
         {step === 2 && (
           <button
             type="submit"
+            onClick={()=>setIsSubmitting(true)}
             className="text-center bg-green-500 text-white px-4 py-2 rounded mt-4 hover:bg-green-700"
           >
             Submit Quiz

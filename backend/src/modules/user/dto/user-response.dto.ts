@@ -1,5 +1,3 @@
-
-import { QuizSession } from "src/modules/quiz-session/entities/quiz-session.entity";
 import { Quiz } from "src/modules/quiz/entities/quiz.entity";
 import { User } from "../entities/user.entity";
 import { LoginType, Role } from "src/configs/enum";
@@ -22,7 +20,6 @@ export class UserResponseDTO {
     active: boolean;
     avatar: string;
     createdQuizzes: any;
-    quizSessions: QuizSession[];
     loginType: LoginType;
     token: Token;
 }

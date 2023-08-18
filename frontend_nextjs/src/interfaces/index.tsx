@@ -139,7 +139,37 @@ interface CreateQuestionDto {
   correctOption: string;
   explain: string;
 }
-
+interface CreateAnswerDto {
+  yourChoice: string;
+  answer: string;
+  correct: boolean;
+}
+export interface CreateResultDto {
+  player_id: number;
+  quiz_id: number;
+  result: CreateAnswerDto[];
+  startTime: Date;
+  endTime: Date;
+}
+export interface Result {
+  id: number;
+  player_id: number;
+  player: User;
+  quiz_id: number;
+  quiz: Quiz;
+  result: Answer[];
+  startTime: Date;
+  endTime: Date;
+  score: number;
+}
+interface Answer {
+  id: number;
+  yourChoice: string;
+  answer: string;
+  correct: boolean;
+  result_id: number;
+  result: Result;
+}
 // Define the interface for the CreateQuizDto
 export interface CreateQuizDto {
   title: string;

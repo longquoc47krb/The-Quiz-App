@@ -22,6 +22,12 @@ const quizSessionSlice = createSlice({
         ...action.payload,
       };
     },
+    setUser: (state, action) => {
+      return {
+        ...state,
+        user: action.payload,
+      };
+    },
     isStart: (state, action) => {
       return {
         ...state,
@@ -32,6 +38,18 @@ const quizSessionSlice = createSlice({
       return {
         ...state,
         currentQuestion: action.payload,
+      };
+    },
+    setStartTime: (state, action) => {
+      return {
+        ...state,
+        startTime: action.payload,
+      };
+    },
+    setEndTime: (state, action) => {
+      return {
+        ...state,
+        endTime: action.payload,
       };
     },
   },
@@ -46,6 +64,12 @@ const persistedReducer = persistReducer(
   quizSessionSlice.reducer,
 );
 
-export const { setQuizSession, isStart, setCurrentQuestion } =
-  quizSessionSlice.actions;
+export const {
+  setQuizSession,
+  isStart,
+  setCurrentQuestion,
+  setStartTime,
+  setEndTime,
+  setUser,
+} = quizSessionSlice.actions;
 export default persistedReducer;

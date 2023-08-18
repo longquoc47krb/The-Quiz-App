@@ -19,7 +19,6 @@ import { FcGoogle } from 'react-icons/fc';
 import { login } from '@/apis/authServices';
 import { EXPIRATION_DATE } from '@/common/constants';
 import ErrorMessage from '@/components/error-message';
-import withAuth from '@/hocs/withAuth';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 
@@ -30,7 +29,7 @@ export interface LoginFormValues {
 }
 
 const LoginPage: React.FC = () => {
-  // const { cookies, setCookie } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     register,
     handleSubmit,
@@ -43,6 +42,7 @@ const LoginPage: React.FC = () => {
   };
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     // Handle form submission
+    if(isSubmitting){
     const { identifier, password } = data;
     const loginDto = { identifier, password };
     try {
@@ -53,10 +53,13 @@ const LoginPage: React.FC = () => {
         expires: EXPIRATION_DATE
       } );
       router.push('/')
-      toast.success("Login successful!"); // Display success toast
+      toast.success("Login successful!");
+      setIsSubmitting(false) // Display success toast
     } catch (error) {
       toast.error("Login failed. Please check your credentials."); // Display error toast
+      setIsSubmitting(false)
     }
+  }
   };
   const handleGoogleLogin = () => {
     window.open(process.env.NEXT_PUBLIC_GOOGLE_OAUTH, '_blank');
@@ -106,7 +109,7 @@ const LoginPage: React.FC = () => {
                   <a href="/forgot-password">Forgot password?</a>
                 </p>
               </div>
-              <button className="primary-button bg-primary" type="submit">
+              <button className="primary-button bg-primary" type="submit" onClick={()=> setIsSubmitting(true)}>
                 Sign in
               </button>
               <div className="or-divider">
@@ -136,4 +139,4 @@ const LoginPage: React.FC = () => {
     </Main>
   );
 };
-export default withAuth(LoginPage);
+export default LoginPage;

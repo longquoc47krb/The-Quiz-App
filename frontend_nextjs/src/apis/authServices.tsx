@@ -25,3 +25,15 @@ export const registerUser = async (createUser: CreateUserDto) => {
     return error;
   }
 };
+export const sendResetPassword = async(email) => {
+  try {
+    const response = await axiosClient.post("/auth/send-token-email", {
+      params: { 
+        email,
+        type: 'RESET_PASSWORD'
+       }})
+       return response.data;
+  }catch (error) {
+    return error;
+  }
+}

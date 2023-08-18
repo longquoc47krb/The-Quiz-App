@@ -41,7 +41,6 @@ export function mapUserToUserResponseDTO(user: User) {
         active: user.active,
         avatar: user.avatar,
         createdQuizzes: user.createdQuizzes,
-        quizSessions: user.quizSessions,
         loginType: user.loginType,
         token: user.token
     };

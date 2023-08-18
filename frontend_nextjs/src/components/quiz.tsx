@@ -16,23 +16,25 @@ function QuizEntity(props: QuizProps) {
   const router = useRouter();
   return (
     <div
-      className="dark:bg-zinc-300 rounded-lg cursor-pointer p-4 max-h-[15rem] min-w-[15rem] flex flex-col justify-between"
+      className="item-container"
       onClick={() => router.push(`/quiz/${id}`)}
     >
       <div>
-        <h1 className="text-3xl font-bold line-clamp-2">{title}</h1>
-        <h2 className="font-medium text-gray-600">{category}</h2>
-        <h2 className="font-medium text-gray-600">
-          {questions.length} questions
-        </h2>
+        <h1 className="text-3xl font-medium line-clamp-2">{title}</h1>
+        <h2 className="font-normal italic text-gray-600">{category}</h2>
       </div>
-      <div className="flex items-center">
-        <img
-          src={author?.avatar}
-          className="rounded-full"
-          style={{ width: 48 }}
-        />
-        <h2>{author?.name}</h2>
+      <div className="flex justify-between">
+        <div className="flex items-center gap-2">
+          <img
+            src={author?.avatar}
+            className="rounded-full"
+            style={{ width: 32 }}
+          />
+          <h2  className="text-sm">{author?.name}</h2>
+        </div>
+        <h2 className="font-thin text-gray-600">
+            {questions.length} questions
+          </h2>
       </div>
     </div>
   );

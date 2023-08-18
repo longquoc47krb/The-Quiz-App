@@ -45,7 +45,7 @@ export class QuizController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.quizService.remove(+id);
+    return this.quizService.deleteQuizById(+id);
   }
   @Post('submit')
   async submitExam(

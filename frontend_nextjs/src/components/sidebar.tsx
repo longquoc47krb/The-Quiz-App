@@ -5,7 +5,7 @@
 /* eslint-disable react/button-has-type */
 import type { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BiHomeAlt } from 'react-icons/bi';
 import { MdOutlineLeaderboard } from 'react-icons/md';
@@ -14,13 +14,38 @@ const Sidebar = ({className} : {className: string}) => {
   const router = useRouter();
   const homeRef = useRef(null);
   const createRef = useRef(null);
+  const [index, setIndex] = useState(0)
+  useEffect(()=>{
+    switch(router.pathname){
+      case '/': {
+        setIndex(0);
+        break;
+      }
+      case '/quiz/create': {
+        setIndex(1);
+        break;
+      }
+      case '/ranking': {
+        setIndex(2);
+        break;
+      }
+      default: {setIndex(3);
+      break;}
+    }
+  },[router.pathname])
+
+  const translateYValues = ['translate-y-0', 'translate-y-[67px]', 'translate-y-[140px]', 'hidden'];
+
+  const classNameString = `sidebar-indicator absolute active -left-2 transition-transform ease-linear -z-10 duration-300 ${translateYValues[index]}`;
+
   return (
-    <ul className={`w-fit flex flex-col inline-block ${className}`}>
+    <ul className={`relative w-fit flex flex-col inline-block ${className}`}>
       <li
-        ref={homeRef}
-        className={`sidebar-item ${router.pathname === '/' ? 'active' : ''}`}
+        ref={homeRef}  
+        className={`sidebar-item ${router.pathname === '/' ? 'active-text' : ''}`}
         onClick={() => {
           router.push('/');
+          setIndex(0)
         }}
       >
         <BiHomeAlt className='mx-auto' size={32} />
@@ -28,9 +53,10 @@ const Sidebar = ({className} : {className: string}) => {
       </li>
       <li
         ref={createRef}
-        className={`sidebar-item ${router.pathname === '/quiz/create' ? 'active' : ''}`}
+        className={`sidebar-item ${router.pathname === '/quiz/create' ? 'active-text' : ''}`}
         onClick={() => {
           router.push('/quiz/create');
+          setIndex(1)
         }}
       >
         <AiOutlinePlus className='mx-auto' size={32} />
@@ -38,14 +64,19 @@ const Sidebar = ({className} : {className: string}) => {
       </li>
       <li
         ref={createRef}
-        className={`sidebar-item ${router.pathname === '/ranking' ? 'active' : ''}`}
+        className={`sidebar-item ${router.pathname === '/ranking' ? 'active-text' : ''}`}
         onClick={() => {
           router.push('/ranking');
+          setIndex(2)
         }}
       >
         <MdOutlineLeaderboard className='mx-auto' size={32} />
         <span>Ranking</span>
       </li>
+      <span
+        className={classNameString}
+      />
+      {/* <span className={`sidebar-item active absolute -z-20 translate-y-[${80 * index}px] duration-75 ease-linear`}/> */}
     </ul>
   );
 };

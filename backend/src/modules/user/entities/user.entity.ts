@@ -1,8 +1,9 @@
 
 import { DEFAULT_USER_AVATAR } from 'src/configs/constants';
 import { LoginType, Role } from 'src/configs/enum';
-import { QuizSession } from 'src/modules/quiz-session/entities/quiz-session.entity';
+
 import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
+import { Result } from 'src/modules/result/entities/result.entity';
 import { Token } from 'src/modules/token/entities/token.entity';
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
@@ -45,16 +46,20 @@ export class User {
     @Column({ default: DEFAULT_USER_AVATAR })
     avatar: string;
     createdQuizzes: any;
-    @OneToMany(() => QuizSession, quizSession => quizSession.user)
-    quizSessions: QuizSession[];
     @Column({ default: LoginType.EmailPassword })
     loginType: LoginType;
     @Column({ default: false })
     verified: boolean;
+    @Column({ nullable: true })
+    token_id: number;
     @OneToOne(() => Token, token => token.user)
     @JoinColumn({ name: 'token_id' })
     token: Token;
 
     @OneToMany(() => Quiz, quiz => quiz.author)
     quizzes: Quiz[];
+
+    @OneToMany(() => Result, result => result.player)
+    results: Result[];
+
 }

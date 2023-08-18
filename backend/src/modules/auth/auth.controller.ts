@@ -12,6 +12,8 @@ import { LoginType } from 'src/configs/enum';
 import { CheckUserExistenceDTO } from '../user/dto/user-existence.dto';
 import { MailService } from '../mail/mail.service';
 import { UpdateUserDTO } from '../user/dto/update-user.dto';
+import moment from 'moment-timezone';
+import { getDateInGMTPlus7 } from 'src/common/helpers/Date';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -84,6 +86,7 @@ export class AuthController {
             username: user.username
         }
         const isExist = await this.userService.checkUserExists(checkUser)
+
         if (!isExist) {
             const createNewUser: CreateUserDto = {
                 name: user.name,
@@ -99,11 +102,12 @@ export class AuthController {
             await this.mailService.sendWelcomeEmail(user.email, user.username);
             await this.userService.createUser(createNewUser)
         }
+        const userInfo = await this.userService.findByEmailOrUsername(user.email)
         const updateUser: UpdateUserDTO = {
             lastLogin: new Date(),
         }
-        await this.userService.update(user.id, updateUser);
-        const token = this.authService.generateAuthToken(user);
+        await this.userService.update(userInfo.id, updateUser);
+        const token = this.authService.generateAuthToken(userInfo);
         const { accessToken } = token;
         res.redirect(`${process.env.APP_URL}auth?token=${accessToken}`);
 
@@ -130,3 +134,4 @@ export class AuthController {
 
 
 }
+

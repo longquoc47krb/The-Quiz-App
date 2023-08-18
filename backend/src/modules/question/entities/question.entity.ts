@@ -17,7 +17,7 @@ export class Question {
     @Column()
     correctOption: string;
 
-    @Column()
+    @Column({ length: 1000 })
     explain: string;
 
     @ManyToOne(() => Quiz, quiz => quiz.questions)

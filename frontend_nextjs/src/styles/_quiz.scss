@@ -79,7 +79,7 @@
 }
 @layer components{
   .correct-choice {
-    @apply bg-lime-400;
+    @apply bg-[#09ff00];
   }
   .incorrect-choice {
     @apply bg-red-600;
@@ -103,7 +103,7 @@
   75%,
   85%,
   95% {
-    background: greenyellow;
+    background: #0a9b05;;
   }
   10%,
   20%,
@@ -115,7 +115,7 @@
   80%,
   90%,
   100% {
-    background: rgb(23, 221, 33);
+    background: #09ff00;;
   }
 }
 .fade-in {
@@ -170,4 +170,8 @@
   100% {
     opacity:1;
   }
+}
+.blue-gradient{
+  background: rgb(14,85,154);
+  background: linear-gradient(0deg, rgba(14,85,154,1) 0%, rgba(2,44,84,1) 100%);
 }

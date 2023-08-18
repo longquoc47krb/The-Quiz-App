@@ -21,7 +21,11 @@ function withAuth<T extends Props>(
     const router = useRouter();
     const currentRoute = router.pathname;
     useEffect(() => {
-      if (!props.isAuthenticated) {
+      if (
+        !props.isAuthenticated &&
+        currentRoute !== '/login' &&
+        currentRoute !== '/register'
+      ) {
         router.replace('/login'); // Redirect to login page if not authenticated
       } else if (
         (currentRoute === '/login' && props.isAuthenticated) ||

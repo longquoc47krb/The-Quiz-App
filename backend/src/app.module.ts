@@ -13,7 +13,6 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { QuizModule } from './modules/quiz/quiz.module';
 import { QuestionModule } from './modules/question/question.module';
-import { QuizSessionModule } from './modules/quiz-session/quiz-session.module';
 import databaseConfig from './configs/database.config';
 import { SharedModule } from './modules/shared/shared.module';
 import { UtilsModule } from './utils/utils.module';
@@ -25,6 +24,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { join } from 'path';
 import { TokenModule } from './modules/token/token.module';
+import { ResultModule } from './modules/result/result.module';
 @Module({
   imports: [
     UserModule,
@@ -74,9 +74,9 @@ import { TokenModule } from './modules/token/token.module';
     AuthModule,
     QuizModule,
     QuestionModule,
-    QuizSessionModule,
     UtilsModule,
     TokenModule,
+    ResultModule,
     WinstonModule.forRoot(loggerConf),
   ],
   controllers: [AppController],

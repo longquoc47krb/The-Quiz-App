@@ -1,8 +1,8 @@
 
 import { QuizCategory } from "src/common/category.enum";
 import { Question } from "src/modules/question/entities/question.entity";
+import { Result } from "src/modules/result/entities/result.entity";
 import { User } from "src/modules/user/entities/user.entity";
-import { QuizSession } from "src/modules/quiz-session/entities/quiz-session.entity";
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('quiz')
@@ -27,6 +27,8 @@ export class Quiz {
     @JoinTable()
     participants: User[];
 
+    @OneToMany(() => Result, result => result.quiz)
+    results: Result[];
 
     @Column({ default: 0 })
     totalParticipants: number;
@@ -34,14 +36,11 @@ export class Quiz {
     @Column({ default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 
-    @OneToMany(() => QuizSession, quizSession => quizSession.quiz)
-    quizSessions: QuizSession[];
-
-    @Column({ name: 'authorId' })
-    authorId: string;
+    @Column({ nullable: true })
+    authorId: number; // Cột để lưu trữ khóa ngoại
 
     @ManyToOne(() => User, user => user.quizzes)
-    @JoinColumn({ name: 'authorId' })
-    author: User;
+    @JoinColumn({ name: 'authorId' }) // Liên kết với cột "authorId"
+    author: User; // Thuộc tính để truy cập thông tin User
 
 }

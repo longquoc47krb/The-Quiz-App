@@ -7,6 +7,13 @@ import QuizDashboard from '@/components/quiz-dashboard';
 import { Quiz } from '@/interfaces';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next/types';
 import { fetchQuizzes } from '@/apis/quizServices';
+import {
+  isStart,
+  setQuizSession,
+  setCurrentQuestion,
+} from '@/middlewares/slices/quizSessionSlice';
+import { useDispatch } from 'react-redux';
+import RecentYourQuizzes from '@/components/recent-your-quizzes';
 
 export const getServerSideProps: GetServerSideProps<{
   quizzes: Quiz[];
@@ -19,8 +26,13 @@ export const getServerSideProps: GetServerSideProps<{
 const Index = ({
   quizzes,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const dispatch = useDispatch();
+  dispatch(isStart(false));
+  dispatch(setQuizSession(null));
+  dispatch(setCurrentQuestion(0));
   return (
     <Main meta={<Meta title="Quizaka | Home Page" description="Quizaka" />}>
+      <RecentYourQuizzes />
       <QuizDashboard quizzes={quizzes} />
     </Main>
   );

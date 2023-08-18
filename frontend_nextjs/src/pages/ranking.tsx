@@ -6,7 +6,7 @@ import { Main } from '@/templates/Main';
 const Ranking: React.FC = () => {
   return (
     <Main meta={<Meta title="Login" description="Login" />}>
-      <div className="flex justify-center items-center h-full w-full">
+      <div className="flex justify-center items-center h-[calc(100vh-10rem)] w-full">
         Ranking
       </div>
     </Main>
