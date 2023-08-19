@@ -13,21 +13,16 @@ const MultiChoiceQuestionsPreview = ({
   title,
   options,
   explain,
-  result,
+  yourChoice,
   answer,
 }) => {
-  console.log({ result });
   const [isCorrect, setIsCorrect] = useState([false, false, false, false]);
-  console.log(answer);
   useEffect(() => {
     const isAnswerCorrect = checkCorrectAnswer(options, answer);
     setIsCorrect(isAnswerCorrect);
   }, [options]);
   const validateClassName = (option: string, index: number) => {
-    console.log({ isCorrect });
-    console.log({ option, index });
-    console.log('your choice:', result?.yourChoice);
-    if (result?.yourChoice === option) {
+    if (yourChoice === option) {
       return isCorrect[index] ? 'correct-choice flicker' : 'incorrect-choice';
     }
     if (option === answer) {
@@ -36,7 +31,7 @@ const MultiChoiceQuestionsPreview = ({
     return isCorrect[index] ? 'correct-choice flicker' : '';
   };
   function renderResult() {
-    if (!result) {
+    if (!yourChoice) {
       return (
         <span className="my-2">
           <ImCross className="inline-block" />{' '}
@@ -45,7 +40,7 @@ const MultiChoiceQuestionsPreview = ({
       );
     }
 
-    if (result.yourChoice === '') {
+    if (yourChoice === '') {
       return (
         <span className="my-2">
           <ImCross className="inline-block" />{' '}
@@ -53,7 +48,7 @@ const MultiChoiceQuestionsPreview = ({
         </span>
       );
     }
-    if (result.yourChoice === result.answer) {
+    if (yourChoice === answer) {
       return (
         <span className="text-left text-lime-400 my-2">
           <FaCheck className="inline-block text-lime-400" />{' '}
@@ -69,10 +64,10 @@ const MultiChoiceQuestionsPreview = ({
     );
   }
   return (
-    <div className="flex items-center flex-col py-4 absolute">
-      <h1 className="dark:text-gray-300">{title}</h1>
+    <div className="flex md:items-center flex-col py-4 absolute">
+      <h1 className="dark:text-gray-300 w-[60vw] text-center">{title}</h1>
       <div className="flex flex-col items-start">
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="md:grid md:grid-cols-2 md:gap-4 mt-4 flex flex-col gap-y-4">
           {options.map((option, index) => (
             <button
               key={index}

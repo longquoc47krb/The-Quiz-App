@@ -14,6 +14,9 @@ const quizSessionSlice = createSlice({
     endTime: null,
     isStart: false,
     currentQuestion: 0,
+    results: [],
+    timePerQuestion: 0,
+    score: 0,
   },
   reducers: {
     setQuizSession: (state, action) => {
@@ -21,6 +24,15 @@ const quizSessionSlice = createSlice({
         ...state,
         ...action.payload,
       };
+    },
+    setResults: (state, action) => {
+      return {
+        ...state,
+        results: action.payload,
+      };
+    },
+    pushToResults: (state, action) => {
+      state.results.push(action.payload);
     },
     setUser: (state, action) => {
       return {
@@ -52,6 +64,18 @@ const quizSessionSlice = createSlice({
         endTime: action.payload,
       };
     },
+    setTimePerQuestion: (state, action) => {
+      return {
+        ...state,
+        timePerQuestion: action.payload,
+      };
+    },
+    setScore: (state, action) => {
+      return {
+        ...state,
+        score: action.payload,
+      };
+    },
   },
 });
 const persistConfig = {
@@ -71,5 +95,11 @@ export const {
   setStartTime,
   setEndTime,
   setUser,
+  setResults,
+  pushToResults,
+  setTimePerQuestion,
+  setScore,
 } = quizSessionSlice.actions;
+export const timePerQuestionSelector = (state) =>
+  state.quizSession.timePerQuestion;
 export default persistedReducer;

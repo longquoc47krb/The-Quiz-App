@@ -13,7 +13,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createResult } from '@/apis/resultServices';
 import CongratulationPic from '@/assets/images/200w.webp';
 import { congratSound, correctSound, incorrectSound } from '@/common/sounds';
-import { isStart, setCurrentQuestion, setEndTime, setQuizSession } from '@/middlewares/slices/quizSessionSlice';
+import type { Quiz } from '@/interfaces';
+import { isStart, pushToResults, setCurrentQuestion, setEndTime, setQuizSession, setTimePerQuestion, timePerQuestionSelector } from '@/middlewares/slices/quizSessionSlice';
 import { checkCorrectAnswer, checkOptionIsCorrectOrNot, renderCorrectRatio,  } from '@/utils';
 
 import SlideAnimation from './animation/slider';
@@ -22,66 +23,86 @@ import Modal from './modal';
 import MultiChoiceQuestions from './multi-choice-questions/multi-choice-questions';
 
 function MultichoiceQuestionSection({
-  title,
-  options,
-  answer,
-  explain,
-  time
+  quiz,
+  currentQuestion
 }: {
-  title: string;
-  options: string[];
-  answer: string;
-  time: any;
-  explain: string;
+  quiz: Quiz,
+  currentQuestion: number
 }) {
+
+  
+  const time = 10 * quiz?.questions?.length
+
+  const timePerQuestion = useSelector(timePerQuestionSelector);
   const [selectOption, setSelectOption] = useState('');
   const [isCorrect, setIsCorrect] = useState([false, false, false, false]);
   const [isFinish, setIsFinish] = useState(false);
+  const [isFillMissing, setIsFillMissing] = useState(false)
   const [isShowExplain, setIsShowExplain] = useState(false);
   const questions = useSelector((state) => state.quizSession.quiz.questions);
-  const [timer, setTimer] = useState(0)
   const dispatch = useDispatch();
-  const currentQuestion = useSelector(
-    (state) => state.quizSession.currentQuestion,
-  );
+  const results = useSelector(state => state.quizSession.results)
   const previousQuestion = usePrevious(currentQuestion);
-  const quiz = useSelector(state => state.quizSession.quiz);
   const user = useSelector(state => state.quizSession.user);
   const startTime = useSelector(state => state.quizSession.startTime);
   const endTime = useSelector(state => state.quizSession.endTime);
   const router = useRouter()
-  const [yourAnswers, setYourAnswers] = useState<string[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const numberCorrectAnswer = countBy(yourAnswers, 'correct').true || 0;
+  const numberCorrectAnswer = countBy(results, 'correct').true || 0;
   async function submitResult(){
-    
+    console.log('Results in submitResult:', results)
     await createResult({
             player_id: user.id,
             quiz_id: quiz.id,
             startTime: new Date(startTime),
             endTime: new Date(endTime),
-            result: yourAnswers.map(({ yourChoice, correct, answer }) => ({
-              yourChoice,
-              correct,
-              answer
-            }))
+            result: results
     })
-  } 
-
-  useEffect(()=>{
-    console.log({isFinish})
-    if(isFinish){
+  }
+  useEffect(()=> {
+    if(isFillMissing){
       submitResult()
+    }
+  },[isFillMissing])
+  useEffect(()=>{
+    if(isFinish){
+      const questionsLength = quiz?.questions?.length || 0;
+
+      if (results.length !== questionsLength) {
+      const diff = questionsLength - results.length;
+
+      for (let i = 0; i < diff; i++) {
+      const newQuestionIndex = results.length + i;
+      const newQuestion = quiz?.questions?.[newQuestionIndex];
+      
+      if (newQuestion) {
+        const { correctOption, options, text, explain } = newQuestion;
+        
+        dispatch(pushToResults({
+          yourChoice: '',
+          correct: false,
+          answer: correctOption,
+          options,
+          time: 0,
+          title: text,
+          explain
+        }));
+        }
+      }
+    } 
+    setIsFillMissing(true)     
     }
   },[isFinish])
   // end sound
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((prevTimer) => prevTimer + 1);
+      dispatch(setTimePerQuestion(timePerQuestion + 1)); // Dispatch the action to update timer
     }, 1000);
 
-    return () => clearInterval(interval); // Clear interval on unmount
-  }, [currentQuestion]);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [dispatch, timePerQuestion, currentQuestion]);
   const handleFinish = () => {
     if(!isFinish && !modalIsOpen)
     {
@@ -90,14 +111,13 @@ function MultichoiceQuestionSection({
     setModalIsOpen(true);
     congratSound.play() 
     dispatch(setQuizSession(null))
-    console.log('finish:', yourAnswers)
     }   
   }
   const resetSelection = () => {
     setSelectOption('');
     setIsCorrect([false, false, false, false]);
     setIsShowExplain(false);
-    setTimer(0);
+    dispatch(setTimePerQuestion(0))
   }
   const resetQuizSession = () => {
     dispatch(setCurrentQuestion(0))
@@ -114,32 +134,16 @@ function MultichoiceQuestionSection({
       handleFinish()
     }
   };
-  
-  const handleAddYourAnswer = (value) => {
-    const isAnswerCorrect = checkOptionIsCorrectOrNot(value, answer);
-    const updatedAnswer = {
-      yourChoice: value,
-      correct: isAnswerCorrect,
-      answer,
-      time: timer
-    };
-    
-    setYourAnswers(prevAnswers => [...prevAnswers, updatedAnswer]);
-  };
   // console.log({yourAnswers})
-  const handleAnswer = (
-    e: React.MouseEvent<HTMLButtonElement>,
+  const handleAnswer = (e: React.MouseEvent<HTMLButtonElement>,
     index: number,
   ) => {
     const selected = e.currentTarget.value;
     setSelectOption(selected);
-    const isAnswerCorrect = checkCorrectAnswer(options, answer)
+    const isAnswerCorrect = checkCorrectAnswer(quiz?.questions[currentQuestion]?.options, quiz?.questions[currentQuestion]?.correctOption)
     setIsCorrect(isAnswerCorrect);
     setIsShowExplain(true);
-    handleAddYourAnswer(selected);
-    console.log("selected:",selected)
-    console.log('handle_ans:', yourAnswers)
-    if (checkOptionIsCorrectOrNot(selected, answer)) {
+    if (checkOptionIsCorrectOrNot(selected, quiz?.questions[currentQuestion]?.correctOption)) {
       const randomIndex = Math.floor(Math.random() * correctSound.length);
       const randomSound = correctSound[randomIndex];
       randomSound.play();
@@ -175,17 +179,17 @@ function MultichoiceQuestionSection({
       <h1>
         Question {currentQuestion + 1} of {questions?.length}
       </h1>
-      <Countdown seconds={10000} onCountdownComplete={handleFinish}/>
+      <Countdown seconds={time} onCountdownComplete={handleFinish}/>
       <SlideAnimation
               direction={currentQuestion > previousQuestion ? 1 : -1}
               currentPage={currentQuestion}
-              className="mx-auto absolute top-[10vh]"
+              className="mx-auto top-[10vh] w-[80vw] absolute"
             >
-          <MultiChoiceQuestions explain={explain} isFinish={isFinish} isShowExplain={isShowExplain} options={options} selectOption={selectOption} title={title} handleAnswer={handleAnswer} validateClassName={validateClassName}/>
+          <MultiChoiceQuestions key={currentQuestion} question={quiz?.questions[currentQuestion]} isFinish={isFinish} isShowExplain={isShowExplain} selectOption={selectOption} handleAnswer={handleAnswer} validateClassName={validateClassName}/>
 
             </SlideAnimation>
       {
-        isFinish && <button className='bg-red-600 text-white px-4 py-2 rounded-md w-fit mt-4 hover:bg-red-700 absolute bottom-[60vh]' onClick={redirectToHome}>Finish</button>
+        isFinish && <button className='bg-red-600 text-white px-4 py-2 rounded-md w-fit mt-4 hover:bg-red-700 absolute top-[60vh]' onClick={redirectToHome}>Finish</button>
       }
       <Modal isOpen={modalIsOpen} onClose={closeModal}>
         <img src={CongratulationPic.src} className='w-40 h-40 mx-auto'/>

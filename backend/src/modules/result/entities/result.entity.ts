@@ -17,11 +17,23 @@ export class Answer {
 
     @ApiProperty()
     @Column()
+    title: string;
+
+    @ApiProperty()
+    @Column({ length: 1000 })
+    explain: string;
+
+    @ApiProperty()
+    @Column('simple-array')
     options: string[];
 
     @ApiProperty()
     @Column()
     correct: boolean;
+
+    @ApiProperty()
+    @Column()
+    time: number;
 
     @ApiProperty()
     @ManyToOne(() => Result, result => result.result)

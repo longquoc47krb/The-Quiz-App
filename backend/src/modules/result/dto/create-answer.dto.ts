@@ -11,5 +11,14 @@ export class CreateAnswerDto {
     correct: boolean;
 
     @ApiProperty()
+    time: number;
+
+    @ApiProperty()
     options: string[];
+
+    @ApiProperty()
+    title: string;
+
+    @ApiProperty()
+    explain: string;
 }

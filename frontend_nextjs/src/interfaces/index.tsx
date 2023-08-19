@@ -143,6 +143,8 @@ interface CreateAnswerDto {
   yourChoice: string;
   answer: string;
   correct: boolean;
+  time: number;
+  options: string[];
 }
 export interface CreateResultDto {
   player_id: number;
@@ -167,8 +169,10 @@ interface Answer {
   yourChoice: string;
   answer: string;
   correct: boolean;
+  time: number;
   result_id: number;
   result: Result;
+  options: string[];
 }
 // Define the interface for the CreateQuizDto
 export interface CreateQuizDto {

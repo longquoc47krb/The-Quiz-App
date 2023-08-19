@@ -23,14 +23,13 @@ import {
 function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
   const time = calculateTimeDifference(result.endTime, result.startTime);
   const { player, quiz, result: resultArr } = result;
-  const [yourAnswers, setYourAnswers] = useState(resultArr);
   const numberCorrectAnswer = countBy(result.result, 'correct').true || 0;
   const [correctArr, setCorrectArr] = useState([]);
   // pagination
   const questionsPerPage = 1;
   const [currentPage, setCurrentPage] = useState(0);
   const previousPage = usePrevious(currentPage);
-  const totalPages = Math.ceil(quiz.questions.length / questionsPerPage);
+  const totalPages = Math.ceil(resultArr.length / questionsPerPage);
   const handleNextPage = () => {
     if (currentPage < totalPages - 1) {
       setCurrentPage(currentPage + 1);
@@ -43,32 +42,17 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
     }
   };
 
-  const correctRatio = numberCorrectAnswer / quiz?.questions?.length;
+  const correctRatio = numberCorrectAnswer / resultArr.length;
   useEffect(() => {
-    if (resultArr.length !== quiz?.questions.length) {
-      const updatedOptions = [...resultArr];
-      const itemsToAdd = quiz?.questions.length - updatedOptions.length;
-      for (let i = updatedOptions.length; i < itemsToAdd; i++) {
-        updatedOptions.push({
-          yourChoice: '',
-          correct: false,
-          answer: quiz?.questions[i]?.correctOption,
-        }); // Replace someValue with the value you want to add
-        console.log({ updatedOptions });
-      }
-      setYourAnswers(updatedOptions);
-    }
-  }, [quiz, resultArr]);
-  useEffect(() => {
-    const correctArray = yourAnswers.map((item) => item.correct);
-    const desiredLength = quiz.questions.length;
+    const correctArray = resultArr.map((item) => item.correct);
+    const desiredLength = resultArr.length;
     const newArray = [];
     for (let i = 0; i < desiredLength; i++) {
       newArray.push(correctArray[i] || false);
     }
     setCorrectArr(newArray);
   }, [result]);
-  console.log(`ID ${result.id}:`, yourAnswers);
+  console.log(`ID ${result.id}:`, resultArr);
 
   return (
     <Main
@@ -78,16 +62,16 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
     >
       {' '}
       <div>
-        <div className="flex justify-center items-start">
-          <div>
-            <div className="flex w-full justify-center items-start">
-              <div className="flex justify-start items-center text-gray-300 bg-active p-4 rounded-lg">
-                <div className="flex justify-start gap-4 pr-4 mr-4 border-r-2 border-r-primary">
+        <div className="md:flex md:items-start block min-h-screen">
+          <div className="w-[60vw]">
+            <div className="flex md:w-full justify-start items-start relative">
+              <div className="md:flex md:justify-center md:items-start text-gray-300 bg-active p-4 rounded-lg block md:w-full w-[calc(100vw-5rem)">
+                <div className="md:flex md:justify-center md:gap-4 md:pr-4 md:mr-4 md:border-r-2 md:border-r-primary block">
                   <img
                     src={player.avatar}
                     className="rounded-full border-2 border-gray-500 w-12 h-12"
                   />
-                  <div className="text-lg">
+                  <div className="text-lg md:block flex justify-between pb-2 mb-4 border-b-primary border-b-2 md:border-none">
                     <h2>
                       {player.name}{' '}
                       {player?.verified && (
@@ -100,7 +84,7 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
                     </h2>
                   </div>
                 </div>
-                <div className="text-lg grid grid-cols-2 grid-rows-3 gap-x-4 ">
+                <div className="text-lg md:grid md:grid-cols-[20vw_20vw] md:grid-rows-3 md:gap-x-4 block ">
                   <h1>Quiz: {quiz.title}</h1>
                   <p>{formatDateToCustomFormat(result.startTime)}</p>
                   <p>
@@ -113,7 +97,7 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
                     <AiOutlineCheckCircle className="inline-block m-0 text-green-500" />{' '}
                     Correct:
                     <span className="text-gray-500 mx-2">
-                      {numberCorrectAnswer}/{quiz?.questions?.length}
+                      {numberCorrectAnswer}/{resultArr.length}
                     </span>
                     <span className={renderCorrectRatio(correctRatio * 100)}>
                       ({(correctRatio * 100).toFixed(2)}%)
@@ -129,21 +113,21 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
             <SlideAnimation
               direction={currentPage > previousPage ? 1 : -1}
               currentPage={currentPage}
-              className="mx-auto w-full"
+              className="mx-auto"
             >
-              {quiz.questions
+              {resultArr
                 .slice(
                   currentPage * questionsPerPage,
                   (currentPage + 1) * questionsPerPage,
                 )
-                ?.map((question, index) => (
+                ?.map((item, index) => (
                   <MultiChoiceQuestionsPreview
                     key={currentPage}
-                    explain={question.explain}
-                    options={question.options}
-                    title={question.text}
-                    result={yourAnswers[currentPage]}
-                    answer={question.correctOption}
+                    explain={item.explain}
+                    options={item.options}
+                    title={item.title}
+                    yourChoice={item.yourChoice}
+                    answer={item.answer}
                   />
                 ))}
             </SlideAnimation>

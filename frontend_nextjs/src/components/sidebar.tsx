@@ -39,7 +39,7 @@ const Sidebar = ({className} : {className: string}) => {
   const classNameString = `sidebar-indicator absolute active -left-2 transition-transform ease-linear -z-10 duration-300 ${translateYValues[index]}`;
 
   return (
-    <ul className={`relative w-fit flex flex-col inline-block ${className}`}>
+    <ul className={`relative w-fit md:flex flex-col hidden ${className}`}>
       <li
         ref={homeRef}  
         className={`sidebar-item ${router.pathname === '/' ? 'active-text' : ''}`}

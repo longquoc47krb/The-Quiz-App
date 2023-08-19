@@ -41,6 +41,7 @@ module.exports = {
         },
         primary: '#282031',
         darkPrimary: '#745696',
+        darkPrimaryActive: '#9e77c9',
         active: '#393241',
       },
     },

@@ -42,11 +42,21 @@ export class ResultService {
       answer.correct = answerDto.correct;
       answer.result_id = rstl.id;
       answer.options = answerDto.options
+      answer.time = answerDto.time;
+      answer.title = answerDto.title;
+      answer.explain = answerDto.explain
       await this.answerRepository.save(answer);
       answers.push(answer);
 
       if (answer.correct) {
-        score += 1000; // Adjust score calculation as needed
+        if (answer.time < 5) {
+          score += 5000;
+        } else if (answer.time < 10) {
+          score += 3000;
+        } else {
+          score += 1000;
+        }
+        // Adjust score calculation as needed
       }
     }
     rstl.result = answers;
@@ -59,7 +69,7 @@ export class ResultService {
     return await this.resultRepository
       .createQueryBuilder('result')
       .leftJoinAndSelect('result.player', 'user')
-      .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('quiz.questions', 'questions').leftJoinAndSelect('result.result', 'answer').where('result.player_id = :userId', { userId }).getMany();
+      .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('result.result', 'answer').where('result.player_id = :userId', { userId }).getMany();
   }
   async findAll() {
     // return this.resultRepository.find({
@@ -68,12 +78,12 @@ export class ResultService {
     return await this.resultRepository
       .createQueryBuilder('result')
       .leftJoinAndSelect('result.player', 'user')
-      .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('quiz.questions', 'questions').leftJoinAndSelect('result.result', 'answer').getMany();
+      .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('result.result', 'answer').getMany();
   }
 
   async findOne(id: number) {
     const result = await this.resultRepository.createQueryBuilder('result').leftJoinAndSelect('result.player', 'user')
-      .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('quiz.questions', 'questions').leftJoinAndSelect('result.result', 'answer').where('result.id = :id', { id }).getOne();
+      .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('result.result', 'answer').where('result.id = :id', { id }).getOne();
 
     if (!result) {
       throw new NotFoundException(`Result with ID ${id} not found.`);

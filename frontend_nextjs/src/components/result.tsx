@@ -12,7 +12,7 @@ function ResultEntity(props: Result) {
   const { quiz, startTime, result, id } = props;
   const router = useRouter();
   const numberCorrectAnswer = countBy(result, 'correct').true || 0;
-  const correctRatio = numberCorrectAnswer / quiz?.questions?.length;
+  const correctRatio = numberCorrectAnswer / result?.length;
   return (
     <div
       className="item-container"

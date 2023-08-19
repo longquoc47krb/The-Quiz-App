@@ -17,7 +17,7 @@ function QuizStartForm({
   const { user } = useAuth();
   const dispatch = useDispatch();
   const time = convertSecondsToMinutesAndSeconds(
-    15 * quizData.questions?.length,
+    10 * quizData.questions?.length,
   );
   return (
     <div className="rounded-lg cursor-pointer p-4 h-[15rem] w-50 flex flex-col justify-between mr-4 text-sky-600 dark:text-violet-400 bg-violet-400/10">
@@ -36,6 +36,10 @@ function QuizStartForm({
               quiz: quizData,
               startTime: new Date(),
               endTime: null,
+              currentQuestion: 0,
+              results: [],
+              timePerQuestion: 0,
+              score: 0,
             }),
           );
           onClose();
