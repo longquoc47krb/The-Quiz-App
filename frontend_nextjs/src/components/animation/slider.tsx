@@ -27,7 +27,17 @@ const variants = {
     };
   },
 };
-const SlideAnimation = ({ children, className, direction, currentPage }) => {
+const SlideAnimation = ({
+  children,
+  className,
+  direction,
+  currentPage,
+}: {
+  children: any;
+  className: string;
+  direction: number;
+  currentPage: number;
+}) => {
   return (
     <AnimatePresence initial={false} custom={direction}>
       <motion.div

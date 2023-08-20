@@ -3,7 +3,7 @@ import React from 'react';
 function Loading() {
   return (
     <div className="flex items-center justify-center bg-slate-900 w-screen h-screen">
-      <div class="peeek-loading">
+      <div className="peeek-loading">
         <ul>
           <li />
           <li />

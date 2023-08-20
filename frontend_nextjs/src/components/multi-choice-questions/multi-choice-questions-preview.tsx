@@ -15,6 +15,12 @@ const MultiChoiceQuestionsPreview = ({
   explain,
   yourChoice,
   answer,
+}: {
+  title: string;
+  options: string[];
+  explain: string;
+  yourChoice: string;
+  answer: string;
 }) => {
   const [isCorrect, setIsCorrect] = useState([false, false, false, false]);
   useEffect(() => {

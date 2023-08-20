@@ -29,6 +29,7 @@ const Countdown = ({
         animatedElement.removeEventListener('animationend', handleAnimationEnd);
       };
     }
+    return () => {};
   }, [onCountdownComplete]);
   return (
     <div className="flex justify-center">

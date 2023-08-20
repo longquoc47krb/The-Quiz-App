@@ -11,7 +11,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
-import DarkModeSwitch from "./dark-mode-switch";
 import { useAuth } from "@/hooks/useAuthContext";
 
 const Header = () => {
@@ -28,7 +27,7 @@ const Header = () => {
   return (
     <header className="header">
       <div className="flex items-center justify-end w-full">
-        <DarkModeSwitch/>
+        {/* <DarkModeSwitch/> */}
         {user ? (
           <div className="text-gray-200 font-medium text-base flex items-center gap-x-4">
             <img
