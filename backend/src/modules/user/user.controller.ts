@@ -4,12 +4,12 @@ import { ApiBearerAuth, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger'
 import { LoginType, Role } from 'src/configs/enum';
 import { Roles, RolesGuard } from 'src/utils';
 import { User } from 'src/utils/decorator/user.decorator';
+import { LoginUserDTO } from '../auth/dto/login-credential.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { User as UserEntity } from './entities/user.entity';
 import { UserService } from './user.service';
-import { LoginUserDTO } from '../auth/dto/login-credential.dto';
-import { UserResponseDTO } from './dto/user-response.dto';
+import { ResponseDto } from 'src/utils/interface/response.dto';
 
 @ApiTags('User')
 @Controller('user')
@@ -60,8 +60,10 @@ export class UserController {
     @User() user: UserEntity,
   ) {
     try {
-      console.log({ user })
-      return await this.userService.getOne(user?.id)
+      console.log({ user });
+
+      const userEntity = await this.userService.getOne(user?.id)
+      return new ResponseDto(200, 'Fetched user successfully', userEntity)
     } catch (error) {
 
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -69,7 +71,8 @@ export class UserController {
   }
   @Get(":id")
   findById(@Param('id') id: string) {
-    return this.userService.getOne(+id)
+    const userEntity = this.userService.getOne(+id)
+    return new ResponseDto(200, 'Fetched user successfully', userEntity)
   }
   @Get()
   @ApiOperation({ summary: 'Find user by email or username' })
@@ -78,11 +81,14 @@ export class UserController {
   @ApiQuery({ name: 'identifier', required: false })
   findByField(@Query('username') username?: string, @Query('email') email?: string, @Query('identifier') identifier?: string) {
     if (username) {
-      return this.userService.findByUsername(username)
+      const userEntity = this.userService.findByUsername(username)
+      return new ResponseDto(200, 'Fetched user successfully', userEntity)
     }
     if (identifier) {
-      return this.userService.findByEmailOrUsername(identifier);
+      const userEntity = this.userService.findByEmailOrUsername(identifier);
+      return new ResponseDto(200, 'Fetched user successfully', userEntity)
     }
-    return this.userService.findByEmail(email);
+    const userEntity = this.userService.findByEmail(email);
+    return new ResponseDto(200, 'Fetched user successfully', userEntity)
   }
 }

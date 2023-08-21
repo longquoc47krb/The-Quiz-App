@@ -9,7 +9,7 @@ import { GoogleStrategy } from '../auth/strategies/google.strategy';
         PassportModule.register({ defaultStrategy: 'google' }),
         JwtModule.register({
             secret: `${process.env.JWT_SECRET}`,
-            signOptions: { expiresIn: '24h' },
+            signOptions: { expiresIn: '7d' },
         }),
     ],
     providers: [GoogleStrategy],

@@ -15,6 +15,7 @@ import { CheckUserExistenceDTO } from './dto/user-existence.dto';
 import { Logger } from 'winston';
 import { TokenService } from '../token/token.service';
 import { Quiz } from '../quiz/entities/quiz.entity';
+import { ResponseDto } from 'src/utils/interface/response.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -47,13 +48,13 @@ export class UserService {
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
 
-    return user;
+    return user
   }
   async findByEmailOrUsername(identifier: string) {
     const user = await this.userRepository.createQueryBuilder('user').where('user.username = :identifier', { identifier }).orWhere('user.email = :identifier', { identifier }).getOne();
     if (!user)
       throw new NotFoundException('User does not exists or unauthorized');
-    return (user);
+    return user
   }
   async findByVerificationCode(verificationToken: string) {
     const user = await this.tokenService.findUserByToken(verificationToken);

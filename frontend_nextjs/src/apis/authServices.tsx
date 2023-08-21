@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable prettier/prettier */
+
 import axiosClient from "@/configs/axiosClient";
-import { CreateUserDto, LoginUserDto } from "@/interfaces";
+import { CreateUserDto, LoginUserDto, RefreshTokenDto } from "@/interfaces";
 
 export const login = async (loginDto: LoginUserDto) => {
   try {
@@ -25,15 +26,24 @@ export const registerUser = async (createUser: CreateUserDto) => {
     return error;
   }
 };
-export const sendResetPassword = async(email: string) => {
+export const sendResetPassword = async (email: string) => {
   try {
     const response = await axiosClient.post("/auth/send-token-email", {
-      params: { 
+      params: {
         email,
-        type: 'RESET_PASSWORD'
-       }})
-       return response.data;
-  }catch (error) {
+        type: "RESET_PASSWORD",
+      },
+    });
+    return response.data;
+  } catch (error) {
     return error;
   }
-}
+};
+export const refreshAuthToken = async (token: RefreshTokenDto) => {
+  try {
+    const response = await axiosClient.post("/auth/refresh-token", token);
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};

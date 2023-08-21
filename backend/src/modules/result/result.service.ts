@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { ResponseDto } from 'src/utils/interface/response.dto';
 import { User } from '../user/entities/user.entity';
 import { Quiz } from '../quiz/entities/quiz.entity';
+import { handleScorePerQuestion } from 'src/common/helpers/utils';
 
 @Injectable()
 export class ResultService {
@@ -47,17 +48,7 @@ export class ResultService {
       answer.explain = answerDto.explain
       await this.answerRepository.save(answer);
       answers.push(answer);
-
-      if (answer.correct) {
-        if (answer.time < 5) {
-          score += 5000;
-        } else if (answer.time < 10) {
-          score += 3000;
-        } else {
-          score += 1000;
-        }
-        // Adjust score calculation as needed
-      }
+      score += handleScorePerQuestion(answer.time, answer.correct);
     }
     rstl.result = answers;
     rstl.score = score;
@@ -66,19 +57,27 @@ export class ResultService {
 
   }
   async findAllByPlayerId(userId: number) {
-    return await this.resultRepository
+    const results = await this.resultRepository
       .createQueryBuilder('result')
       .leftJoinAndSelect('result.player', 'user')
       .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('result.result', 'answer').where('result.player_id = :userId', { userId }).getMany();
+    if (results) {
+      return new ResponseDto(200, 'Fetched results successfully', results)
+    }
+    return new ResponseDto(400, 'Fetched results failed', [])
   }
   async findAll() {
     // return this.resultRepository.find({
     //   relations: ['player', 'quiz', 'result'], // Load related entities
     // });
-    return await this.resultRepository
+    const results = await this.resultRepository
       .createQueryBuilder('result')
       .leftJoinAndSelect('result.player', 'user')
       .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('result.result', 'answer').getMany();
+    if (results) {
+      return new ResponseDto(200, 'Fetched results successfully', results)
+    }
+    return new ResponseDto(400, 'Fetched results failed', [])
   }
 
   async findOne(id: number) {
@@ -89,7 +88,7 @@ export class ResultService {
       throw new NotFoundException(`Result with ID ${id} not found.`);
     }
 
-    return result;
+    return new ResponseDto(200, `Fetched result #${id} successfully`, result)
   }
 
   update(id: number, updateResultDto: UpdateResultDto) {

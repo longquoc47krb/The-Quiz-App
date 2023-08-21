@@ -30,14 +30,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       try {
         if (!user) {
           const response = await getMe();
-          if (response?.status === 500) {
-            // Handle 500 Internal Server Error here
-            console.error('Internal Server Error occurred');
-            // You might want to set some state or display an error message to the user
-            return;
-          }
-
-          dispatch(setUser(response));
+          dispatch(setUser(response?.data));
         }
       } catch (error) {
         // Handle other errors that might occur during the fetch
@@ -54,11 +47,15 @@ export const AuthProvider: React.FC = ({ children }) => {
     clearAuthentication();
     dispatch(setUser(null));
   };
-
+  const isAuthenticated = () => {
+    // Check if user is authenticated
+    return !!user;
+  };
   const authContextValue = {
     user,
     setCurrentUser,
     removeCurrentUser,
+    isAuthenticated,
   };
 
   return (

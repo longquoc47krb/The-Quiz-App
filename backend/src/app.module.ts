@@ -44,10 +44,6 @@ import { ResultModule } from './modules/result/result.module';
       }),
 
     }),
-    JwtModule.register({
-      secret: `${process.env.JWT_SECRET_KEY}`,
-      signOptions: { expiresIn: '24h' },
-    }),
     MailerModule.forRoot({
       transport: {
         host: `${process.env.MAIL_HOST}`, // Replace with your SMTP server address

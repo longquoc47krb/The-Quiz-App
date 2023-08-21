@@ -93,14 +93,14 @@ export class AuthService {
         } catch (error) {
             throw new Error('Invalid refresh token');
         }
-
-        const { userId, type } = payload;
+        console.log({ payload })
+        const { sub, type } = payload;
 
         if (type !== 'refresh') {
             throw new Error('Wrong token type');
         }
 
-        const user = await this.userService.getOne(userId);
+        const user = await this.userService.getOne(sub);
 
         if (!user) {
             throw new Error('Invalid user');

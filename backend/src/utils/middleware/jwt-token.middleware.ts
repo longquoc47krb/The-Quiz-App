@@ -28,15 +28,24 @@ export class JwtTokenMiddleware implements NestMiddleware {
 
         const token: string = this.getBearerToken(req);
         if (token) {
-            const isTokenValid: boolean = this.verifyToken(token);
-
-            if (isTokenValid) {
-                const payload: any = this.getTokenPayload(token);
-                req.locals.user = {
-                    id: payload.userId,
-                    email: payload.email,
-                    roles: payload.roles,
-                };
+            try {
+                const isTokenValid: boolean = this.verifyToken(token);
+                if (isTokenValid) {
+                    const payload: any = this.getTokenPayload(token);
+                    req.locals.user = {
+                        id: payload.userId,
+                        email: payload.email,
+                        roles: payload.roles,
+                    };
+                } else {
+                    return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
+                }
+            } catch (error) {
+                if (error.name === 'TokenExpiredError') {
+                    return res.status(401).json({ statusCode: 401, message: 'Token has expired' });
+                } else {
+                    return res.status(500).json({ statusCode: 500, message: 'Internal Server Error' });
+                }
             }
         }
 

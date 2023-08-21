@@ -44,3 +44,7 @@ export const NoAnswerProvidedMessage = [
 "Feel free to guess if you're not sure about the answer.",
 "Take a moment to think, and when you're ready, go ahead and answer."
 ]
+export const ScoreMax = 10000;
+export const ScoreMin = 1000;
+export const Tmax = 30;
+export const ScorePenalty = 5;

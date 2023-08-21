@@ -45,7 +45,7 @@ const Header = () => {
       </div>
       {toggle && user && (
         <ul className="menu-list">
-          <li className="menu-item">Profile</li>
+          <li className="menu-item" onClick={()=>router.push('/profile')}>Profile</li>
           <li className="menu-item">Settings</li>
           <li
             className="menu-item"

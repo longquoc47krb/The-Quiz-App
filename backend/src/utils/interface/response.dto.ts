@@ -1,17 +1,17 @@
 export class ResponseDto<T> {
-    status: string;
+    statusCode: number;
     message: string;
     data?: T;
 
-    private constructor(status: string, message: string, data?: T) {
-        this.status = status;
+    public constructor(statusCode: number, message: string, data?: T) {
+        this.statusCode = statusCode;
         this.message = message;
         this.data = data;
     }
     static createSuccess(message: string) {
-        return new ResponseDto('success', message);
+        return new ResponseDto(200, message);
     }
     static createWithData<T>(message: string, data: T): ResponseDto<T> {
-        return new ResponseDto<T>('success', message, data);
+        return new ResponseDto<T>(200, message, data);
     }
 }

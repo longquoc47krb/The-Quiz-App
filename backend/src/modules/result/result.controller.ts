@@ -25,6 +25,9 @@ export class ResultController {
     return this.resultService.findAll();
   }
   @Get('/player/:id')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(Role.User)
   findAllByPlayerId(@Param('id') id: string) {
     return this.resultService.findAllByPlayerId(+id);
   }

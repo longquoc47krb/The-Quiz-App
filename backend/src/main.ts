@@ -1,12 +1,12 @@
-import { NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import { initSwagger } from './app.swagger';
-import { ConfigService } from '@nestjs/config';
 import { SERVER_PORT } from './configs/constants';
-import generateTypeormConfigFile from './scripts/generateTypeorm';
 import { CustomExceptionFilter } from './exception';
+import generateTypeormConfigFile from './scripts/generateTypeorm';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

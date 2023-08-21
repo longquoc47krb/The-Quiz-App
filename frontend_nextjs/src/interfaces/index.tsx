@@ -54,7 +54,7 @@ export interface Question {
 export interface Quiz {
   id: number;
   title: string;
-  description: string;
+  description?: string;
   category: string;
   questions: Question[];
   participants?: User[];
@@ -180,4 +180,7 @@ export interface CreateQuizDto {
   description: string;
   category: string; // Assuming QuizCategory is a string enum or type
   questions: CreateQuestionDto[];
+}
+export interface RefreshTokenDto {
+  refreshToken: string;
 }

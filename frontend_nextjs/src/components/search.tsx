@@ -22,7 +22,6 @@ const Search: React.FC<SearchProps> = ({ data, keysToSearch }) => {
     const searchResults = fuse.search(value);
     setResults(searchResults);
   };
-  console.log({ results });
   return (
     <div className="mx-4 relative">
       <input

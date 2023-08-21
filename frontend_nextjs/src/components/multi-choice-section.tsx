@@ -183,7 +183,7 @@ function MultichoiceQuestionSection({
       <SlideAnimation
               direction={currentQuestion > previousQuestion ? 1 : -1}
               currentPage={currentQuestion}
-              className="mx-auto top-[10vh] w-[80vw] absolute"
+              className="mx-auto top-[10vh] w-[80vw]"
             >
           <MultiChoiceQuestions key={currentQuestion} question={quiz?.questions[currentQuestion]} isFinish={isFinish} isShowExplain={isShowExplain} selectOption={selectOption} handleAnswer={handleAnswer} validateClassName={validateClassName}/>
 

@@ -47,11 +47,12 @@ const LoginPage: React.FC = () => {
     const loginDto = { identifier, password };
     try {
       const response: any = await login(loginDto);
-      const { accessToken } = response.data;
+      const { accessToken, refreshToken } = response.data;
     
       Cookies.set("accessToken", accessToken, {
         expires: EXPIRATION_DATE
       } );
+      localStorage.setItem('refreshToken', refreshToken);
       router.push('/')
       toast.success("Login successful!");
       setIsSubmitting(false) // Display success toast

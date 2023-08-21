@@ -1,56 +1,70 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable prettier/prettier */
 /* eslint-disable unused-imports/no-unused-vars */
-import { useEffect, useState } from 'react';
+import { Splide } from "@splidejs/react-splide";
+import { useQuery } from "@tanstack/react-query";
+import { isArray } from "lodash";
+import type { GetServerSideProps } from "next";
 
-import { fetchResultsByPlayerId } from '@/apis/resultServices';
-import { useAuth } from '@/hooks/useAuthContext';
-import type { Result } from '@/interfaces';
+import { fetchResultsByPlayerId } from "@/apis/resultServices";
+import { useAuth } from "@/hooks/useAuthContext";
+import type { Result } from "@/interfaces";
+import store from "@/middlewares/store";
 
-import ResultEntity from './result';
+import ResultEntity from "./result";
+import ResultItemWrap from "./splide";
 
-const RecentYourQuizzes = () => {
-  const [results, setResult] = useState([]);
-  const [loading, setLoading] = useState(false)
-  const { user } = useAuth()
-  useEffect(()=>{
-    async function getResults(){
-      try {
-        setLoading(true)
-        const response = await fetchResultsByPlayerId(user?.id);
-        setResult(response)
-        setLoading(false)
-      } catch (err){
-        console.log({err})
-        setLoading(false)
-      }
-      
-    }
-    getResults()
-  },[])
-  const reversedArray = results?.map((_, index, array) => array[array.length - 1 - index]) ?? [];
-  if(loading){
-    return <div className='w-screen p-4'><span>Loading ...</span></div>
+export const getServerSideProps: GetServerSideProps<{
+  results: Result[];
+}> = async () => {
+  try {
+    const { user } = store.getState().quizSession;
+    const results = await fetchResultsByPlayerId(user?.id);
+    return {
+      props: { results },
+    };
+  } catch (error) {
+    console.error("Error fetching results:", error);
+    return {
+      props: { results: [] }, // Handle the error case appropriately
+    };
   }
-  return <>
-    {results?.length > 0 
-    && 
-    <>
-      <h1 className="m-4 text-2xl text-gray-400 font-medium">Recent</h1>
-      <div className='m-4 w-[calc(100vw-10rem) grid grid-cols-[24rem_24rem_24rem] gap-4'>
-      {
-        reversedArray.slice(0, 3).map((props: Result) => (
-          <ResultEntity  key={props.id} {...props}/>
-        ))
-      }
-        </div>
-        <button className='m-4 hover:bg-transparent rounded-lg w-screen hover:text-gray-400 hover:translate-x-2 hover:duration-150 hover:ease-linear'>View more ▶</button>
-    </>
-  
-  }
-  </>
-  
 };
-
-
+const RecentYourQuizzes = () => {
+  const { user } = useAuth();
+  const { data: results, isLoading } = useQuery({
+    queryKey: ["resultsByPlayerId"],
+    queryFn: () => fetchResultsByPlayerId(user?.id),
+  });
+  if (isLoading) {
+    return (
+      <div className="w-screen p-4">
+        <span>Loading ...</span>
+      </div>
+    );
+  }
+  console.log(isArray(results.data), results.data);
+  const reversedArray = isArray(results?.data)
+    ? results.data.map((_, index, array) => array[array.length - 1 - index])
+    : [];
+  console.log({ reversedArray });
+  const resultArrayLength = isArray(results?.data) ? results?.data.length : 0;
+  return (
+    <>
+      {resultArrayLength > 0 && (
+        <>
+          <h1 className="m-4 text-2xl text-gray-400 font-medium">Recent</h1>
+            <Splide options={{start:3, perPage: 3, gap: "1em" , width: 'calc(100vw - 6rem)', arrows: false, height: "100%"}} tag="div" style={{paddingTop: "1em", paddingLeft: 8}}>
+              {reversedArray.map((props: Result) => (
+                <ResultItemWrap>
+                  <ResultEntity key={props.id} {...props} />
+                </ResultItemWrap>
+              ))}
+            </Splide>
+        </>
+      )}
+    </>
+  );
+};
 
 export default RecentYourQuizzes;

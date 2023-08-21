@@ -3,6 +3,7 @@ import { usePrevious } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { ScoreMax, ScoreMin,ScorePenalty, Tmax } from "@/common/constants";
 import type { Question } from "@/interfaces";
 import {
   pushToResults,
@@ -26,21 +27,26 @@ const MultiChoiceQuestions = ({
   validateClassName: any;
   handleAnswer: any;
 }) => {
+
   const dispatch = useDispatch();
   const [showScore, setShowScore] = useState(false);
   const score = useSelector(state => state.quizSession.score);
   const prevScore = usePrevious(score);
+  const [scorePerQuestion, setScorePerQuestion] = useState(0);
   const timePerQuestion = useSelector(timePerQuestionSelector);
   const [isCorrect, setIsCorrect] = useState(false);
   useEffect(()=>{
     if(isCorrect){
-      if(timePerQuestion < 5) {
-        dispatch(setScore(prevScore + 5000))
-      } else if (timePerQuestion < 10) {
-        dispatch(setScore(prevScore + 3000))
-      } else {
-        dispatch(setScore(prevScore + 1000))
+      if(timePerQuestion <= Tmax) {
+        const Score = ScoreMax - ScorePenalty  * timePerQuestion
+        dispatch(setScore(prevScore + Score))
+        setScorePerQuestion(Score);
+      }  else {
+        const Score = ScoreMin;
+        dispatch(setScore(prevScore + Score))
+        setScorePerQuestion(Score);
       }
+      setScorePerQuestion(0);
     }    
   },[isCorrect])
   const handleAddYourAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -64,17 +70,11 @@ const MultiChoiceQuestions = ({
       setShowScore(false);
     },2500)
   };
-  function handleScore(time, isCorrect) {
-    if (isCorrect) {
-      if (time < 5) {
-        return "+5000";
-      }
-      if (time < 10) {
-        return "+3000";
-      }
-      return "+1000";
+  function handleScore(time: number, correct: boolean) {
+    if(correct){
+        return scorePerQuestion
     }
-    return "+0";
+    return 0;  
   }
   return (
     <>
@@ -102,9 +102,9 @@ const MultiChoiceQuestions = ({
         </div>
       )}
        {showScore &&  <h1
-        className="text-lime-500 text-center showScore font-bold"
+        className={`${handleScore(timePerQuestion, isCorrect) > 0 ? "text-lime-500" : "text-red-600"} text-center showScore font-bold `}
       >
-        {handleScore(timePerQuestion, isCorrect)}
+        +{handleScore(timePerQuestion, isCorrect)}
       </h1>}
     </>
   );

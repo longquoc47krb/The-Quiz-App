@@ -39,7 +39,7 @@ const SlideAnimation = ({
   currentPage: number;
 }) => {
   return (
-    <AnimatePresence initial={false} custom={direction}>
+    <AnimatePresence initial={false} custom={direction} mode="popLayout">
       <motion.div
         key={currentPage}
         custom={direction}
@@ -49,8 +49,8 @@ const SlideAnimation = ({
         exit="exit"
         transition={{
           x: { type: 'spring', stiffness: 300, damping: 30 },
-          opacity: { duration: 0.5 },
-          translateY: { duration: 0.5 },
+          opacity: { duration: 0.3 },
+          translateY: { duration: 0.3 },
         }}
         className={className}
       >

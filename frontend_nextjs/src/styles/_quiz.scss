@@ -144,11 +144,11 @@
   }
 }
 .fade-in {
-  animation: fadeIn ease 2s;
-  -webkit-animation: fadeIn ease 2s;
-  -moz-animation: fadeIn ease 2s;
-  -o-animation: fadeIn ease 2s;
-  -ms-animation: fadeIn ease 2s;
+  animation: fadeIn ease 1s;
+  -webkit-animation: fadeIn ease 1s;
+  -moz-animation: fadeIn ease 1s;
+  -o-animation: fadeIn ease 1s;
+  -ms-animation: fadeIn ease 1s;
 }
 
 
@@ -199,4 +199,11 @@
 .blue-gradient{
   background: rgb(14,85,154);
   background: linear-gradient(0deg, rgba(14,85,154,1) 0%, rgba(2,44,84,1) 100%);
+}
+.splide__arrow {
+  top: 38% !important;
+  width: 1.5em !important;
+}
+.splide.is-initialized, .splide.is-rendered {
+  padding-top: 0 !important;
 }

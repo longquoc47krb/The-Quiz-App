@@ -70,7 +70,7 @@ const MultiChoiceQuestionsPreview = ({
     );
   }
   return (
-    <div className="flex md:items-center flex-col py-4 absolute">
+    <div className="flex md:items-center flex-col py-4">
       <h1 className="dark:text-gray-300 w-[60vw] text-center">{title}</h1>
       <div className="flex flex-col items-start">
         <div className="md:grid md:grid-cols-2 md:gap-4 mt-4 flex flex-col gap-y-4">

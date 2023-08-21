@@ -21,6 +21,7 @@ import {
 } from '@/utils';
 
 function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
+  console.log({ result });
   const time = calculateTimeDifference(result.endTime, result.startTime);
   const { player, quiz, result: resultArr } = result;
   const numberCorrectAnswer = countBy(result.result, 'correct').true || 0;
@@ -158,7 +159,7 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
-        result: response,
+        result: response.data,
       },
     };
   } catch (error) {

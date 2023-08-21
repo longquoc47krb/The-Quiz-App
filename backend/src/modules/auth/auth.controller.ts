@@ -14,6 +14,7 @@ import { MailService } from '../mail/mail.service';
 import { UpdateUserDTO } from '../user/dto/update-user.dto';
 import moment from 'moment-timezone';
 import { getDateInGMTPlus7 } from 'src/common/helpers/Date';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
@@ -75,7 +76,10 @@ export class AuthController {
     async googleLogin() {
         // The user will be redirected to the Google login page.
     }
-
+    @Post('refresh-token')
+    async getNewAuthToken(@Body() token: RefreshTokenDto) {
+        return await this.authService.refreshToken(token);
+    }
     @Get('google/callback')
     @UseGuards(AuthGuard('google'))
     async googleLoginCallback(@Req() req, @Res() res) {

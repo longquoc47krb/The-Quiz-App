@@ -9,7 +9,7 @@ export const fetchUsers = async () => {
 };
 export const fetchUserById = async (id: string) => {
   const response = await axiosClient.get<User>(`/user/${id}`);
-  return response;
+  return response.data;
 };
 export const getMe = async () => {
   const response = await axiosClient.get<User>(`/user/me`);
