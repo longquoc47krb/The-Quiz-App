@@ -10,13 +10,26 @@
     &.active-text{
       @apply text-white
     }
+    &.active {
+      @apply text-white bg-active
+    }
     
   }
   .sidebar-indicator{
     @apply mb-2 text-base cursor-pointer rounded-md w-20 h-20 p-2 font-normal ;
+    &#profile{
+      
+    }
     &.active {
       @apply bg-active;
     }
+  }
+  .profile-sidebar-item {
+    @apply mb-2 text-base cursor-pointer rounded-md flex items-center justify-start gap-x-2 h-16 font-normal w-auto min-w-max px-4;
+    &.active {
+      @apply text-white bg-active
+    }
+    
   }
 
 }

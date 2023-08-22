@@ -205,5 +205,9 @@
   width: 1.5em !important;
 }
 .splide.is-initialized, .splide.is-rendered {
-  padding-top: 0 !important;
+  padding-top: 0.5rem !important;
+}
+.splide {
+  padding-left: 1.5vw !important;
+  padding-right: 1.5vw !important;
 }

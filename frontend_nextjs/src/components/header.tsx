@@ -15,19 +15,18 @@ import { useAuth } from "@/hooks/useAuthContext";
 
 const Header = () => {
   const { user, setCurrentUser, removeCurrentUser } = useAuth();
-  useEffect(() => {
-    setCurrentUser();
-  }, []);
   const [toggle, setToggle] = useState(false);
   const router = useRouter();
   const handleLogin = () => {
     router.push('/login');
   };
-  
+  useEffect(()=>{
+    setCurrentUser()
+  },[])
   return (
     <header className="header">
-      <div className="flex items-center justify-end w-full">
         {/* <DarkModeSwitch/> */}
+        <img src={`${router.basePath}/quizaka.png`} alt="logo" className="h-[2.5rem] cursor-pointer" onClick={()=>router.push('/')}/>
         {user ? (
           <div className="text-gray-200 font-medium text-base flex items-center gap-x-4">
             <img
@@ -42,11 +41,12 @@ const Header = () => {
             Login
           </span>
         )}
-      </div>
       {toggle && user && (
         <ul className="menu-list">
-          <li className="menu-item" onClick={()=>router.push('/profile')}>Profile</li>
-          <li className="menu-item">Settings</li>
+          <li className="menu-item"   onClick={()=>router.push('/profile')}>Profile</li>
+          <li className="menu-item" 
+          onClick={()=>router.push('/settings')}
+          >Settings</li>
           <li
             className="menu-item"
             onClick={removeCurrentUser}

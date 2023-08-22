@@ -131,9 +131,9 @@ export class AuthController {
     @ApiOperation({ summary: 'Reset password' })
     @Post('reset-password')
     async resetPassword(@Query('code') code: string) {
-        await this.authService.resetPassword(code)
+        const userId = await this.authService.resetPassword(code)
         // res.redirect(`${process.env.APP_URL}new-password`);
-        return { message: 'Reset password successfully', success: true };
+        return { message: 'Reset password successfully', success: true, data: userId };
     }
 
 

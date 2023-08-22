@@ -212,6 +212,7 @@ export class AuthService {
             password: ""
         }
         await this.userService.update(user.id, update)
+        return user.id;
     }
 }
 

@@ -28,12 +28,20 @@ export const registerUser = async (createUser: CreateUserDto) => {
 };
 export const sendResetPassword = async (email: string) => {
   try {
-    const response = await axiosClient.post("/auth/send-token-email", {
-      params: {
-        email,
-        type: "RESET_PASSWORD",
-      },
-    });
+    const response = await axiosClient.post("/auth/send-token-email", null, { params: {
+      email,
+      type: "RESET_PASSWORD"
+    }});
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+export const resetPassword = async (code: string) => {
+  try {
+    const response = await axiosClient.post("/auth/reset-password", null, { params: {
+      code
+    }});
     return response.data;
   } catch (error) {
     return error;

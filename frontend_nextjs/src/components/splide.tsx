@@ -6,8 +6,8 @@ const ResultItemWrap = ({ children }) => {
   return (
     <SplideSlide
       style={{
-        marginRight: gapSize,
-        width: `calc(((100% + ${gapSize}) / ${previewColumns}) - ${gapSize})`,
+        paddingTop: '1rem',
+        width: `calc(((100vw + ${gapSize}) / ${previewColumns}) - ${gapSize})`,
         height: '100%',
       }}
     >

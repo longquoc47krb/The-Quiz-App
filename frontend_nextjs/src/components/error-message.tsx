@@ -3,7 +3,7 @@ interface ErrorMessageProps {
 }
 const ErrorMessage: React.FC<ErrorMessageProps> = ({ error }) => {
   const isValid = error === true || error === undefined;
-  const textColor = isValid ? "text-green-500" : "error";
-  return <span className={textColor}>{error}</span>;
+  const textColor = isValid ? 'text-green-500' : 'error';
+  return <span className={`${textColor} max-w-min`}>{error}</span>;
 };
 export default ErrorMessage;

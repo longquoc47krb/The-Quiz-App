@@ -31,7 +31,7 @@ const Meta = (props: IMetaProps) => {
           rel="icon"
           type="image/png"
           sizes="32x32"
-          href={`${router.basePath}/favicon-32x32.png`}
+          href={`${router.basePath}/favicon-32x32.ico`}
           key="icon32"
         />
         <link
@@ -50,7 +50,7 @@ const Meta = (props: IMetaProps) => {
           rel="icon"
           type="image/png"
           sizes="16x16"
-          href={`${router.basePath}/favicon-16x16.png`}
+          href={`${router.basePath}/favicon-16x16.ico`}
           key="icon16"
         />
         <link

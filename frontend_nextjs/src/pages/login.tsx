@@ -19,6 +19,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { login } from '@/apis/authServices';
 import { EXPIRATION_DATE } from '@/common/constants';
 import ErrorMessage from '@/components/error-message';
+import { useAuth } from '@/hooks/useAuthContext';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 
@@ -40,6 +41,7 @@ const LoginPage: React.FC = () => {
   const togglePasswordVisibility = () => {
     setPasswordVisible((prevVisible) => !prevVisible);
   };
+  const { setIsLogged} = useAuth()
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     // Handle form submission
     if(isSubmitting){
@@ -48,7 +50,7 @@ const LoginPage: React.FC = () => {
     try {
       const response: any = await login(loginDto);
       const { accessToken, refreshToken } = response.data;
-    
+      setIsLogged(true)
       Cookies.set("accessToken", accessToken, {
         expires: EXPIRATION_DATE
       } );

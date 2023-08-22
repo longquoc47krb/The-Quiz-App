@@ -50,7 +50,6 @@ function MultichoiceQuestionSection({
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const numberCorrectAnswer = countBy(results, 'correct').true || 0;
   async function submitResult(){
-    console.log('Results in submitResult:', results)
     await createResult({
             player_id: user.id,
             quiz_id: quiz.id,

@@ -43,6 +43,7 @@ module.exports = {
         darkPrimary: '#745696',
         darkPrimaryActive: '#9e77c9',
         active: '#393241',
+        darkBlack: '#101012',
       },
     },
   },

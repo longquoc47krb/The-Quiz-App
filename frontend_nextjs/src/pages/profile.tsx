@@ -1,35 +1,21 @@
-// pages/profile.js
 import React from 'react';
 
+import withAuth from '@/hocs/withAuth';
 import { useAuth } from '@/hooks/useAuthContext';
 import { Meta } from '@/layouts/Meta';
-import { Main } from '@/templates/Main';
+import { ProfileLayout } from '@/templates/ProfileLayout';
 
-const Profile = () => {
-  const userProfile = {
-    avatar: 'link-to-avatar-image',
-    name: 'John Doe',
-    username: 'johndoe',
-    email: 'johndoe@example.com',
-    dateOfBirth: '1990-01-01',
-  };
+function Profile() {
   const { user } = useAuth();
-  console.log({ user });
   return (
-    <Main meta={<Meta title="Profile" description="Profile user" />}>
-      <div className="text-gray-300">
-        <img
-          src={user.avatar}
-          alt="Avatar"
-          className="w-24 h-24 rounded-full border-2 border-gray-500"
-        />
-        <h1>{user.name}</h1>
-        <p>Username: {user.username}</p>
-        <p>Email: {user.email}</p>
-        <p>Date of Birth: {user?.dateOfBirth}</p>
-      </div>
-    </Main>
+    <ProfileLayout
+      meta={
+        <Meta title={`${user?.name} | Quizaka`} description="User profile" />
+      }
+    >
+      <h1>Profile</h1>
+    </ProfileLayout>
   );
-};
+}
 
-export default Profile;
+export default withAuth(Profile);

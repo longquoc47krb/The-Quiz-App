@@ -231,3 +231,28 @@ $animationTime:2.5s;
 	transform: scale(0.5);
 	}
 }
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: 20px auto;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.selected {
+  border-bottom: 2px solid blue;
+}
+
+.tab-content {
+  padding: 20px;
+  border: 1px solid #ccc;
+}

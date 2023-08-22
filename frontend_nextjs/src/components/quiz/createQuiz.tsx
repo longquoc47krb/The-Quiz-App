@@ -55,7 +55,7 @@ const CreateQuizForm = () => {
   const [step, setStep] = useState(1);
   const previousStep = usePrevious(step);
   const [numQuestions, setNumQuestions] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(-1);
   const previousPage = usePrevious(currentPage);
   const [isUploadFromDevice, setIsUploadFromDevice] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -95,6 +95,7 @@ const CreateQuizForm = () => {
 
   const optionsList = getValues("questions");
   const values = getValues();
+  const { questions } = values;
   const onSubmit: SubmitHandler<CreateQuizDto> = async (
     data: CreateQuizDto
   ) => {
@@ -139,9 +140,9 @@ const CreateQuizForm = () => {
               <ErrorMessage error={errors.title?.message} />
             </label>
             <label className="block mb-4">
-              Quiz Description:
+              Quiz Description (Optional)
               <textarea
-                {...register("description", { required: true })}
+                {...register("description", { required: false })}
                 className="input-container"
               />
             </label>
@@ -233,10 +234,10 @@ const CreateQuizForm = () => {
                         </select>
                       </label>
                       <label className="block mb-2">
-                        Explanation:
+                        Explanation (Optional)
                         <textarea
                           {...register(`questions.${currentPage}.explain`, {
-                            required: true,
+                            required: false,
                           })}
                           className="input-container"
                         />
@@ -245,7 +246,7 @@ const CreateQuizForm = () => {
                         <button
                           type="button"
                           onClick={() => remove(currentPage)}
-                          disabled={optionsList === 1}
+                          disabled={questions?.length === 1}
                           className="w-fit flex items-center gap-x-4 bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-700 disabled:cursor-not-allowed"
                         >
                           <BsTrash /> <span>Remove Question</span>

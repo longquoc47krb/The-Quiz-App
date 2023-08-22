@@ -37,6 +37,36 @@ export const validateSchema = yup.object().shape({
     .oneOf([yup.ref('password')], 'Passwords must match')
     .required('Confirm Password is required'),
 });
+export const validateUpdatePasswordSchema = yup.object().shape({
+  currentPassword: yup
+    .string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 6 characters')
+    .test(
+      'currentPassword',
+      'Password must contain at least 1 special character, number, and uppercase letter',
+      (value) =>
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+]).{6,}$/.test(
+          value || '',
+        ),
+    ),
+  newPassword: yup
+    .string()
+    .required('New Password is required')
+    .min(6, 'Password must be at least 6 characters')
+    .test(
+      'newPassword',
+      'Password must contain at least 1 special character, number, and uppercase letter',
+      (value) =>
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#$%^&*()_+]).{6,}$/.test(
+          value || '',
+        ),
+    ),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('newPassword')], 'Passwords must match')
+    .required('Confirm Password is required'),
+});
 export const validateQuestion = (question: any) => {
   return (
     question &&

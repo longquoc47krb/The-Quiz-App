@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
+import { sendResetPassword } from '@/apis/authServices';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
-import { sendResetPassword } from '@/apis/authServices';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -33,7 +33,7 @@ export default function ForgotPassword() {
   return (
     <Main meta={<Meta title="Forgot password" description="Forgot password" />}>
       <div className="min-h-screen flex items-start justify-center">
-        <div className="item-container w-[40vw]">
+        <div className="w-[40vw] p-8">
           <h1 className="text-2xl font-semibold mb-4 text-center">
             Forgot Password
           </h1>
@@ -43,7 +43,7 @@ export default function ForgotPassword() {
               placeholder="Enter your email"
               value={email}
               onChange={handleEmailChange}
-              className="w-full p-2 border rounded mb-4"
+              className="input-container mb-4"
             />
             <div className="flex items-center gap-x-2">
               <button

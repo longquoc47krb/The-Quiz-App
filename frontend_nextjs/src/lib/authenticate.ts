@@ -7,6 +7,7 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 import * as jose from 'jose';
+import Cookies from "js-cookie";
 import { DecodedUser } from "@/interfaces";
 import { JWT_SECRET } from "@/common/constants";
 
@@ -21,7 +22,8 @@ export const authenticateUser = (
   res: NextApiResponse
 ): Promise<AuthenticateUser> => {
   try {
-    const tokenInCookie = req.headers.cookie;
+    const tokenInCookie = req.headers.cookie || Cookies.get('accessToken');
+    // const tokenInCookie = Cookies.get('accessToken');
     const accessToken = tokenInCookie?.replace('accessToken=','');
     if (!accessToken) {
       return Promise.resolve({
