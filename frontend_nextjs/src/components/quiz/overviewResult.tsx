@@ -1,16 +1,23 @@
 import { motion } from 'framer-motion';
 import { maxBy } from 'lodash';
+import { toast, Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 
 import { updateParticipants } from '@/apis/quizServices';
 import { useAuth } from '@/hooks/useAuthContext';
-import { setQuizSession } from '@/middlewares/slices/quizSessionSlice';
+import { isStart, setQuizSession } from '@/middlewares/slices/quizSessionSlice';
 import { convertSecondsToMinutesAndSeconds } from '@/utils';
 
 function OverviewResult({ quizData, results }) {
   const highestScoreObject = maxBy(results, 'score');
   const dispatch = useDispatch();
   const { user } = useAuth();
+  const checkAuthentication = (user) => {
+    if (user) {
+      dispatch(isStart(true));
+    }
+    toast.error('Please login to start');
+  };
   return (
     <motion.div
       initial={{ opacity: 0, y: -100 }}
@@ -57,6 +64,7 @@ function OverviewResult({ quizData, results }) {
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
         onClick={async () => {
+          checkAuthentication(user);
           dispatch(
             setQuizSession({
               id: null,
@@ -69,16 +77,16 @@ function OverviewResult({ quizData, results }) {
               timePerQuestion: 0,
               score: 0,
               streak: 0,
-              isStart: true,
             }),
           );
-          await updateParticipants(quizData?.id, user?.id);
+          user && (await updateParticipants(quizData?.id, user?.id));
         }}
         className="mt-4 flex justify-center px-6 py-1 rounded-lg text-gray-200 bg-green-600 w-fit hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-5"
         disabled={results.length === 5}
       >
         Start
       </motion.button>
+      <Toaster />
     </motion.div>
   );
 }
