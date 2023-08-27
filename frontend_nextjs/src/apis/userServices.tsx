@@ -12,6 +12,12 @@ export const fetchUserById = async (id: string) => {
   return response.data;
 };
 export const getMe = async () => {
-  const response = await axiosClient.get<User>(`/user/me`);
-  return response.data;
+  try {
+    const response = await axiosClient.get<User>(`/user/me`);
+    return response.data;
+  } catch (error) {
+    // Handle the error here
+    console.error('An error occurred:', error);
+    throw error; // Rethrow the error if needed
+  }
 };

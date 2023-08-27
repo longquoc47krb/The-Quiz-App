@@ -14,7 +14,13 @@ function MyQuizzes() {
   const { user } = useAuth();
   const { data: quizzes, isLoading } = useQuery({
     queryKey: ['fetchQuizzesByAuthorId'],
-    queryFn: () => fetchQuizzesByAuthorId(user?.id),
+    queryFn: () => {
+      if (!user) {
+        // Handle the case when user is undefined or null
+        return Promise.resolve([]); // You can return an empty array or any default value
+      }
+      return fetchQuizzesByAuthorId(user.id);
+    },
     refetchInterval: 10000,
   });
   if (isLoading) {

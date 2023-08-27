@@ -12,13 +12,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { useAuth } from "@/hooks/useAuthContext";
+import { FcGoogle } from "react-icons/fc";
 
 const Header = () => {
   const { user, setCurrentUser, removeCurrentUser } = useAuth();
   const [toggle, setToggle] = useState(false);
   const router = useRouter();
-  const handleLogin = () => {
-    router.push('/login');
+  const handleGoogleLogin = () => {
+    window.open(process.env.NEXT_PUBLIC_GOOGLE_OAUTH, '_blank');
   };
   useEffect(()=>{
     setCurrentUser()
@@ -37,9 +38,13 @@ const Header = () => {
             />
           </div>
         ) : (
-          <span className="dark:text-white cursor-pointer mr-4" onClick={handleLogin}>
-            Login
-          </span>
+          <button
+          className="bg-gray-800/30 flex items-center justify-center w-max gap-x-2 mt-4 p-2 rounded-lg m-2 text-white hover:bg-gray-800/70"
+          onClick={handleGoogleLogin}
+        >
+          <FcGoogle />
+          <span>Login with Google</span>
+        </button>
         )}
       {toggle && user && (
         <ul className="menu-list">
