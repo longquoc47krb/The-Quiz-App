@@ -11,9 +11,13 @@ function GridPagination({totalPages, currentPage, setCurrentPage, handlePrevPage
     }
     return ''
   }
+  function calculateColumn(n : number) {
+    return `40px_`.repeat((n - 10) / 10 + 2).slice(0, -1);
+  }
+  // grid-cols-[${calculateColumn(totalPages)}]
   return (
     <div className='mx-4'>
-      <div className="grid grid-cols-[40px_40px] gap-4 overflow-y-auto max-h-screen justify-center mb-4">
+      <div className="grid grid-cols-[40px_40px_40px] gap-4 overflow-y-auto max-h-screen justify-center mb-4">
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
               <button
                 key={pageIndex}

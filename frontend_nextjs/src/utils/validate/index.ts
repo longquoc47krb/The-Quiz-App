@@ -71,6 +71,7 @@ export const validateQuestion = (question: any) => {
   return (
     question &&
     typeof question.text === 'string' &&
+    typeof question.picture === 'string' &&
     Array.isArray(question.options) &&
     question.options.length === 4 &&
     question.options.every((option) => typeof option === 'string') &&

@@ -21,7 +21,6 @@ function withAuth<T extends Props>(
   const Wrapper = (props: T) => {
     const router = useRouter();
     const currentRoute = router.pathname;
-    console.log({ props });
     useEffect(() => {
       if (!props.isAuthenticated) {
         // Show a push notification for unauthenticated users

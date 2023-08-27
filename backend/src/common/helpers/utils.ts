@@ -12,3 +12,7 @@ export const handleScorePerQuestion = (time: number, isCorrect: boolean) => {
     }
     return 0;
 }
+export function filterNonNullEmpty(arr) {
+    const result = arr.filter(item => item !== null && item !== "");
+    return result;
+}

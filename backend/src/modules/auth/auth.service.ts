@@ -118,7 +118,7 @@ export class AuthService {
         const existToken = await this.tokenService.findByUserId(user.id);
 
         const expirationDate = new Date();
-        expirationDate.setMinutes(expirationDate.getMinutes() + 15);
+        expirationDate.setMinutes(expirationDate.getMinutes() + 30);
         const randomToken = this.tokenService.generateVerificationToken();
         if (!existToken) {
             const token = new Token();

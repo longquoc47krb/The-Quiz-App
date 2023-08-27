@@ -8,17 +8,29 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import { QuizProps } from '@/interfaces';
-import { useRouter } from 'next/router';
+import { QuizProps } from "@/interfaces";
+import { useRouter } from "next/router";
+import { LuEdit } from "react-icons/lu";
 
 function QuizEntity(props: QuizProps) {
-  const { title, author, id, category, questions } = props;
+  const { title, author, id, category, questions, isUpdate } = props;
   const router = useRouter();
   return (
     <div
-      className="item-container"
-      onClick={() => router.push(`/quiz/${id}`)}
+      className="item-container relative"
+      onClick={() =>
+        isUpdate ? router.push(`/quiz/stats/${id}`) : router.push(`/quiz/${id}`)
+      }
     >
+      {isUpdate && (
+        <LuEdit
+          className="absolute top-4 right-4"
+          onClick={(e) => {
+            e.stopPropagation()
+            router.push(`/quiz/update/${id}`);
+          }}
+        />
+      )}
       <div>
         <h1 className="text-3xl font-medium line-clamp-2">{title}</h1>
         <h2 className="font-normal italic text-gray-600">{category}</h2>
@@ -30,11 +42,11 @@ function QuizEntity(props: QuizProps) {
             className="rounded-full"
             style={{ width: 32 }}
           />
-          <h2  className="text-sm">{author?.name}</h2>
+          <h2 className="text-sm">{author?.name}</h2>
         </div>
         <h2 className="font-thin text-gray-600">
-            {questions.length} questions
-          </h2>
+          {questions.length} questions
+        </h2>
       </div>
     </div>
   );

@@ -21,4 +21,7 @@ export class CreateAnswerDto {
 
     @ApiProperty()
     explain: string;
+
+    @ApiProperty()
+    picture?: string;
 }

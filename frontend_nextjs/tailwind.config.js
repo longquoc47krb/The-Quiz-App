@@ -44,6 +44,7 @@ module.exports = {
         darkPrimaryActive: '#9e77c9',
         active: '#393241',
         darkBlack: '#101012',
+        darkViolet: 'rgb(34,31,44)',
       },
     },
   },

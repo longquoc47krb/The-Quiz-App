@@ -33,12 +33,10 @@ function NewPassword() {
   const router = useRouter();
   const { query } = router;
   const { code } = query;
-  console.log(code);
   useEffect(() => {
     const createNewPassword = async () => {
       try {
         const response = await resetPassword(code);
-        console.log({ response });
         toast.success(response.message);
       } catch (error) {
         console.log({ error });

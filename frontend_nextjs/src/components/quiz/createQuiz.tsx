@@ -10,20 +10,27 @@
 import { usePrevious } from "@uidotdev/usehooks";
 import React, { useEffect, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
-import { useFieldArray, useForm } from "react-hook-form";
+import { FormProvider , useFieldArray, useForm } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { BsTrash } from "react-icons/bs";
 
-import { createQuiz } from "@/apis/quizServices";
+import { createQuiz, updateQuiz } from "@/apis/quizServices";
 import { QuizCategoryList } from "@/common/constants";
-import type { CreateQuizDto, Quiz } from "@/interfaces";
+import type { CreateQuizDto, Quiz, UpdateQuizDto } from "@/interfaces";
 
 import SlideAnimation from "../animation/slider";
 import ErrorMessage from "../error-message";
+import ExportJSONButton from "../export-json-button";
 import GridPagination from "../grid-pagination";
 import UploadFile from "../upload-file";
+import ImageUpload from "../upload-image";
 
-const CreateQuizForm = () => {
+interface CreateUpdateQuizProps {
+  isUpdate ?: boolean;
+  data ?: Quiz
+}
+const CreateQuizForm = (props: CreateUpdateQuizProps) => {
+  const { isUpdate, data: existingQuizData } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     control,
@@ -32,6 +39,8 @@ const CreateQuizForm = () => {
     formState: { errors },
     getValues,
     setValue,
+    methods,
+    watch
   } = useForm<Quiz>({
     defaultValues: {
       title: "",
@@ -39,10 +48,12 @@ const CreateQuizForm = () => {
       category: "",
       questions: [
         {
+          
           text: "",
           options: ["", "", "", ""],
           correctOption: "",
           explain: "",
+          picture:""
         },
       ],
     },
@@ -51,12 +62,24 @@ const CreateQuizForm = () => {
     control,
     name: "questions",
   });
+  // if data exists
+
+  useEffect(() => {
+    if (isUpdate && existingQuizData) {
+      // Set the form data with existing quiz data for update
+      setValue("title", existingQuizData.title)
+      setValue("description", existingQuizData.description)
+      setValue("category", existingQuizData.category)
+      setValue("questions", existingQuizData.questions)
+    }
+  }, [isUpdate]);
+
+
   // reorder question using drag-n-drop
   const [step, setStep] = useState(1);
   const previousStep = usePrevious(step);
   const [numQuestions, setNumQuestions] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState(-1);
-  const previousPage = usePrevious(currentPage);
   const [isUploadFromDevice, setIsUploadFromDevice] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const questionsPerPage = 1;
@@ -86,17 +109,33 @@ const CreateQuizForm = () => {
     options: ["", "", "", ""],
     correctOption: "",
     explain: "",
+    picture: ""
   }));
   useEffect(() => {
-    if (!isUploadFromDevice) {
+    if (!isUploadFromDevice && !isUpdate) {
       setValue("questions", defaultQuestions);
     }
   }, [isUploadFromDevice]);
 
-  const optionsList = getValues("questions");
   const values = getValues();
   const { questions } = values;
-  const onSubmit: SubmitHandler<CreateQuizDto> = async (
+  console.log({questions})
+  const onUpdateSubmit: SubmitHandler<UpdateQuizDto> = async (
+    data: UpdateQuizDto
+  ) => {
+    if (step === 2 && isSubmitting) {
+      try {
+        const response: any = await updateQuiz(existingQuizData?.id, data);
+        toast.success("Updated quiz successful!"); // Display success toast
+        setIsSubmitting(false);
+      } catch (error) {
+        toast.error("Updated quiz failed. Try again"); // Display error toast
+      } finally {
+        setIsSubmitting(false); // Reset the flag after submission (success or failure)
+      }
+    }
+  };
+  const onCreateSubmit: SubmitHandler<CreateQuizDto> =  async (
     data: CreateQuizDto
   ) => {
     if (step === 2 && isSubmitting) {
@@ -105,6 +144,7 @@ const CreateQuizForm = () => {
         toast.success("Created quiz successful!"); // Display success toast
         setIsSubmitting(false);
       } catch (error) {
+        console.log({error})
         toast.error("Create quiz failed. Try again"); // Display error toast
       } finally {
         setIsSubmitting(false); // Reset the flag after submission (success or failure)
@@ -134,7 +174,7 @@ const CreateQuizForm = () => {
               Quiz Title:
               <input
                 type="text"
-                {...register("title", { required: true })}
+                {...register("title", { required: false })}
                 className="input-container"
               />
               <ErrorMessage error={errors.title?.message} />
@@ -185,7 +225,9 @@ const CreateQuizForm = () => {
             >
               <div>
                 <h3 className="text-xl font-bold mt-4">Questions:</h3>
-                <UploadFile onDataUpload={handleDataUpload} />
+                <div className="flex items-center gap-x-4">
+                  <UploadFile onDataUpload={handleDataUpload} /> {isUpdate && <ExportJSONButton data={values} />}
+                </div>
                 {fields
                   .slice(
                     currentPage * questionsPerPage,
@@ -202,6 +244,10 @@ const CreateQuizForm = () => {
                           className="input-container"
                         />
                       </label>
+                      <label className="block mb-2">
+                        Picture (Optional):
+                        <ImageUpload name={`questions.${currentPage}.picture`} value={questions[currentPage]?.picture} setValue={setValue}/>
+                      </label>
                       <div className="grid grid-cols-2 justify-center">
                         {question.options.map((option, optionIndex) => (
                           <label key={optionIndex} className="block mb-2 mr-2">
@@ -209,7 +255,7 @@ const CreateQuizForm = () => {
                             <input
                               {...register(
                                 `questions.${currentPage}.options.${optionIndex}`,
-                                { required: true }
+                                { required: false }
                               )}
                               className="input-container"
                             />
@@ -224,6 +270,7 @@ const CreateQuizForm = () => {
                           })}
                           className="input-container"
                         >
+                          {/* {getValues(`questions.${currentPage}.options`)?.map( */}
                           {getValues(`questions.${currentPage}.options`)?.map(
                             (option, optionIndex) => (
                               <option key={optionIndex} value={option}>
@@ -300,13 +347,15 @@ const CreateQuizForm = () => {
   };
   return (
     <main className="mx-auto px-4">
-      <h2 className="text-3xl font-bold mb-4">Create Quiz Form</h2>
+      <h2 className="text-3xl font-bold mb-4">{isUpdate ? "Update" : "Create"} Quiz Form</h2>
+      <FormProvider {...methods}>
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={isUpdate ? handleSubmit(onUpdateSubmit) : handleSubmit(onCreateSubmit)}
         // className='w-[calc(100vw-15rem)]'
       >
         {renderStep()}
       </form>
+      </FormProvider>
       <Toaster />
     </main>
   );

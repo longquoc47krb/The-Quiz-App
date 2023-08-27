@@ -1,5 +1,5 @@
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { ResultService } from './result.service';
 import { CreateResultDto } from './dto/create-result.dto';
 import { UpdateResultDto } from './dto/update-result.dto';
@@ -30,6 +30,20 @@ export class ResultController {
   @Roles(Role.User)
   findAllByPlayerId(@Param('id') id: string) {
     return this.resultService.findAllByPlayerId(+id);
+  }
+  @Get('/quiz/:id')
+  // @ApiBearerAuth()
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.User)
+  findAllByQuizId(@Param('id') id: string) {
+    return this.resultService.findAllByQuizId(+id);
+  }
+  @Get('/quiz/user/:id')
+  @ApiBearerAuth()
+  @UseGuards(RolesGuard)
+  @Roles(Role.User)
+  findAllByPlayerIdAndQuizId(@Param('id') id: string, @Query('quizId') quizId: string) {
+    return this.resultService.findAllByPlayerIdAndQuizId(+id, +quizId);
   }
   @Get(':id')
   findOne(@Param('id') id: string) {

@@ -33,3 +33,13 @@
   }
 
 }
+.section {
+  &::before{
+    background: $borderSecondaryColor;
+    color: $borderSecondaryColor;
+    content: ".";
+    width: 1px;
+    border-radius: 0 5px 5px 0;
+    margin-right: 1rem;
+  }
+}

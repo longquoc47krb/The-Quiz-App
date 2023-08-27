@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import { ImCross } from 'react-icons/im';
 
@@ -7,35 +6,11 @@ import {
   IncorrectMessage,
   NoAnswerProvidedMessage,
 } from '@/common/constants';
-import { checkCorrectAnswer, getRandomItemFromArray } from '@/utils';
+import type { MCQProps } from '@/interfaces';
+import { getRandomItemFromArray, validateOptionClassName } from '@/utils';
 
-const MultiChoiceQuestionsPreview = ({
-  title,
-  options,
-  explain,
-  yourChoice,
-  answer,
-}: {
-  title: string;
-  options: string[];
-  explain: string;
-  yourChoice: string;
-  answer: string;
-}) => {
-  const [isCorrect, setIsCorrect] = useState([false, false, false, false]);
-  useEffect(() => {
-    const isAnswerCorrect = checkCorrectAnswer(options, answer);
-    setIsCorrect(isAnswerCorrect);
-  }, [options]);
-  const validateClassName = (option: string, index: number) => {
-    if (yourChoice === option) {
-      return isCorrect[index] ? 'correct-choice flicker' : 'incorrect-choice';
-    }
-    if (option === answer) {
-      return isCorrect[index] ? 'correct-choice flicker' : 'incorrect-choice';
-    }
-    return isCorrect[index] ? 'correct-choice flicker' : '';
-  };
+const MultiChoiceQuestionsPreview = (props: MCQProps) => {
+  const { answer, explain, options, picture, title, yourChoice } = props;
   function renderResult() {
     if (!yourChoice) {
       return (
@@ -72,14 +47,31 @@ const MultiChoiceQuestionsPreview = ({
   return (
     <div className="flex md:items-center flex-col py-4">
       <h1 className="dark:text-gray-300 w-[60vw] text-center">{title}</h1>
+      {picture && (
+        <div className="flex justify-center w-full">
+          <img
+            src={picture}
+            className="h-[30vh] border-2 border-gray-500"
+            alt="question"
+          />
+        </div>
+      )}
       <div className="flex flex-col items-start">
-        <div className="md:grid md:grid-cols-2 md:gap-4 mt-4 flex flex-col gap-y-4">
+        <div
+          className={`md:grid ${
+            options.length === 3 ? 'md:grid-cols-1' : 'md:grid-cols-2'
+          } md:gap-4 mt-4 flex flex-col gap-y-4`}
+        >
           {options.map((option, index) => (
             <button
               key={index}
               disabled
               value={option}
-              className={`option ${validateClassName(option, index)}`}
+              className={`option ${validateOptionClassName(
+                yourChoice,
+                option,
+                answer,
+              )}`}
             >
               {option}
             </button>

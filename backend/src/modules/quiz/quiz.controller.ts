@@ -1,6 +1,6 @@
 
 
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, UseInterceptors, ClassSerializerInterceptor, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { QuizService } from './quiz.service';
@@ -12,6 +12,7 @@ import { UserResponseDTO } from '../user/dto/user-response.dto';
 import { User } from 'src/utils/decorator/user.decorator';
 import { User as UserEntity } from '../user/entities/user.entity';
 import { userInfo } from 'os';
+import { ResponseDto } from 'src/utils/interface/response.dto';
 
 @ApiTags('Quiz')
 
@@ -37,12 +38,6 @@ export class QuizController {
   findOne(@Param('id') id: string) {
     return this.quizService.findOne(+id);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateQuizDto: UpdateQuizDto) {
-    return this.quizService.update(+id, updateQuizDto);
-  }
-
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.quizService.deleteQuizById(+id);
@@ -53,5 +48,36 @@ export class QuizController {
     @Body('answers') answers: string[],
   ): Promise<QuizResult> {
     return this.quizService.calculateResults(candidateId, answers);
+  }
+  @Get('author/:id')
+  async findByAuthorId(@Param('id') id: string) {
+    try {
+      const quizzez = await this.quizService.findByAuthorId(+id);
+      if (!quizzez) {
+        return new ResponseDto(400, 'Not found quiz', [])
+      }
+      return new ResponseDto(200, 'Successfully fetched quizzes', quizzez);
+    } catch (error) {
+      return new ResponseDto(400, 'Not found quiz', [])
+    }
+
+  }
+  @Patch(':id')
+  async updateQuiz(@Param('id') id: string, @Body() updateQuizDto: UpdateQuizDto) {
+    try {
+      return this.quizService.updateQuiz(+id, updateQuizDto);
+    } catch (error) {
+      return new ResponseDto(400, 'Not found quiz', [])
+    }
+
+  }
+  @Patch('participant/:id')
+  async updateParticipant(@Param('id') id: string, @Query('participantId') participantId: string) {
+    try {
+      return this.quizService.updateParticipants(+id, +participantId);
+    } catch (error) {
+      return new ResponseDto(400, 'Not found quiz', [])
+    }
+
   }
 }

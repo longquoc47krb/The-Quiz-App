@@ -4,9 +4,7 @@ const Tab = ({ label, selected, onClick }) => {
   return (
     <div
       className={`tab ${
-        selected
-          ? 'border-b-2 border-b-darkPrimaryActive text-darkPrimaryActive'
-          : ''
+        selected ? 'text-darkPrimaryActive rounded-full bg-darkViolet' : ''
       }`}
       onClick={onClick}
     >
@@ -15,15 +13,15 @@ const Tab = ({ label, selected, onClick }) => {
   );
 };
 
-const Tabs = ({ tabs, children }) => {
+const Tabs = ({ tabs, children, onSwitchTab }) => {
   const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTabClick = (index) => {
     setSelectedTab(index);
+    onSwitchTab(index);
     const tabHash = `#${index + 1}`; // Use a meaningful hash value
     window.location.hash = tabHash;
   };
-
   useEffect(() => {
     // Update the selected tab based on the URL hash
     const { hash } = window.location;
@@ -36,7 +34,7 @@ const Tabs = ({ tabs, children }) => {
   }, [tabs]);
   return (
     <div className="flex flex-col w-full px-4">
-      <div className="flex border-b-[1px] border-b-gray-800">
+      <div className="flex ">
         {tabs.map((tab, index) => (
           <Tab
             key={index}

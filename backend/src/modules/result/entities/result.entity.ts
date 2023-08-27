@@ -20,8 +20,12 @@ export class Answer {
     title: string;
 
     @ApiProperty()
-    @Column({ length: 1000 })
+    @Column({ length: 5000, nullable: true })
     explain: string;
+
+    @ApiProperty()
+    @Column({ nullable: true })
+    picture: string;
 
     @ApiProperty()
     @Column('simple-array')

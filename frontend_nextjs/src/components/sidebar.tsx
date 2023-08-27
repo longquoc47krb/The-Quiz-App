@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BiHomeAlt } from 'react-icons/bi';
-import { MdOutlineLeaderboard } from 'react-icons/md';
 
 const Sidebar = ({className} : {className: string}) => {
   const router = useRouter();
@@ -23,10 +22,6 @@ const Sidebar = ({className} : {className: string}) => {
       }
       case '/quiz/create': {
         setIndex(1);
-        break;
-      }
-      case '/ranking': {
-        setIndex(2);
         break;
       }
       default: {setIndex(3);
@@ -61,17 +56,6 @@ const Sidebar = ({className} : {className: string}) => {
       >
         <AiOutlinePlus className='mx-auto' size={32} />
         <span>Create</span>
-      </li>
-      <li
-        ref={createRef}
-        className={`sidebar-item ${router.pathname === '/ranking' ? 'active-text' : ''}`}
-        onClick={() => {
-          router.push('/ranking');
-          setIndex(2)
-        }}
-      >
-        <MdOutlineLeaderboard className='mx-auto' size={32} />
-        <span>Ranking</span>
       </li>
       <span
         className={classNameString}

@@ -17,6 +17,7 @@ const quizSessionSlice = createSlice({
     results: [],
     timePerQuestion: 0,
     score: 0,
+    streak: 0,
   },
   reducers: {
     setQuizSession: (state, action) => {
@@ -29,6 +30,12 @@ const quizSessionSlice = createSlice({
       return {
         ...state,
         results: action.payload,
+      };
+    },
+    setStreak: (state, action) => {
+      return {
+        ...state,
+        streak: action.payload,
       };
     },
     pushToResults: (state, action) => {
@@ -99,6 +106,7 @@ export const {
   pushToResults,
   setTimePerQuestion,
   setScore,
+  setStreak,
 } = quizSessionSlice.actions;
 export const timePerQuestionSelector = (state) =>
   state.quizSession.timePerQuestion;

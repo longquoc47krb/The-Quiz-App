@@ -10,7 +10,7 @@ import { fetchResultById } from '@/apis/resultServices';
 import SlideAnimation from '@/components/animation/slider';
 import GridPagination from '@/components/grid-pagination';
 import MultiChoiceQuestionsPreview from '@/components/multi-choice-questions/multi-choice-questions-preview';
-import type { Result } from '@/interfaces';
+import type { MCQProps, Result } from '@/interfaces';
 import { Meta } from '@/layouts/Meta';
 import { Main } from '@/templates/Main';
 import {
@@ -52,7 +52,7 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
     }
     setCorrectArr(newArray);
   }, [result]);
-
+  console.log({ resultArr });
   return (
     <Main
       meta={
@@ -71,7 +71,7 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
                     className="rounded-full border-2 border-gray-500 w-12 h-12"
                   />
                   <div className="text-lg md:block flex justify-between pb-2 mb-4 border-b-primary border-b-2 md:border-none">
-                    <h2>
+                    <h2 className="flex items-center">
                       {player.name}{' '}
                       {player?.verified && (
                         <MdVerified className="inline-block text-cyan-500" />
@@ -119,15 +119,8 @@ function RecentlySubmitedQuiz({ result }: RecentResultPageProps) {
                   currentPage * questionsPerPage,
                   (currentPage + 1) * questionsPerPage,
                 )
-                ?.map((item, index) => (
-                  <MultiChoiceQuestionsPreview
-                    key={currentPage}
-                    explain={item.explain}
-                    options={item.options}
-                    title={item.title}
-                    yourChoice={item.yourChoice}
-                    answer={item.answer}
-                  />
+                ?.map((props: MCQProps, index) => (
+                  <MultiChoiceQuestionsPreview key={currentPage} {...props} />
                 ))}
             </SlideAnimation>
           </div>

@@ -15,6 +15,7 @@ import {
 import { useDispatch } from 'react-redux';
 import RecentYourQuizzes from '@/components/recent-your-quizzes';
 import Search from '@/components/search';
+import MyQuizzes from '@/components/my-quizzes';
 
 export const getServerSideProps: GetServerSideProps<{
   quizzes: Quiz[];
@@ -34,6 +35,7 @@ const Index = ({
   return (
     <Main meta={<Meta title="Quizaka | Home Page" description="Quizaka" />}>
       <Search data={quizzes} keysToSearch={['title']} />
+      <MyQuizzes />
       <RecentYourQuizzes />
       <QuizDashboard quizzes={quizzes} />
     </Main>

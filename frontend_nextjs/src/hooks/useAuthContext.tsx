@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'next/router';
 import React, { createContext, useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -26,6 +27,7 @@ export const useAuth = () => {
 export const AuthProvider: React.FC = ({ children }) => {
   const dispatch = useDispatch();
   const [isLogged, setIsLogged] = useState(false);
+  const router = useRouter();
   const { data, isLoading } = useQuery({
     queryKey: ['getMe'],
     queryFn: getMe,
@@ -40,6 +42,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const removeCurrentUser = () => {
     clearAuthentication();
+    router.push('/login');
     dispatch(setUser(null));
     setIsLogged(false);
   };

@@ -14,6 +14,20 @@ export function convertSecondsToMinutesAndSeconds(seconds: any) {
 
   return `${formattedMinutes}:${formattedSeconds}`;
 }
+export function convertToThousandsFormat(number) {
+  const numberStr = String(number);
+  const { length } = numberStr;
+  let formattedStr = '';
+
+  for (let i = length - 1, count = 0; i >= 0; i--, count++) {
+    formattedStr = numberStr[i] + formattedStr;
+    if (count !== 0 && count % 3 === 0 && i !== 0) {
+      formattedStr = ` ${formattedStr}`;
+    }
+  }
+
+  return formattedStr;
+}
 export const checkCorrectAnswer = (
   options: string[],
   correctAnswer: string,
@@ -101,4 +115,18 @@ export function shuffleArray(array: string[]) {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+export const validateOptionClassName = (
+  selectOption: string,
+  option: string,
+  correctAnswer: string,
+) => {
+  if (selectOption === option) {
+    return checkOptionIsCorrectOrNot(option, correctAnswer)
+      ? 'correct-choice flicker'
+      : 'incorrect-choice';
+  }
+  return checkOptionIsCorrectOrNot(option, correctAnswer)
+    ? 'correct-choice flicker'
+    : '';
+};
 export * from './validate/index';

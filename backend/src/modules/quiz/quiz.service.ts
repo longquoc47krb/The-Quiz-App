@@ -11,6 +11,7 @@ import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { Quiz } from './entities/quiz.entity';
 import { ResponseDto } from 'src/utils/interface/response.dto';
 import { User } from '../user/entities/user.entity';
+import { filterNonNullEmpty } from 'src/common/helpers/utils';
 
 @Injectable()
 export class QuizService {
@@ -27,7 +28,7 @@ export class QuizService {
     quiz.category = createQuizDto.category;
     quiz.description = createQuizDto.description;
     quiz.authorId = user.id;
-    quiz.title = createQuizDto.title;
+    quiz.title = createQuizDto.title || `${createQuizDto.category} #${quiz.id}`;;
     console.log({ quiz })
     const savedQuestions = [];
     const uniqueQuestionTexts = [];
@@ -37,10 +38,11 @@ export class QuizService {
       }
       const question = new Question();
       question.text = questionData.text;
-      question.options = questionData.options;
+      question.options = filterNonNullEmpty(questionData.options);
       question.correctOption = questionData.correctOption;
       question.quizId = quiz.id;
       question.explain = questionData.explain;
+      question.picture = questionData.picture;
       const savedQuestion = await this.questionRepository.save(question);
       savedQuestions.push(savedQuestion);
     }
@@ -56,39 +58,76 @@ export class QuizService {
     });
     return quizzes;
   }
-
+  async findByAuthorId(authorId: number) {
+    const quizzes = await this.quizRepository.createQueryBuilder('quiz').leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user').where("quiz.authorId = :authorId", { authorId }).getMany()
+    return quizzes
+  }
   findOne(id: number) {
     return this.quizRepository.createQueryBuilder('quiz')
       .leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user')
       .where('quiz.id = :id', { id })
       .getOne();
   }
+  async updateParticipants(quizId: number, participantId: number) {
+    const participant = await this.userService.getOne(participantId);
+    const existingQuiz = await this.findOne(quizId);
 
-  async update(id: number, updateQuizDto: UpdateQuizDto) {
-    const { title, description, category } = updateQuizDto;
-    // Assuming you have a Quiz entity and repository in your codebase
-    const quiz = await this.quizRepository.createQueryBuilder('quiz')
-      .where('quiz.id = :id', { id })
-      .getOne();
-
-    if (!quiz) {
-      throw new Error(`Quiz with ID ${id} not found`);
+    if (!participant) {
+      throw new Error('Participant not found');
     }
-    if (!(category in QuizCategory)) {
-      throw new Error(`Invalid category value: ${category}`);
+
+    if (!existingQuiz) {
+      throw new Error('Quiz not found');
     }
-    // Update the quiz properties based on the values in updateQuizDto
-    quiz.title = title;
-    quiz.description = description;
-    quiz.category = category;
-    // Update other properties as needed
 
-    // Create a new question entity
-    const newQuestion = new Question()
-    // Save the updated quiz to the database
-    const updatedQuiz = await this.quizRepository.save(quiz);
+    if (!existingQuiz.participants) {
+      existingQuiz.participants = [];
+    }
 
-    return updatedQuiz;
+    const participantExists = existingQuiz.participants.some(p => p.id === participant.id);
+
+    if (!participantExists) {
+      existingQuiz.participants.push(participant);
+      existingQuiz.totalParticipants += 1;
+    }
+
+    return this.quizRepository.save(existingQuiz);
+  }
+  async updateQuiz(quizId: number, updateQuizDto: UpdateQuizDto) {
+    const existingQuiz = await this.findOne(quizId);
+
+    if (!existingQuiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+    const updatedQuestions: Question[] = [];
+
+    for (let i = 0; i < updateQuizDto.questions.length; i++) {
+      const updateDto = updateQuizDto.questions[i];
+
+      const updatedQuestion = new Question();
+      updatedQuestion.text = updateDto.text;
+      updatedQuestion.options = filterNonNullEmpty(updateDto.options);
+      updatedQuestion.explain = updateDto.explain;
+      updatedQuestion.correctOption = updateDto.correctOption;
+
+      updatedQuestions.push(updatedQuestion);
+    }
+
+
+    // Update properties if provided in the update data
+    if (updateQuizDto.title) {
+      existingQuiz.title = updateQuizDto.title;
+    }
+    if (updateQuizDto.description) {
+      existingQuiz.description = updateQuizDto.description;
+    }
+    if (updateQuizDto.category) {
+      existingQuiz.category = updateQuizDto.category;
+    }
+    if (updateQuizDto.questions) {
+      existingQuiz.questions = updatedQuestions;
+    }
+    return this.quizRepository.save(existingQuiz);
   }
 
   remove(id: number) {

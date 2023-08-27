@@ -42,6 +42,14 @@ export interface UserResponseDTO {
   createdQuizzes: any;
   quizSessions: QuizSession[];
 }
+export interface MCQProps {
+  title: string;
+  picture: string;
+  options: string[];
+  explain: string;
+  yourChoice: string;
+  answer: string;
+}
 export interface Question {
   id: number;
   text: string;
@@ -49,6 +57,7 @@ export interface Question {
   correctOption: string;
   quizId: number;
   explain: string;
+  picture: string;
 }
 
 export interface Quiz {
@@ -94,6 +103,7 @@ export interface QuizProps {
   questions: any;
   author: User;
   category: string;
+  isUpdate?: boolean;
 }
 export interface MenuItem {
   label: string;
@@ -145,6 +155,7 @@ interface CreateAnswerDto {
   correct: boolean;
   time: number;
   options: string[];
+  picture?: string;
 }
 export interface CreateResultDto {
   player_id: number;
@@ -173,6 +184,23 @@ interface Answer {
   result_id: number;
   result: Result;
   options: string[];
+  picture: string;
+}
+export interface UpdateQuestionDto {
+  text?: string;
+  options?: string[];
+  correctOption?: string;
+  explain?: string;
+}
+
+export interface UpdateQuizDto {
+  title?: string;
+
+  description?: string;
+
+  category?: string;
+
+  questions?: UpdateQuestionDto[];
 }
 // Define the interface for the CreateQuizDto
 export interface CreateQuizDto {

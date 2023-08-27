@@ -7,12 +7,10 @@ import { CreateQuestionDto } from "src/modules/question/dto/create-question.dto"
 export class CreateQuizDto {
     @ApiProperty({ example: 'Quiz Title', description: 'The title of the quiz' })
     @IsString()
-    @IsNotEmpty()
     title: string;
 
     @ApiProperty({ example: 'Quiz Description', description: 'The description of the quiz' })
     @IsString()
-    @IsNotEmpty()
     description: string;
 
     @ApiProperty({ example: QuizCategory.SCIENCE, description: 'The category of the quiz' })

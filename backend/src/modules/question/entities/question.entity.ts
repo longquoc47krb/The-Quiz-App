@@ -10,14 +10,15 @@ export class Question {
 
     @Column()
     text: string;
-
     @Column('simple-array')
     options: string[];
 
+    @Column({ nullable: true })
+    picture: string;
     @Column()
     correctOption: string;
 
-    @Column({ length: 1000 })
+    @Column({ length: 5000, nullable: true })
     explain: string;
 
     @ManyToOne(() => Quiz, quiz => quiz.questions)

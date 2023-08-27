@@ -37,9 +37,30 @@ export const sendResetPassword = async (email: string) => {
     return error;
   }
 };
+export const sendVerifyEmail = async (email: string) => {
+  try {
+    const response = await axiosClient.post("/auth/send-token-email", null, { params: {
+      email,
+      type: "VERIFY_EMAIL"
+    }});
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
 export const resetPassword = async (code: string) => {
   try {
     const response = await axiosClient.post("/auth/reset-password", null, { params: {
+      code
+    }});
+    return response.data;
+  } catch (error) {
+    return error;
+  }
+};
+export const verifyAccount = async (code: string) => {
+  try {
+    const response = await axiosClient.post("/auth/verify-email", null, { params: {
       code
     }});
     return response.data;

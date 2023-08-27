@@ -1,4 +1,19 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateQuestionDto } from './create-question.dto';
+import { IsNotEmpty, IsArray, IsString } from 'class-validator';
 
-export class UpdateQuestionDto extends PartialType(CreateQuestionDto) {}
+export class UpdateQuestionDto {
+    @IsNotEmpty()
+    @IsString()
+    text: string;
+
+    @IsNotEmpty()
+    @IsArray()
+    options: string[];
+
+    @IsNotEmpty()
+    @IsString()
+    correctOption: string;
+
+    @IsNotEmpty()
+    @IsString()
+    explain: string;
+}

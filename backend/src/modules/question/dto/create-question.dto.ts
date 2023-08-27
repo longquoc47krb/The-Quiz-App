@@ -7,6 +7,8 @@ export class CreateQuestionDto {
     @IsNotEmpty()
     @IsArray()
     options: string[];
+    @IsString()
+    picture: string;
     @IsNotEmpty()
     @IsString()
     correctOption: string;
