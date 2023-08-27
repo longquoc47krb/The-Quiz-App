@@ -3,6 +3,7 @@
 /* eslint-disable unused-imports/no-unused-vars */
 import { Splide } from "@splidejs/react-splide";
 import { useQuery } from "@tanstack/react-query";
+import { useMediaQuery } from "@uidotdev/usehooks";
 import { isArray } from "lodash";
 import type { GetServerSideProps } from "next";
 
@@ -32,6 +33,7 @@ export const getServerSideProps: GetServerSideProps<{
 };
 const RecentYourQuizzes = () => {
   const { user } = useAuth();
+  const isSmallDevice = useMediaQuery("only screen and (max-width : 768px)");
   const { data: results, isLoading } = useQuery({
     queryKey: ["resultsByPlayerId"],
     queryFn: () => {
@@ -59,7 +61,7 @@ const RecentYourQuizzes = () => {
       {resultArrayLength > 0 && (
         <>
           <h1 className="m-4 text-2xl text-gray-400 font-medium section">Recent</h1>
-            <Splide options={{start:0, perPage: 3, gap: "1rem" , width: 'calc(100vw - 8rem)', arrows: false, height: "100%"}} tag="div" style={{paddingTop: "1em", paddingLeft: 8}}>
+            <Splide options={{start:0, perPage: isSmallDevice ? 1 : 3, gap: "1rem" , width: isSmallDevice ? '90vw' :  'calc(100vw - 8rem)', arrows: false, height: "100%"}} tag="div" style={{paddingTop: "1em", paddingLeft: 8}}>
               {reversedArray.map((props: Result) => (
                 <ResultItemWrap>
                   <ResultEntity key={props.id} {...props} />

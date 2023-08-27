@@ -31,7 +31,6 @@ export const AuthProvider: React.FC = ({ children }) => {
   const { data, isLoading } = useQuery({
     queryKey: ['getMe'],
     queryFn: getMe,
-    refetchInterval: 10000,
     cacheTime: 0,
     keepPreviousData: false,
   });

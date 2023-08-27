@@ -1,5 +1,6 @@
 import { Splide } from '@splidejs/react-splide';
 import { useQuery } from '@tanstack/react-query';
+import { useMediaQuery } from '@uidotdev/usehooks';
 import { isArray } from 'lodash';
 import React from 'react';
 
@@ -12,6 +13,7 @@ import ResultItemWrap from './splide';
 
 function MyQuizzes() {
   const { user } = useAuth();
+  const isSmallDevice = useMediaQuery('only screen and (max-width : 768px)');
   const { data: quizzes, isLoading } = useQuery({
     queryKey: ['fetchQuizzesByAuthorId'],
     queryFn: () => {
@@ -39,9 +41,9 @@ function MyQuizzes() {
           <Splide
             options={{
               start: 0,
-              perPage: 3,
+              perPage: isSmallDevice ? 1 : 3,
               gap: '1rem',
-              width: 'calc(100vw - 8rem)',
+              width: isSmallDevice ? '90vw' : 'calc(100vw - 8rem)',
               arrows: false,
               height: '100%',
             }}
