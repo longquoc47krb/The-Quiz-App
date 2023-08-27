@@ -34,7 +34,13 @@ const RecentYourQuizzes = () => {
   const { user } = useAuth();
   const { data: results, isLoading } = useQuery({
     queryKey: ["resultsByPlayerId"],
-    queryFn: () => fetchResultsByPlayerId(user?.id),
+    queryFn: () => {
+      if (!user) {
+        // Handle the case when user is undefined or null
+        return Promise.resolve([]); // You can return an empty array or any default value
+      }
+      return fetchResultsByPlayerId(user.id);
+    },
     refetchInterval: 10000
   });
   if (isLoading) {
