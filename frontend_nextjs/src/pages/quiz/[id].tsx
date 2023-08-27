@@ -26,7 +26,6 @@ import { getRandomItemFromArray, shuffleArray } from "@/utils";
 
 function QuizDetailPage({ quizData }: QuizDetailPageProps) {
   const router = useRouter();
-  const { id } = router.query;
   const { user } = useAuth();
   const isStart = useSelector((state) => state.quizSession.isStart);
   const [results, setResults] = useState([]);
@@ -64,16 +63,29 @@ function QuizDetailPage({ quizData }: QuizDetailPageProps) {
 
   useEffect(() => {
     async function fetchResults() {
+      const communicatiyResponse = await fetchResultsByQuizId(quizData.id);
+      setGlobalResults(communicatiyResponse.data);
+      if (!user) {
+        // Handle the scenario where the user is null (optional)
+        console.log("User is null. Cannot fetch results.");
+        setResults([]);
+        return;
+      }
+
       const response = await fetchResultsByPlayerIdAndQuizId(
-        user?.id,
+        user.id,
         quizData.id
       );
       setResults(response.data);
-      const communicatiyResponse = await fetchResultsByQuizId(quizData.id);
-      setGlobalResults(communicatiyResponse.data);
+      
+      
     }
-    fetchResults();
-  }, [quizData]);
+
+    if (quizData) {
+      fetchResults();
+    }
+}, [user, quizData]);
+
   // tabs
   const tabs = ["My recent quiz", "Community"];
   return (
