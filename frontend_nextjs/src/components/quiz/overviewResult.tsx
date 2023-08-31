@@ -3,7 +3,6 @@ import { maxBy } from 'lodash';
 import { toast, Toaster } from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 
-import { updateParticipants } from '@/apis/quizServices';
 import { useAuth } from '@/hooks/useAuthContext';
 import { isStart, setQuizSession } from '@/middlewares/slices/quizSessionSlice';
 import { convertSecondsToMinutesAndSeconds } from '@/utils';
@@ -18,6 +17,7 @@ function OverviewResult({ quizData, results }) {
     }
     toast.error('Please login to start');
   };
+  const attemptsTryTimes = 5;
   return (
     <motion.div
       initial={{ opacity: 0, y: -100 }}
@@ -51,7 +51,8 @@ function OverviewResult({ quizData, results }) {
         <span className="text-gray-400">{results?.length || 0}</span>{' '}
       </p>
       <p>
-        Limited No.attempts tried: <span className="text-gray-400">5</span>{' '}
+        Limited No.attempts tried:{' '}
+        <span className="text-gray-400">{attemptsTryTimes}</span>{' '}
       </p>
       <p>
         My record:{' '}
@@ -79,10 +80,10 @@ function OverviewResult({ quizData, results }) {
               streak: 0,
             }),
           );
-          user && (await updateParticipants(quizData?.id, user?.id));
         }}
         className="mt-4 flex justify-center px-6 py-1 rounded-lg text-gray-200 bg-green-600 w-fit hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-5"
-        disabled={results.length === 5}
+        disabled={results.length === attemptsTryTimes}
+        // disabled={results.length === 5}
       >
         Start
       </motion.button>

@@ -24,7 +24,7 @@ export class QuizService {
   async create(createQuizDto: CreateQuizDto, userJwt: User) {
     const { questions } = createQuizDto;
     const user: User = await this.userService.getOne(userJwt.id)
-    const quiz = new Quiz();
+    const quiz = this.quizRepository.create();
     quiz.category = createQuizDto.category;
     quiz.description = createQuizDto.description;
     quiz.authorId = user.id;
@@ -54,7 +54,7 @@ export class QuizService {
   async findAll() {
     // const quizzes = await this.quizRepository.createQueryBuilder('quiz').leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user').getMany()
     const quizzes = await this.quizRepository.find({
-      relations: ['questions', 'author'],
+      relations: ['questions', 'author', 'participants'],
     });
     return quizzes;
   }
@@ -64,8 +64,7 @@ export class QuizService {
   }
   findOne(id: number) {
     return this.quizRepository.createQueryBuilder('quiz')
-      .leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user')
-      .where('quiz.id = :id', { id })
+      .leftJoinAndSelect('quiz.questions', 'questions').innerJoinAndSelect('quiz.author', 'user').where('quiz.id = :id', { id })
       .getOne();
   }
   async updateParticipants(quizId: number, participantId: number) {
@@ -99,22 +98,25 @@ export class QuizService {
     if (!existingQuiz) {
       throw new NotFoundException('Quiz not found');
     }
+
     const updatedQuestions: Question[] = [];
 
-    for (let i = 0; i < updateQuizDto.questions.length; i++) {
-      const updateDto = updateQuizDto.questions[i];
+    if (updateQuizDto.questions) {
+      for (const updateDto of updateQuizDto.questions) {
+        const existingQuestion = existingQuiz.questions.find(
+          question => question.id === updateDto.id
+        );
 
-      const updatedQuestion = new Question();
-      updatedQuestion.text = updateDto.text;
-      updatedQuestion.options = filterNonNullEmpty(updateDto.options);
-      updatedQuestion.explain = updateDto.explain;
-      updatedQuestion.correctOption = updateDto.correctOption;
-
-      updatedQuestions.push(updatedQuestion);
+        if (existingQuestion) {
+          existingQuestion.text = updateDto.text;
+          existingQuestion.options = filterNonNullEmpty(updateDto.options);
+          existingQuestion.explain = updateDto.explain;
+          existingQuestion.correctOption = updateDto.correctOption;
+          updatedQuestions.push(existingQuestion);
+        }
+      }
     }
 
-
-    // Update properties if provided in the update data
     if (updateQuizDto.title) {
       existingQuiz.title = updateQuizDto.title;
     }
@@ -124,9 +126,7 @@ export class QuizService {
     if (updateQuizDto.category) {
       existingQuiz.category = updateQuizDto.category;
     }
-    if (updateQuizDto.questions) {
-      existingQuiz.questions = updatedQuestions;
-    }
+
     return this.quizRepository.save(existingQuiz);
   }
 

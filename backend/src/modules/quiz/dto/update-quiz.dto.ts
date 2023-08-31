@@ -1,6 +1,6 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateQuizDto } from './create-quiz.dto';
-import { IsString, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsNumber } from 'class-validator';
 import { QuizCategory } from 'src/common/category.enum';
 import { CreateQuestionDto } from 'src/modules/question/dto/create-question.dto';
 import { UpdateQuestionDto } from 'src/modules/question/dto/update-question.dto';

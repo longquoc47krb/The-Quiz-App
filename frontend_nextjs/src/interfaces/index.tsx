@@ -104,6 +104,8 @@ export interface QuizProps {
   author: User;
   category: string;
   isUpdate?: boolean;
+  participants?: User[];
+  totalParticipants?: number;
 }
 export interface MenuItem {
   label: string;
@@ -187,10 +189,12 @@ interface Answer {
   picture: string;
 }
 export interface UpdateQuestionDto {
+  id: number;
   text?: string;
   options?: string[];
   correctOption?: string;
   explain?: string;
+  picture?: string;
 }
 
 export interface UpdateQuizDto {

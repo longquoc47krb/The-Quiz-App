@@ -1,6 +1,9 @@
-import { IsNotEmpty, IsArray, IsString } from 'class-validator';
+import { IsNotEmpty, IsArray, IsString, IsNumber } from 'class-validator';
 
 export class UpdateQuestionDto {
+    @IsNotEmpty()
+    @IsNumber()
+    id: number;
     @IsNotEmpty()
     @IsString()
     text: string;

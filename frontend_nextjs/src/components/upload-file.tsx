@@ -24,7 +24,6 @@ const UploadFile: React.FC<UploadFileProps> = ({ onDataUpload }) => {
           const result = readerEvent.target?.result;
           if (result) {
             const parsedData = JSON.parse(result as string);
-            console.log({parsedData})
             const validatedData = validateAndParseQuestions(parsedData);
             onDataUpload(validatedData);
             console.error('Data:', parsedData);
@@ -48,7 +47,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onDataUpload }) => {
         onChange={handleFileChange}
       />
       <button
-        className="bg-blue-400 text-white rounded-md w-fit dark:bg-blue-700 w-fit"
+        className="bg-primary-500 text-white rounded-md w-fit dark:bg-primary-500 w-fit"
         onClick={() => fileInputRef.current?.click()}
       >
         Import question file from your device

@@ -5,7 +5,6 @@ import Cookies from 'js-cookie';
 
 const axiosClientConfig = {
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
-  timeout: 5000,
 };
 
 const axiosClient: AxiosInstance = axios.create(axiosClientConfig);

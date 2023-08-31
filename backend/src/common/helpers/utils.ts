@@ -1,12 +1,14 @@
 import { ScoreMax, ScoreMin, ScorePenalty, Tmax } from "src/configs/constants";
 
-export const handleScorePerQuestion = (time: number, isCorrect: boolean) => {
+export const handleScorePerQuestion = (streak: number, time: number, isCorrect: boolean) => {
+    let bonus = 0;
+    bonus = streak % 5 === 0 && streak > 0 ? bonus + 1000 : 0;
     if (isCorrect) {
         if (time <= Tmax) {
-            const Score = ScoreMax - ScorePenalty * time
+            const Score = ScoreMax - ScorePenalty * (time - 2) + bonus;
             return Score
         }
-        const Score = ScoreMin;
+        const Score = ScoreMin + bonus;
         return Score
 
     }

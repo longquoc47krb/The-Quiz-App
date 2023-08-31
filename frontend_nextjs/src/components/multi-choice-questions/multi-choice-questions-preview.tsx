@@ -46,7 +46,9 @@ const MultiChoiceQuestionsPreview = (props: MCQProps) => {
   }
   return (
     <div className="flex md:items-center flex-col py-4">
-      <h1 className="dark:text-gray-300 w-[60vw] text-center">{title}</h1>
+      <h1 className="dark:text-gray-300 w-[60vw] text-center text-lg">
+        {title}
+      </h1>
       {picture && (
         <div className="flex justify-center w-full">
           <img
@@ -58,9 +60,9 @@ const MultiChoiceQuestionsPreview = (props: MCQProps) => {
       )}
       <div className="flex flex-col items-start">
         <div
-          className={`md:grid ${
+          className={`md:grid text-lg ${
             options.length === 3 ? 'md:grid-cols-1' : 'md:grid-cols-2'
-          } md:gap-4 mt-4 flex flex-col gap-y-4`}
+          } md:gap-4 mt-4 flex flex-col gap-y-4 `}
         >
           {options.map((option, index) => (
             <button

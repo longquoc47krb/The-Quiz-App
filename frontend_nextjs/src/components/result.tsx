@@ -3,7 +3,7 @@ import { countBy } from 'lodash';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { FaHistory } from 'react-icons/fa';
+import { LuHistory } from 'react-icons/lu';
 
 import type { Result } from '@/interfaces';
 import { renderCorrectRatio } from '@/utils';
@@ -37,7 +37,7 @@ function ResultEntity(props: Result) {
         </div>
         <h2 className="font-medium text-gray-600">
           <h2 className="font-medium text-gray-600">
-            <FaHistory className="inline-block text-gray-600" />{' '}
+            <LuHistory className="inline-block text-gray-600" />{' '}
             {moment(startTime).fromNow()}
           </h2>
         </h2>

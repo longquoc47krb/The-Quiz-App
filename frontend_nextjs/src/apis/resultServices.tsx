@@ -27,7 +27,7 @@ export const fetchResultsByQuizId = async (id: string) => {
     return response.data;
   } catch (error) {
     // Handle the error here
-    return error.response.data // Re-throw the error to handle it at a higher level if needed
+    return error // Re-throw the error to handle it at a higher level if needed
   }
 };
 export const fetchResultsByPlayerIdAndQuizId = async (id: string, quizId: string) => {

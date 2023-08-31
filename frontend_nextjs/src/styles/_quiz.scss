@@ -11,14 +11,6 @@
   &.selected {
     background: yellow;
   }
-  &.correct {
-    background: rgb(23, 221, 33);
-    color: white;
-    animation: flicker 10s ease-in-out;
-  }
-  &.incorrect {
-    background: red;
-  }
 }
 .question {
   &-container {
@@ -30,19 +22,14 @@
 }
 @keyframes flicker {
   0%,
-  15%,
   30%,
-  45%,
   60%,
-  75%,
   90% {
     background: rgb(162, 255, 0);
-    transform: scale(1.1);
+    transform: scale(1.05);
   }
   20%,
-  35%,
   50%,
-  65%,
   80%,
   100% {
     background: rgb(23, 221, 33);
@@ -79,7 +66,7 @@
     @apply bg-red-600;
   }
   .option {
-    @apply  hover:bg-orange-700 px-4 py-2 rounded-lg border-[1px] border-gray-300 border-solid w-full dark:text-gray-300 min-w-[20rem]
+    @apply  hover:bg-orange-700 px-4 py-2 border border-[#745696] border-solid w-full dark:text-gray-300 min-w-[20rem]
   }
 }
 .flicker {

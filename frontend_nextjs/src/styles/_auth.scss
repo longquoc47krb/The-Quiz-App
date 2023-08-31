@@ -35,6 +35,9 @@
 }
 @layer components {
   .input-container{
-    @apply border border-gray-300 rounded px-4 py-2 w-full mt-2 dark:text-gray-400;
+    @apply w-full min-w-0 rounded-md text-primary-text bg-transparent border border-gray-200 placeholder-gray-500 focus:outline-none relative z-10 hover:border-gray-400 focus:border-primary-500 text-base leading-6 px-3 py-2
+  }
+  .search-container{
+    @apply text-gray-400 p-2 border-none placeholder-gray-500 rounded md:w-[calc(100vw-10rem)] w-[80vw] hover:border-gray-400 focus:outline-pink-500
   }
 }

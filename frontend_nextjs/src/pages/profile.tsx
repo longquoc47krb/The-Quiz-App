@@ -18,15 +18,15 @@ function Profile() {
         <div className="w-3/4 bg-darkBlack/50 px-4 rounded-3xl p-4">
           <div className="p-4 mb-4 border-b border-b-gray-700/10">
             <img src={user.avatar} className="rounded-full w-24 h-24 mx-auto" />
-            <h1 className="text-center font-semibold text-gray-200">
-              {user.name}
-            </h1>
-            <h2 className="text-center text-gray-700 text-base">
-              @{user.username}
-            </h2>
-            <div className="flex items-center justify-center gap-x-2">
-              <MdEmail />
-              <span className="text-base">{user.email}</span>
+            <div className="grid grid-cols-2 justify-start">
+              <h1 className="text-left text-gray-200">{user.name}</h1>
+              <h2 className="text-left text-gray-700 text-base">
+                @{user.username}
+              </h2>
+              <div className="flex items-center justify-center gap-x-2">
+                <MdEmail />
+                <span className="text-base">{user.email}</span>
+              </div>
             </div>
           </div>
         </div>

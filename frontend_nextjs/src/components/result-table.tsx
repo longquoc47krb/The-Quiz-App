@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { countBy, isArray, maxBy } from 'lodash';
+import { countBy, isArray, maxBy, orderBy } from 'lodash';
 import React from 'react';
 
 import {
@@ -14,14 +14,34 @@ function ResultTable({ results, symbol }: { results: any[]; symbol: boolean }) {
     : [];
   const highestScoreObj = maxBy(reversedArray, 'score');
   const previousHighestScore = highestScoreObj?.score || 0;
+
+  const sortedByScore = orderBy(reversedArray, ['score'], ['desc']);
   const renderRank = (value) => {
     switch (value) {
       case 1:
-        return <span className="text-gray-50">🥇</span>;
+        return (
+          <img
+            src="https://em-content.zobj.net/source/icons8/373/1st-place-medal_1f947.png"
+            alt="golden medal"
+            className="h-10"
+          />
+        );
       case 2:
-        return <span className="text-gray-50">🥈</span>;
+        return (
+          <img
+            src="https://em-content.zobj.net/source/icons8/373/2nd-place-medal_1f948.png"
+            alt="silver medal"
+            className="h-10"
+          />
+        );
       case 3:
-        return <span className="text-gray-50">🥉</span>;
+        return (
+          <img
+            src="https://em-content.zobj.net/source/icons8/373/3rd-place-medal_1f949.png"
+            alt="bronze medal"
+            className="h-10"
+          />
+        );
       default:
         return <span>{value}</span>;
     }
@@ -45,7 +65,7 @@ function ResultTable({ results, symbol }: { results: any[]; symbol: boolean }) {
           </tr>
         </thead>
         <tbody>
-          {reversedArray.map((result, index) => (
+          {sortedByScore.map((result, index) => (
             <tr key={index} className="text-center text-violet-400/40">
               <td className="border p-2 border-neutral-900/50">
                 {symbol ? renderRank(index + 1) : index + 1}

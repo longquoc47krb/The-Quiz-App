@@ -17,6 +17,15 @@ export const fetchQuizzesByAuthorId = async (id: string) => {
     throw new Error('Not found')
   }
 };
+export const deleteQuizById = async (id: string) => {
+  try {
+    const response = await axiosClient.delete<Quiz[]>(`/quiz/${id}`);
+    return response.data;
+
+  } catch (error) {
+    throw new Error('Not found')
+  }
+};
 export const fetchQuizById = async (id: string) => {
   const response = await axiosClient.get<Quiz>(`/quiz/${id}`);
   return response;

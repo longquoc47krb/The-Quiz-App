@@ -23,10 +23,12 @@ function MyQuizzes() {
       }
       return fetchQuizzesByAuthorId(user.id);
     },
-    refetchInterval: 10000,
   });
   if (isLoading) {
-    return <span>Loading...</span>;
+    return <span className="m-4">Loading...</span>;
+  }
+  if (!quizzes) {
+    return null;
   }
   const reversedArray = isArray(quizzes.data)
     ? quizzes.data.map((_, index, array) => array[array.length - 1 - index])

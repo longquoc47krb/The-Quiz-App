@@ -20,10 +20,16 @@ import MyQuizzes from '@/components/my-quizzes';
 export const getServerSideProps: GetServerSideProps<{
   quizzes: Quiz[];
 }> = async () => {
-  const quizzes = await fetchQuizzes();
-  return {
-    props: { quizzes },
-  };
+  try {
+    const quizzes = await fetchQuizzes();
+    return {
+      props: { quizzes },
+    };
+  } catch (err) {
+    return {
+      props: { quizzes: [] },
+    };
+  }
 };
 const Index = ({
   quizzes,

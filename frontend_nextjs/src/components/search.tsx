@@ -29,7 +29,7 @@ const Search: React.FC<SearchProps> = ({ data, keysToSearch }) => {
         placeholder="Search..."
         value={query}
         onChange={handleSearch}
-        className="text-gray-400 p-2 border rounded md:w-[calc(100vw-10rem)] w-[80vw] border-none outline-darkPrimary"
+        className="search-container"
       />
       {results.length > 0 && (
         <ul className="mt-2 item-container w-[80vw] md:w-[calc(100vw-10rem)] h-fit absolute z-10 bg-[#34313F] border-violet-400 border-2 p-3.5">

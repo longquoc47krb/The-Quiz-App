@@ -20,7 +20,8 @@ export class QuestionService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} question`;
+    return this.questionRepository.createQueryBuilder('question').where('question.id = :id', { id })
+      .getOne();
   }
 
   update(id: number, updateQuestionDto: UpdateQuestionDto) {

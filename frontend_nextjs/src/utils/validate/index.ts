@@ -79,3 +79,20 @@ export const validateQuestion = (question: any) => {
     typeof question.explain === 'string'
   );
 };
+export const quizSchema = yup.object().shape({
+  title: yup.string(),
+  description: yup.string(),
+  category: yup.string().required('Category is required'),
+  questions: yup.array().of(
+    yup.object().shape({
+      text: yup.string().required('Question text is required'),
+      options: yup
+        .array()
+        .of(yup.string().nullable())
+        .min(2, 'At least 2 options are required'),
+      correctOption: yup.string().required('Correct option is required'),
+      explain: yup.string().nullable(),
+      picture: yup.string().nullable(),
+    }),
+  ),
+});

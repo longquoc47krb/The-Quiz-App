@@ -11,8 +11,9 @@ import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import { updateParticipants } from "@/apis/quizServices";
 import { createResult } from "@/apis/resultServices";
-import { congratSound, correctPaths, incorrectPaths, playMusic, playRandomSound } from "@/common/sounds";
+import { congratSound, correctPaths, incorrectPaths, playMusic, playRandomSound , stopMusic } from "@/common/sounds";
 import type { Quiz } from "@/interfaces";
 import {
   isStart,
@@ -31,6 +32,7 @@ import Modal from "./modal";
 import MultiChoiceQuestions from "./multi-choice-questions/multi-choice-questions";
 import ResultModal from "./resultModal";
 
+
 function MultichoiceQuestionSection({
   quiz,
   currentQuestion,
@@ -45,7 +47,7 @@ function MultichoiceQuestionSection({
   const correctRef = useRef<HTMLAudioElement | null>(null);
   const incorrectRef = useRef<HTMLAudioElement | null>(null);
   const congratsRef = useRef<HTMLAudioElement | null>(null);
-
+  const streakRef = useRef<HTMLAudioElement | null>(null);
   const timePerQuestion = useSelector(timePerQuestionSelector);
   const [selectOption, setSelectOption] = useState("");
   const [isFinish, setIsFinish] = useState(false);
@@ -59,6 +61,7 @@ function MultichoiceQuestionSection({
   const user = useSelector((state) => state.quizSession.user);
   const startTime = useSelector((state) => state.quizSession.startTime);
   const endTime = useSelector((state) => state.quizSession.endTime);
+  const streak = useSelector((state) => state.quizSession.streak)
   const router = useRouter();
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const numberCorrectAnswer = countBy(results, "correct").true || 0;
@@ -70,6 +73,7 @@ function MultichoiceQuestionSection({
       endTime: new Date(endTime),
       result: results,
     });
+    await updateParticipants(quiz.id, user.id);
   }
   useEffect(() => {
     if (isFillMissing) {
@@ -118,7 +122,14 @@ function MultichoiceQuestionSection({
       clearInterval(interval);
     };
   }, [dispatch, timePerQuestion, currentQuestion]);
-
+  useEffect(()=> {
+    if(streak % 5 === 0 && streak > 0){
+      playMusic(streakRef, `${router.basePath}/assets/sounds/streak.wav`)
+      setTimeout(()=> {
+        stopMusic(streakRef)
+      }, 3000)
+    }
+  },[streak])
   const handleFinish = () => {
     if (!isFinish && !modalIsOpen) {
       dispatch(setEndTime(new Date()));
@@ -175,7 +186,7 @@ function MultichoiceQuestionSection({
     }
     setTimeout(() => {
       handleNextQuestion();
-    }, 1800);
+    }, 2000);
   };
 
   const redirectToQuizDetail = () => {
@@ -185,12 +196,12 @@ function MultichoiceQuestionSection({
   const closeModal = () => {
     setModalIsOpen(false);
   };
-  console.log({selectOption})
   return (
     <div className="flex flex-col items-center justify-center relative">
        <audio ref={correctRef} className="hidden"/>
        <audio ref={incorrectRef} className="hidden"/>
        <audio ref={congratsRef} className="hidden"/>
+       <audio ref={streakRef} className="hidden"/>
       <h1>
         Question {currentQuestion + 1} of {questions?.length}
       </h1>

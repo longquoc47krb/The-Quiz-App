@@ -31,10 +31,10 @@ function GridPagination({totalPages, currentPage, setCurrentPage, handlePrevPage
             ))}
           </div>
           <div className="grid grid-cols-[40px_40px] gap-4">
-            <button type="button" className='flex justify-center items-center bg-primary dark:bg-darkPrimary w-10 h-10 rounded-md px-2 py-1 mr-4' onClick={handlePrevPage} disabled={currentPage === 0}>
+            <button type="button" className='flex justify-center items-center bg-primary dark:bg-primary-900 w-10 h-10 rounded-md px-2 py-1 mr-4' onClick={handlePrevPage} disabled={currentPage === 0}>
               <GrCaretPrevious/>
             </button>
-            <button type="button" className='flex justify-center items-center gap-x-4 bg-primary dark:bg-darkPrimary w-10 h-10 rounded-md px-2 py-1' onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
+            <button type="button" className='flex justify-center items-center gap-x-4 bg-primary dark:bg-primary-900 w-10 h-10 rounded-md px-2 py-1' onClick={handleNextPage} disabled={currentPage === totalPages - 1}>
              <GrCaretNext/>
             </button>
           </div>

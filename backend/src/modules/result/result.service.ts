@@ -36,7 +36,9 @@ export class ResultService {
     rstl.endTime = createResultDto.endTime;
     const answers: Answer[] = [];
     let score = 0;
+    let streak = 0;
     for (const answerDto of createResultDto.result) {
+      streak = answerDto.correct ? streak + 1 : 0;
       const answer = new Answer();
       answer.yourChoice = answerDto.yourChoice;
       answer.answer = answerDto.answer;
@@ -49,7 +51,7 @@ export class ResultService {
       answer.picture = answerDto.picture
       await this.answerRepository.save(answer);
       answers.push(answer);
-      score += handleScorePerQuestion(answer.time, answer.correct);
+      score += handleScorePerQuestion(streak, answer.time, answer.correct);
     }
     rstl.result = answers;
     rstl.score = score;

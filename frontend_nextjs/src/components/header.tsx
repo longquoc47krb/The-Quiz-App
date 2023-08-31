@@ -9,14 +9,19 @@
 /* eslint-disable import/newline-after-import */
 /* eslint-disable no-inner-declarations */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
 import { useAuth } from "@/hooks/useAuthContext";
+import { AnimatePresence, motion } from 'framer-motion';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-
+import { useClickAway } from "@uidotdev/usehooks";
 const Header = () => {
   const { user, setCurrentUser, removeCurrentUser } = useAuth();
   const [toggle, setToggle] = useState(false);
+  const avatarRef = useRef(null)
+  const ref = useClickAway(() => {
+      setToggle(false);
+  });
   const router = useRouter();
   const handleGoogleLogin = () => {
     window.open(process.env.NEXT_PUBLIC_GOOGLE_OAUTH, '_blank');
@@ -27,13 +32,14 @@ const Header = () => {
   return (
     <header className="header">
         {/* <DarkModeSwitch/> */}
-        <img src={`${router.basePath}/quizaka.png`} alt="logo" className="h-[2.5rem] cursor-pointer" onClick={()=>router.push('/')}/>
+        <div onClick={()=>router.push('/')} className="flex items-center text-white font-bold cursor-pointer"><img src={`${router.basePath}/favicon-32x32.png`} alt="logo" className="h-[2.5rem]" />uizaka</div>
         {user ? (
           <div className="text-gray-200 font-medium text-base flex items-center gap-x-4">
             <img
               src={user.avatar}
               alt="avatar"
-              className="w-10 h-10 rounded-full"
+              ref={avatarRef}
+              className="w-10 h-10 rounded-full object-cover"
               onClick={() => setToggle(!toggle)}
             />
           </div>
@@ -46,20 +52,24 @@ const Header = () => {
           <span>Login with Google</span>
         </button>
         )}
+        <AnimatePresence>
       {toggle && user && (
-        <ul className="menu-list">
-          <li className="menu-item"   onClick={()=>router.push('/profile')}>Profile</li>
-          <li className="menu-item" 
-          onClick={()=>router.push('/settings')}
-          >Settings</li>
-          <li
-            className="menu-item"
-            onClick={removeCurrentUser}
-          >
-            Log out
-          </li>
-        </ul>
+        <motion.div ref={ref} initial={{opacity: 0 }} animate={{opacity: 1}} exit={{opacity: 0}} transition={{duration: 0.5}}className="absolute w-max top-14 right-10 z-50">
+          <ul className="menu-list">
+            <motion.li className="menu-item"   onClick={()=>router.push('/profile')}>Profile</motion.li>
+            <motion.li className="menu-item"
+            onClick={()=>router.push('/settings')}
+            >Settings</motion.li>
+            <motion.li
+              className="menu-item"
+              onClick={removeCurrentUser}
+            >
+              Log out
+            </motion.li>
+          </ul>
+        </motion.div>
       )}
+      </AnimatePresence>
     </header>
   );
 };

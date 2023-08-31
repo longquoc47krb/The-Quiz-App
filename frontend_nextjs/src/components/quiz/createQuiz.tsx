@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable unused-imports/no-unused-vars */
 /* eslint-disable no-alert */
@@ -7,19 +8,20 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/button-has-type */
+import { yupResolver } from "@hookform/resolvers/yup";
 import { usePrevious } from "@uidotdev/usehooks";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
-import { FormProvider , useFieldArray, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm, useWatch } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { BsTrash } from "react-icons/bs";
 
 import { createQuiz, updateQuiz } from "@/apis/quizServices";
 import { QuizCategoryList } from "@/common/constants";
 import type { CreateQuizDto, Quiz, UpdateQuizDto } from "@/interfaces";
+import { quizSchema } from "@/utils/validate";
 
 import SlideAnimation from "../animation/slider";
-import ErrorMessage from "../error-message";
 import ExportJSONButton from "../export-json-button";
 import GridPagination from "../grid-pagination";
 import UploadFile from "../upload-file";
@@ -29,9 +31,28 @@ interface CreateUpdateQuizProps {
   isUpdate ?: boolean;
   data ?: Quiz
 }
+const defaultQuizValues = {
+  title: "",
+  description: "",
+  category: QuizCategoryList[7],
+  questions: [
+    {
+      text: "",
+      options: ["", "", "", ""],
+      correctOption: "",
+      explain: "",
+      picture: ""
+    },
+  ],
+};
+
+
 const CreateQuizForm = (props: CreateUpdateQuizProps) => {
   const { isUpdate, data: existingQuizData } = props;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // Initialize the correctOption field for each question
+  defaultQuizValues.questions.forEach(question => {
+  question.correctOption = question.options[0]});
   const {
     control,
     handleSubmit,
@@ -39,29 +60,22 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
     formState: { errors },
     getValues,
     setValue,
-    methods,
+    trigger,
     watch
   } = useForm<Quiz>({
-    defaultValues: {
-      title: "",
-      description: "",
-      category: "",
-      questions: [
-        {
-          
-          text: "",
-          options: ["", "", "", ""],
-          correctOption: "",
-          explain: "",
-          picture:""
-        },
-      ],
-    },
+    defaultValues: defaultQuizValues,
+    resolver: yupResolver(quizSchema),
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "questions",
   });
+  // useWatch
+  const title = useWatch({control, name: 'title' })
+  const description = useWatch({control, name: 'description' })
+  const category = useWatch({control, name: 'category' })
+  const questions = useWatch({control, name: 'questions' })
+  
   // if data exists
 
   useEffect(() => {
@@ -74,12 +88,12 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
     }
   }, [isUpdate]);
 
-
+  console.log({questions})
   // reorder question using drag-n-drop
   const [step, setStep] = useState(1);
   const previousStep = usePrevious(step);
   const [numQuestions, setNumQuestions] = useState<number>(10);
-  const [currentPage, setCurrentPage] = useState(-1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [isUploadFromDevice, setIsUploadFromDevice] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const questionsPerPage = 1;
@@ -104,13 +118,15 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
       setCurrentPage(currentPage - 1);
     }
   };
-  const defaultQuestions = Array.from({ length: numQuestions }, () => ({
-    text: "",
-    options: ["", "", "", ""],
-    correctOption: "",
-    explain: "",
-    picture: ""
-  }));
+  const defaultQuestions = useMemo(() => {
+    return Array.from({ length: numQuestions }, () => ({
+      text: "",
+      options: ["", "", "", ""],
+      correctOption: "",
+      explain: "",
+      picture: ""
+    }));
+  }, [numQuestions]);
   useEffect(() => {
     if (!isUploadFromDevice && !isUpdate) {
       setValue("questions", defaultQuestions);
@@ -118,13 +134,12 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
   }, [isUploadFromDevice]);
 
   const values = getValues();
-  const { questions } = values;
-  console.log({questions})
   const onUpdateSubmit: SubmitHandler<UpdateQuizDto> = async (
     data: UpdateQuizDto
   ) => {
     if (step === 2 && isSubmitting) {
       try {
+        console.log({data})
         const response: any = await updateQuiz(existingQuizData?.id, data);
         toast.success("Updated quiz successful!"); // Display success toast
         setIsSubmitting(false);
@@ -144,7 +159,6 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
         toast.success("Created quiz successful!"); // Display success toast
         setIsSubmitting(false);
       } catch (error) {
-        console.log({error})
         toast.error("Create quiz failed. Try again"); // Display error toast
       } finally {
         setIsSubmitting(false); // Reset the flag after submission (success or failure)
@@ -152,13 +166,15 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
     }
   };
 
-  const goToNextStep = () => {
-    setStep(step + 1);
+  const goToNextStep = async () => {
+    const isStepValid = await trigger(["title", "description", "category"]);
+    isStepValid && setStep(step + 1);
   };
 
   const goToPreviousStep = () => {
     setStep(step - 1);
   };
+  console.log({errors})
   const renderStep = () => {
     return (
       <SlideAnimation
@@ -177,7 +193,6 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                 {...register("title", { required: false })}
                 className="input-container"
               />
-              <ErrorMessage error={errors.title?.message} />
             </label>
             <label className="block mb-4">
               Quiz Description (Optional)
@@ -193,7 +208,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                 className="input-container"
               >
                 {QuizCategoryList?.map((item: string, index: number) => (
-                  <option value={item}>{item}</option>
+                  <option className="bg-primary-background text-primary-text px-4 py-2" value={item}>{item}</option >
                 ))}
               </select>
             </label>
@@ -211,7 +226,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
               <button
                 type="button"
                 onClick={goToNextStep}
-                className="text-center dark:bg-active bg-primary text-white px-4 py-2 rounded mt-4 hover:bg-violet-950"
+                className="text-center dark:bg-primary-800 bg-primary text-white px-4 py-2 rounded mt-4 hover:bg-violet-950"
               >
                 Next
               </button>
@@ -267,17 +282,19 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                         <select
                           {...register(`questions.${currentPage}.correctOption`, {
                             required: true,
+
                           })}
                           className="input-container"
                         >
                           {/* {getValues(`questions.${currentPage}.options`)?.map( */}
-                          {getValues(`questions.${currentPage}.options`)?.map(
+                          {questions[currentPage]?.options?.map(
                             (option, optionIndex) => (
-                              <option key={optionIndex} value={option}>
+                              <option key={optionIndex} value={option} className="bg-primary-background text-primary-text px-4 py-2">
                                 {option}
                               </option>
                             )
                           )}
+                          
                         </select>
                       </label>
                       <label className="block mb-2">
@@ -312,7 +329,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                       explain: "",
                     })
                   }
-                  className="bg-primary dark:bg-active text-white text-center px-4 py-2 rounded mt-4"
+                  className="bg-primary dark:bg-primary-800 text-white text-center px-4 py-2 rounded mt-4"
                 >
                   Add Question
                 </button>
@@ -347,8 +364,8 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
   };
   return (
     <main className="mx-auto px-4">
-      <h2 className="text-3xl font-bold mb-4">{isUpdate ? "Update" : "Create"} Quiz Form</h2>
-      <FormProvider {...methods}>
+      <h2 className="text-5xl text-white font-bold mb-4">{isUpdate ? "Update" : "Create"} Quiz Form</h2>
+      <FormProvider>
       <form
         onSubmit={isUpdate ? handleSubmit(onUpdateSubmit) : handleSubmit(onCreateSubmit)}
         // className='w-[calc(100vw-15rem)]'

@@ -1,6 +1,7 @@
 import { getRandomItemFromArray } from '@/utils';
 
 // initalize sounds
+
 export const congratSound =
   'https://www.chosic.com/wp-content/uploads/2021/12/fm-freemusic-cheerful-whistling.mp3';
 export const backgroundSound = [
@@ -38,13 +39,13 @@ export const playRandomSound = (ref: any, array: string[]) => {
 export const playMusic = (
   ref: any,
   audioUrl: string,
-  volumn?: number = 1,
+  volume?: number = 1,
   loop?: boolean = false,
 ) => {
   if (ref.current) {
     ref.current.src = audioUrl;
     ref.current.play();
-    ref.current.volume = volumn;
+    ref.current.volume = volume;
     ref.current.loop = loop;
   }
 };

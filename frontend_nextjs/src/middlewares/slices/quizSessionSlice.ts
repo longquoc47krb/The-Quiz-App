@@ -1,6 +1,6 @@
 // quizSessionSlice.js
 
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -32,10 +32,16 @@ const quizSessionSlice = createSlice({
         results: action.payload,
       };
     },
-    setStreak: (state, action) => {
+    increaseStreak: (state) => {
       return {
         ...state,
-        streak: action.payload,
+        streak: state.streak + 1,
+      };
+    },
+    clearStreak: (state) => {
+      return {
+        ...state,
+        streak: 0,
       };
     },
     pushToResults: (state, action) => {
@@ -106,7 +112,8 @@ export const {
   pushToResults,
   setTimePerQuestion,
   setScore,
-  setStreak,
+  increaseStreak,
+  clearStreak,
 } = quizSessionSlice.actions;
 export const timePerQuestionSelector = (state) =>
   state.quizSession.timePerQuestion;

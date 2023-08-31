@@ -22,12 +22,11 @@ function ResultModal({ numberCorrectAnswer, questions, quiz }) {
   }, [numberCorrectAnswer]);
   const highestScoreObj = maxBy(results, 'score');
   const previousHighestScore = highestScoreObj?.score || 0;
-  console.log({ previousHighestScore, score });
   return (
-    <div className="rounded-lg cursor-pointer py-8 h-fit w-50 flex flex-col justify-between text-sky-600 dark:text-violet-400 bg-darkViolet mx-auto">
+    <div className="rounded-lg cursor-pointer py-8 h-fit w-50 flex flex-col justify-between text-sky-600 dark:text-violet-400 bg-primary-900 mx-auto border-2 border-primary-900/50 shadow-lg shadow-background/30">
       <img
         src={getRandomItemFromArray(congratsImagesPath)}
-        className="w-40 h-40 mx-auto rounded-xl"
+        className="w-40 h-40 mx-auto rounded-xl border border-pink-500"
       />
       <span>{score > previousHighestScore ? 'New record' : 'Score'}</span>
       <motion.p

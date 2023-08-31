@@ -27,43 +27,30 @@ input::placeholder {
 a {
   color: $linkColor !important;
 }
+
+// loading
 .loader {
-  width: 100px;
-  height: 100px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: inline-block;
-  position: relative;
-  border: 5px solid;
-  border-color: #fff #fff transparent transparent;
+  border-top: 4px solid $secondaryColor;
+  border-right: 4px solid transparent;
   box-sizing: border-box;
   animation: rotation 1s linear infinite;
 }
-.loader::after,
-.loader::before {
-  content: "";
+.loader::after {
+  content: '';  
   box-sizing: border-box;
   position: absolute;
   left: 0;
-  right: 0;
   top: 0;
-  bottom: 0;
-  margin: auto;
-  border: 5px solid;
-  border-color: transparent transparent $primaryColor $primaryColor;
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  box-sizing: border-box;
-  animation: rotationBack 0.5s linear infinite;
-  transform-origin: center center;
+  border-bottom: 4px solid $primaryColor;
+  border-left: 4px solid transparent;
 }
-.loader::before {
-  width: 60px;
-  height: 60px;
-  border-color: #fff #fff transparent transparent;
-  animation: rotation 1.5s linear infinite;
-}
-
 @keyframes rotation {
   0% {
     transform: rotate(0deg);
@@ -71,7 +58,7 @@ a {
   100% {
     transform: rotate(360deg);
   }
-}
+} 
 @keyframes rotationBack {
   0% {
     transform: rotate(0deg);
@@ -150,46 +137,6 @@ $size:1.4em;
 $dotCount:10;
 $animationTime:2.5s;
 
-.peeek-loading{
-	background-color: $primaryColor;
-	overflow: hidden;
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 100%;
-	width: 100%;
-}
-.peeek-loading ul{
-	position: absolute;
-	left: calc(50% - 0.7em);
-	top: calc(50% - 4.2em);
-	display: inline-block;
-	text-indent:$size*2;
-}
-.peeek-loading ul li:after,
-.peeek-loading ul:after{
-	width: $size;
-	height: $size;
-	background-color: $borderSecondaryColor;
-	border-radius: 100%;
-}
-.peeek-loading ul li:after,
-.peeek-loading ul:after{
-	content:"";
-	display: block;
-}
-.peeek-loading ul:after{
-	position: absolute;
-	top: $size*2;
-}
-.peeek-loading li{
-	position: absolute;
-	padding-bottom: $size*4;
-	top: 0;
-	left: 0;
-}
 
 // Creating Circle and Animation Delay
 @for $i from 1 through 10{

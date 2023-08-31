@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import { fetchQuizById } from "@/apis/quizServices";
 import {
   fetchResultsByPlayerIdAndQuizId,
-  fetchResultsByQuizId,
+  fetchResultsByQuizId
 } from "@/apis/resultServices";
 import { backgroundSound, playMusic, stopMusic } from "@/common/sounds";
 import Loading from "@/components/loading";
@@ -48,7 +48,7 @@ function QuizDetailPage({ quizData }: QuizDetailPageProps) {
     [isStart]
   );
   const playBGMusic = useCallback(
-    () => playMusic(audioRef, BGSound, 0.5, true),
+    () => playMusic(audioRef, BGSound, 0.3, true),
     [isStart]
   );
   const stopBGMusic = useCallback(() => stopMusic(audioRef), [isStart]);

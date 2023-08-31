@@ -4,7 +4,7 @@ const Tab = ({ label, selected, onClick }) => {
   return (
     <div
       className={`tab ${
-        selected ? 'text-darkPrimaryActive rounded-full bg-darkViolet' : ''
+        selected ? 'text-primary-text rounded-full bg-primary-900' : ''
       }`}
       onClick={onClick}
     >

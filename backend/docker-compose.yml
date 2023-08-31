@@ -5,6 +5,9 @@ services:
     ports:
       - '3307:3306'
     restart: always
+    mem_limit: 512m
+    mem_reservation: 128M
+    cpus: 0.5
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: quizapp
