@@ -32,7 +32,7 @@ function VerficationPage() {
   };
   return (
     <ProfileLayout
-      meta={<Meta title="Verification | Quizaka" description="Verification" />}
+      meta={<Meta title="Verification | Quizaholic" description="Verification" />}
     >
       <h1 className="p-4 rounded-xl bg-darkBlack/20 max-w-[calc(100vw-20rem)] drop-shadow-md flex items-center justify-between">
         <span>My account status: {renderVerificationStatus(isVerified)} </span>

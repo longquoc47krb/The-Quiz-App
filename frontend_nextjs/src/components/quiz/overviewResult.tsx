@@ -82,7 +82,7 @@ function OverviewResult({ quizData, results }) {
           );
         }}
         className="mt-4 flex justify-center px-6 py-1 rounded-lg text-gray-200 bg-green-600 w-fit hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-5"
-        disabled={results.length === attemptsTryTimes}
+        disabled={results?.length === attemptsTryTimes}
         // disabled={results.length === 5}
       >
         Start

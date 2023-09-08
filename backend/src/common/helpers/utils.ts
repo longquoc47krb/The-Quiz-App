@@ -18,3 +18,18 @@ export function filterNonNullEmpty(arr) {
     const result = arr.filter(item => item !== null && item !== "");
     return result;
 }
+export function getStartOfWeek(currentDate: Date) {
+    const currentDay = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const diff = currentDay - 1; // Calculate the difference from Sunday (assuming Sunday is 0 and Monday is 1)
+
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - diff); // Set to Monday
+
+    return startOfWeek;
+}
+export function replaceComma(arr) {
+    for (let i = 0; i < arr.length; i++) {
+        arr[i] = arr[i].replace(/,/g, '&#44;');
+    }
+    return arr;
+}

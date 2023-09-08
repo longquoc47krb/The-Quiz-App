@@ -39,7 +39,7 @@ const Index = ({
   dispatch(setQuizSession(null));
   dispatch(setCurrentQuestion(0));
   return (
-    <Main meta={<Meta title="Quizaka | Home Page" description="Quizaka" />}>
+    <Main meta={<Meta title="Quizaholic | Home Page" description="Quizaholic" />}>
       <Search data={quizzes} keysToSearch={['title']} />
       <MyQuizzes />
       <RecentYourQuizzes />

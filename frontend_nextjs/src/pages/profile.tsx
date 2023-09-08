@@ -11,7 +11,7 @@ function Profile() {
   return (
     <ProfileLayout
       meta={
-        <Meta title={`${user?.name} | Quizaka`} description="User profile" />
+        <Meta title={`${user?.name} | Quizaholic`} description="User profile" />
       }
     >
       <div className="w-full flex justify-center">

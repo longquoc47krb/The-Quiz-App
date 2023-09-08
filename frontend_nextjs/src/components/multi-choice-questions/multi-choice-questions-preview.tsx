@@ -7,7 +7,11 @@ import {
   NoAnswerProvidedMessage,
 } from '@/common/constants';
 import type { MCQProps } from '@/interfaces';
-import { getRandomItemFromArray, validateOptionClassName } from '@/utils';
+import {
+  getRandomItemFromArray,
+  replaceHtmlComma,
+  validateOptionClassName,
+} from '@/utils';
 
 const MultiChoiceQuestionsPreview = (props: MCQProps) => {
   const { answer, explain, options, picture, title, yourChoice } = props;
@@ -46,9 +50,10 @@ const MultiChoiceQuestionsPreview = (props: MCQProps) => {
   }
   return (
     <div className="flex md:items-center flex-col py-4">
-      <h1 className="dark:text-gray-300 w-[60vw] text-center text-lg">
-        {title}
-      </h1>
+      <div
+        className="text-center dark:text-gray-200 w-[60vw] text-lg"
+        dangerouslySetInnerHTML={{ __html: title }}
+      />
       {picture && (
         <div className="flex justify-center w-full">
           <img
@@ -75,15 +80,16 @@ const MultiChoiceQuestionsPreview = (props: MCQProps) => {
                 answer,
               )}`}
             >
-              {option}
+              {replaceHtmlComma(option)}
             </button>
           ))}
         </div>
         {renderResult()}
       </div>
-      <div className="bg-gray-600 text-gray-900 rounded-lg p-4 mt-4 w-[50vw] fade-in">
-        {explain}
-      </div>
+      <div
+        className="bg-gray-600 text-gray-900 rounded-lg p-4 mt-4 w-[50vw] fade-in"
+        dangerouslySetInnerHTML={{ __html: explain }}
+      />
     </div>
   );
 };

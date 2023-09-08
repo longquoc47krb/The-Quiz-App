@@ -3,6 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuizCategory } from 'src/common/category.enum';
 import { Question } from 'src/modules/question/entities/question.entity';
+import { Result, Answer } from 'src/modules/result/entities/result.entity';
 import { Repository } from 'typeorm';
 import { UserResponseDTO } from '../user/dto/user-response.dto';
 import { UserService } from '../user/user.service';
@@ -11,7 +12,7 @@ import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { Quiz } from './entities/quiz.entity';
 import { ResponseDto } from 'src/utils/interface/response.dto';
 import { User } from '../user/entities/user.entity';
-import { filterNonNullEmpty } from 'src/common/helpers/utils';
+import { filterNonNullEmpty, replaceComma } from 'src/common/helpers/utils';
 
 @Injectable()
 export class QuizService {
@@ -20,6 +21,10 @@ export class QuizService {
     private quizRepository: Repository<Quiz>,
     @InjectRepository(Question)
     private questionRepository: Repository<Question>,
+    @InjectRepository(Result)
+    private resultRepository: Repository<Result>,
+    @InjectRepository(Answer)
+    private answerRepository: Repository<Answer>,
     private userService: UserService) { }
   async create(createQuizDto: CreateQuizDto, userJwt: User) {
     const { questions } = createQuizDto;
@@ -38,7 +43,7 @@ export class QuizService {
       }
       const question = new Question();
       question.text = questionData.text;
-      question.options = filterNonNullEmpty(questionData.options);
+      question.options = replaceComma(filterNonNullEmpty(questionData.options));
       question.correctOption = questionData.correctOption;
       question.quizId = quiz.id;
       question.explain = questionData.explain;
@@ -162,6 +167,15 @@ export class QuizService {
     };
   }
   async deleteQuizById(quizId: number): Promise<void> {
+    const results = await this.resultRepository
+      .createQueryBuilder('result')
+      .leftJoinAndSelect('result.player', 'user')
+      .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('result.result', 'answer').where('result.quiz_id = :quizId', { quizId }).getMany();
+    for (const result of results) {
+      const answer = await this.answerRepository.createQueryBuilder('answer').where('answer.result_id = :resultId', { resultId: result.id }).getOne();
+      await this.answerRepository.remove(answer)
+      await this.resultRepository.remove(result);
+    }
     const quiz = await this.quizRepository
       .createQueryBuilder('quiz')
       .leftJoinAndSelect('quiz.questions', 'questions')

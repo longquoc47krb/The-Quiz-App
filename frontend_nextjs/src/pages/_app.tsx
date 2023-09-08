@@ -1,5 +1,6 @@
 import '../styles/global.scss';
 import '../styles/index.css';
+import 'react-quill/dist/quill.snow.css';
 import '@splidejs/react-splide/css/core';
 // Default theme
 import '@splidejs/react-splide/css';

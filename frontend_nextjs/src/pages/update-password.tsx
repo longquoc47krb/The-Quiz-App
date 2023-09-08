@@ -41,7 +41,7 @@ function UpdatePassword() {
   return (
     <ProfileLayout
       meta={
-        <Meta title="Update password | Quizaka" description="Update password" />
+        <Meta title="Update password | Quizaholic" description="Update password" />
       }
     >
       <form onSubmit={handleSubmit(onSubmit)}>

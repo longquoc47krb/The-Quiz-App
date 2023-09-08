@@ -25,6 +25,7 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { join } from 'path';
 import { TokenModule } from './modules/token/token.module';
 import { ResultModule } from './modules/result/result.module';
+import { StatsModule } from './modules/stats/stats.module';
 @Module({
   imports: [
     UserModule,
@@ -73,6 +74,7 @@ import { ResultModule } from './modules/result/result.module';
     UtilsModule,
     TokenModule,
     ResultModule,
+    StatsModule,
     WinstonModule.forRoot(loggerConf),
   ],
   controllers: [AppController],

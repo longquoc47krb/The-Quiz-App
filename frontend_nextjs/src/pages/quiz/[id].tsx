@@ -92,7 +92,7 @@ function QuizDetailPage({ quizData }: QuizDetailPageProps) {
     <Main
       meta={
         <Meta
-          title={`Quizaka | ${quizData?.title}`}
+          title={`Quizaholic | ${quizData?.title}`}
           description={`${quizData?.title}`}
         />
       }

@@ -8,7 +8,9 @@ interface UploadFileProps {
   onDataUpload: (jsonData: any) => void;
 }
 const validateAndParseQuestions = (data: any) => {
-  if (Array.isArray(data.questions) && data.questions.every(validateQuestion)) {
+  console.log({ data });
+  // if (Array.isArray(data.questions) && data.questions.every(validateQuestion)) {
+  if (Array.isArray(data.questions)) {
     return data?.questions;
   }
   throw new Error('Invalid questions format');
@@ -24,6 +26,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onDataUpload }) => {
           const result = readerEvent.target?.result;
           if (result) {
             const parsedData = JSON.parse(result as string);
+            console.log({ result, parsedData });
             const validatedData = validateAndParseQuestions(parsedData);
             onDataUpload(validatedData);
             console.error('Data:', parsedData);

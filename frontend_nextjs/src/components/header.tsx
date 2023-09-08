@@ -32,7 +32,7 @@ const Header = () => {
   return (
     <header className="header">
         {/* <DarkModeSwitch/> */}
-        <div onClick={()=>router.push('/')} className="flex items-center text-white font-bold cursor-pointer"><img src={`${router.basePath}/favicon-32x32.png`} alt="logo" className="h-[2.5rem]" />uizaka</div>
+        <h1 onClick={()=>router.push('/')} className="flex items-center text-white font-bold cursor-pointer text-xl">Quizaholic</h1>
         {user ? (
           <div className="text-gray-200 font-medium text-base flex items-center gap-x-4">
             <img

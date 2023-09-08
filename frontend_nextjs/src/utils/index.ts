@@ -129,4 +129,10 @@ export const validateOptionClassName = (
     ? 'correct-choice flicker'
     : '';
 };
+export function replaceHtmlComma(sentence: string) {
+  // Replace all occurrences of "&#44;" with ","
+  const correctedSentence = sentence.replace(/&#44;/g, ',');
+
+  return correctedSentence;
+}
 export * from './validate/index';

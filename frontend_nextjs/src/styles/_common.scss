@@ -201,3 +201,11 @@ $animationTime:2.5s;
   padding: 20px;
   border: 1px solid #ccc;
 }
+.editor-container {
+  li {
+    display: block !important;
+  }
+  code {
+    color: black !important;
+  }
+}
