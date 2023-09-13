@@ -167,15 +167,18 @@ export class QuizService {
     };
   }
   async deleteQuizById(quizId: number): Promise<void> {
-    const results = await this.resultRepository
+    const resultsToDelete = await this.resultRepository
       .createQueryBuilder('result')
       .leftJoinAndSelect('result.player', 'user')
       .leftJoinAndSelect('result.quiz', 'quiz').leftJoinAndSelect('quiz.author', 'author').leftJoinAndSelect('result.result', 'answer').where('result.quiz_id = :quizId', { quizId }).getMany();
-    for (const result of results) {
-      const answer = await this.answerRepository.createQueryBuilder('answer').where('answer.result_id = :resultId', { resultId: result.id }).getOne();
-      await this.answerRepository.remove(answer)
+    for (const result of resultsToDelete) {
+      await Promise.all(result.result.map(answer => this.answerRepository.remove(answer)));
       await this.resultRepository.remove(result);
     }
+
+    // for (const answer of answersToDelete) {
+    //   await this.answerRepository.remove(answer);
+    // }
     const quiz = await this.quizRepository
       .createQueryBuilder('quiz')
       .leftJoinAndSelect('quiz.questions', 'questions')

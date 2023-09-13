@@ -8,7 +8,7 @@ export class Question {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ length: 5000 })
     text: string;
     @Column('simple-array')
     options: string[];

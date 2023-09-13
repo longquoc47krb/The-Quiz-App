@@ -22,6 +22,7 @@ import {
 } from "react-hook-form";
 import toast, { Toaster } from "react-hot-toast";
 import { BsTrash } from "react-icons/bs";
+import { useDispatch } from "react-redux"
 
 import { createQuiz, updateQuiz } from "@/apis/quizServices";
 import { QuizCategoryList } from "@/common/constants";
@@ -46,8 +47,8 @@ const defaultQuizValues = {
   questions: [
     {
       text: "",
-      options: ["", "", "", ""],
-      correctOption: "",
+      options: ["<p></p>", "<p></p>", "<p></p>", "<p></p>"],
+      correctOption: "<p></p>",
       explain: "",
       picture: "",
     },
@@ -78,6 +79,16 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
     control,
     name: "questions",
   });
+  const addItems = (num : number) => {
+    for (let i = 0; i < num; i++) {
+      append({
+        text: "<p></p>",
+        options: ["<p></p>", "<p></p>", "<p></p>", "<p></p>"],
+        correctOption: "<p></p>",
+        explain: "<p></p>",
+      });
+    }
+  };
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -98,7 +109,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
       setValue("questions", existingQuizData.questions);
     }
   }, [isUpdate]);
-
+  const dispatch = useDispatch()
   // reorder question using drag-n-drop
   const [step, setStep] = useState(1);
   const previousStep = usePrevious(step);
@@ -129,11 +140,11 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
     }
   };
   const defaultQuestions = useMemo(() => {
-    return Array.from({ length: numQuestions }, () => ({
+    return Array.from({ length: numQuestions }, () => ( {
       text: "",
-      options: ["", "", "", ""],
-      correctOption: "",
-      explain: "",
+      options: ["<p></p>", "<p></p>", "<p></p>", "<p></p>"],
+      correctOption: "<p></p>",
+      explain: "<p></p>",
       picture: "",
     }));
   }, [numQuestions]);
@@ -174,16 +185,16 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
       }
     }
   };
-
   const goToNextStep = async () => {
     const isStepValid = await trigger(["title", "description", "category"]);
     isStepValid && setStep(step + 1);
   };
 
+
   const goToPreviousStep = () => {
     setStep(step - 1);
   };
-  console.log({ questions });
+  console.log(questions[currentPage])
   const renderStep = () => {
     return (
       <SlideAnimation
@@ -225,16 +236,6 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
               </select>
             </label>
             <label className="block mb-4">
-              Number of questions:
-              <input
-                type="number"
-                className="input-container"
-                step="1"
-                value={numQuestions}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setNumQuestions(Number(e.target.value))
-                }
-              />
               <button
                 type="button"
                 onClick={goToNextStep}
@@ -246,7 +247,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
           </div>
         )}
         {step === 2 && (
-          <div className="flex items-start" key="step2">
+          <div className="flex items-start w-[calc(100vw-10rem)]" key="step2">
             <div>
               <h3 className="text-xl font-bold mt-4">Questions:</h3>
               <div className="flex items-center gap-x-4">
@@ -284,15 +285,20 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                     </label>
                     <div className="grid grid-cols-2 justify-center">
                       {question.options.map((option, optionIndex) => (
-                        <label key={optionIndex} className="block mb-2 mr-2">
+                        <label key={optionIndex} className="block mb-2 mr-2 bg-black/25 p-2">
                           Option {optionIndex + 1}:
-                          <input
-                            {...register(
-                              `questions.${currentPage}.options.${optionIndex}`,
-                              { required: false }
-                            )}
-                            className="input-container"
+                          <Controller
+                        name={`questions.${currentPage}.options.${optionIndex}`}
+                        control={control}
+                        key={optionIndex}
+                        defaultValue="<p></p>"
+                        render={({ field }) => (
+                          <TextEditor
+                            value={field.value}
+                            onChange={field.onChange}
                           />
+                        )}
+                      />
                         </label>
                       ))}
                     </div>
@@ -300,11 +306,10 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                       Correct Option:
                       <select
                         {...register(`questions.${currentPage}.correctOption`, {
-                          required: true,
+                          required: false,
                         })}
                         className="input-container"
                       >
-                        {/* {getValues(`questions.${currentPage}.options`)?.map( */}
                         {questions[currentPage]?.options?.map(
                           (option, optionIndex) => (
                             <option
@@ -312,7 +317,8 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                               value={option}
                               className="bg-primary-background text-primary-text px-4 py-2"
                             >
-                              {option}
+                             <div dangerouslySetInnerHTML={{ __html: option }} />
+                             
                             </option>
                           )
                         )}
@@ -337,7 +343,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                         type="button"
                         onClick={() => remove(currentPage)}
                         disabled={questions?.length === 1}
-                        className="w-fit flex items-center gap-x-4 bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-700 disabled:cursor-not-allowed"
+                        className="w-full justify-center flex items-center gap-x-4 bg-red-500 text-white px-4 py-2 rounded mt-4 hover:bg-red-700 disabled:cursor-not-allowed"
                       >
                         <BsTrash /> <span>Remove Question</span>
                       </button>
@@ -345,20 +351,36 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                   </div>
                 ))}
               <div className="mt-4" />
-              <button
-                type="button"
-                onClick={() =>
-                  append({
-                    text: "",
-                    options: ["", "", "", ""],
-                    correctOption: "",
-                    explain: "",
-                  })
-                }
-                className="bg-primary dark:bg-primary-800 text-white text-center px-4 py-2 rounded mt-4"
-              >
-                Add Question
-              </button>
+              <div className="flex items-center gap-x-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    append({
+                      text: "",
+                      options: ["", "", "", ""],
+                      correctOption: "",
+                      explain: "",
+                    })
+                  }
+                  className="bg-primary dark:bg-primary-800 text-white text-center px-4 py-2 rounded mt-4"
+                >
+                  Add Question
+                </button>
+                <button
+                  type="button"
+                  onClick={() => addItems(5)}
+                  className="bg-primary dark:bg-primary-800/40 text-white text-center px-4 py-2 rounded mt-4 w-fit"
+                >
+                  +5
+                </button>
+                <button
+                  type="button"
+                  onClick={() => addItems(10)}
+                  className="bg-primary dark:bg-primary-800/40 text-white text-center px-4 py-2 rounded mt-4 w-fit"
+                >
+                  +10
+                </button>
+              </div>
               <button
                 type="button"
                 onClick={goToPreviousStep}

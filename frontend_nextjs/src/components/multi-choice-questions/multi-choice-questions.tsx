@@ -47,8 +47,6 @@ const MultiChoiceQuestions = ({
       Bonus += 1000;
     }
     let Score = 0;
-    console.log({ Bonus });
-    console.log({ streak });
     if (timePerQuestion <= Tmax) {
       Score = ScoreMax - ScorePenalty * (timePerQuestion - 2);
       dispatch(setScore(prevScore + Score + Bonus));
@@ -125,7 +123,9 @@ const MultiChoiceQuestions = ({
         Score: <span className="text-lime-500">{score}</span>
       </h1>
       {/* <h1 className="text-center">{question.text}</h1> */}
-      <div className="text-center dark:text-gray-200" dangerouslySetInnerHTML={{__html: question.text}} />
+      <div className="flex justify-center">
+        <div className="w-fit dark:text-gray-200" dangerouslySetInnerHTML={{__html: question.text}} />
+      </div>
       {question.picture && (
         <div className="flex justify-center w-full">
           <img
@@ -161,7 +161,7 @@ const MultiChoiceQuestions = ({
                 }}
                 type="button"
               >
-                {replaceHtmlComma(option)}
+                <div className="text-center dark:text-gray-200" dangerouslySetInnerHTML={{__html: replaceHtmlComma(option)}} />
               </button>
             )
         )}

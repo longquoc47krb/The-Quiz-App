@@ -16,7 +16,7 @@ export class Answer {
     answer: string;
 
     @ApiProperty()
-    @Column()
+    @Column({ length: 5000 })
     title: string;
 
     @ApiProperty()

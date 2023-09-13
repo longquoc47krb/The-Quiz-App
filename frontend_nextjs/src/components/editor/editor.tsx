@@ -1,61 +1,195 @@
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+/* eslint-disable react/button-has-type */
+import Color from '@tiptap/extension-color';
+import ListItem from '@tiptap/extension-list-item';
+import TextAlign from '@tiptap/extension-text-align';
+import TextStyle from '@tiptap/extension-text-style';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import classNames from 'classnames';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 
-import type { EditorProps } from 'draft-js';
-import { convertToRaw, EditorState } from 'draft-js';
-import draftToHtml from 'draftjs-to-html';
-import dynamic from 'next/dynamic';
-import React, { useState } from 'react';
+import { onBlurred, onFocused } from '@/middlewares/slices/createQuizSlice';
 
-const Editor = dynamic<EditorProps>(
-  () => import('react-draft-wysiwyg').then((mod) => mod.Editor),
-  { ssr: false },
-);
+import * as Icons from './icons';
 
-const TextEditor = ({ value, onChange }) => {
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty(),
-  );
+const TextEditor = ({ value, onChange }: { value: string; onChange?: any }) => {
+  const dispatch = useDispatch();
+  const editor = useEditor({
+    extensions: [
+      Color.configure({ types: [TextStyle.name, ListItem.name] }),
+      TextStyle.configure({ types: [ListItem.name] }),
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      StarterKit.configure({
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+        },
+      }),
+    ],
+    content: value,
+    onUpdate({ editor }) {
+      onChange(editor.getHTML());
+    },
+    onFocus({ editor, event }) {
+      dispatch(onFocused());
+    },
+    onBlur({ editor, event }) {
+      dispatch(onBlurred());
+    },
+  });
 
-  const onEditorStateChange = (editorState) => {
-    const htmlString = draftToHtml(
-      convertToRaw(editorState.getCurrentContent()),
-    );
+  const toggleBold = useCallback(() => {
+    editor.chain().focus().toggleBold().run();
+  }, [editor]);
 
-    setEditorState(editorState);
-    onChange(htmlString); // Pass the HTML content back using the onChange prop
-  };
+  const toggleItalic = useCallback(() => {
+    editor.chain().focus().toggleItalic().run();
+  }, [editor]);
+
+  const toggleStrike = useCallback(() => {
+    editor.chain().focus().toggleStrike().run();
+  }, [editor]);
+
+  const toggleCode = useCallback(() => {
+    editor.chain().focus().toggleCode().run();
+  }, [editor]);
+  if (!editor) {
+    return null;
+  }
   return (
-    <Editor
-      editorState={editorState}
-      wrapperClassName="border border-gray-200 rounded-sm p-2"
-      editorClassName="border border-gray-200 rounded-md px-2 leading-4 editor-container"
-      onEditorStateChange={onEditorStateChange}
-      toolbar={{
-        options: [
-          'inline',
-          'blockType',
-          'fontSize',
-          'fontFamily',
-          'list',
-          'textAlign',
-          'colorPicker',
-          'embedded',
-          'remove',
-          'history',
-        ],
-        inline: { inDropdown: true },
-        blockType: { inDropdown: true },
-        fontSize: { inDropdown: true },
-        fontFamily: { inDropdown: true },
-        list: { inDropdown: true },
-        textAlign: { inDropdown: true },
-        colorPicker: { inDropdown: true },
-        embedded: { inDropdown: true },
-        remove: { inDropdown: true },
-        history: { inDropdown: true },
-      }}
-    />
-    // <div className='leading-4'/>
+    <div className="editor">
+      <div className="flex items-center justify-start flex-wrap">
+        {/* <button
+          className="w-fit mr-2 hover:bg-transparent"
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editor.can().undo()}
+        >
+          <Icons.RotateLeft />
+        </button>
+        <button
+          className="w-fit mr-2 hover:bg-transparent"
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editor.can().redo()}
+        >
+          <Icons.RotateRight />
+        </button> */}
+        <button
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('bold'),
+          })}
+          onClick={toggleBold}
+        >
+          <Icons.Bold />
+        </button>
+        {/* <button
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('underline'),
+          })}
+          onClick={toggleUnderline}
+        >
+          <Icons.Underline />
+        </button> */}
+        <button
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('intalic'),
+          })}
+          onClick={toggleItalic}
+        >
+          <Icons.Italic />
+        </button>
+        <button
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('strike'),
+          })}
+          onClick={toggleStrike}
+        >
+          <Icons.Strikethrough />
+        </button>
+        <button
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('code'),
+          })}
+          onClick={toggleCode}
+        >
+          <Icons.Code />
+        </button>
+        <input
+          type="color"
+          className="w-6"
+          onInput={(event) =>
+            editor.chain().focus().setColor(event.target.value).run()
+          }
+          value={editor.getAttributes('textStyle').color}
+          defaultValue="#FF0000"
+        />
+        <button
+          className="w-fit mr-2 hover:bg-transparent text-xs"
+          onClick={() => editor.chain().focus().unsetColor().run()}
+        >
+          Reset Color
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive({ textAlign: 'left' }),
+          })}
+        >
+          <Icons.Left />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive({ textAlign: 'center' }),
+          })}
+        >
+          <Icons.Center />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive({ textAlign: 'right' }),
+          })}
+        >
+          <Icons.Right />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('codeBlock'),
+          })}
+        >
+          <Icons.CodeBlock />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('bulletList'),
+          })}
+        >
+          <Icons.Bullet />
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={classNames('w-fit mr-2 hover:bg-transparent', {
+            'text-primary-500': editor.isActive('orderedList'),
+          })}
+        >
+          <Icons.Ordered />
+        </button>
+      </div>
+
+      <EditorContent
+        editor={editor}
+        className="border border-gray-600 rounded-sm px-4 py-4 outline-none focus-within:border-primary-500 text-gray-200"
+      />
+    </div>
   );
 };
 

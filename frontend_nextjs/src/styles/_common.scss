@@ -40,7 +40,7 @@ a {
   animation: rotation 1s linear infinite;
 }
 .loader::after {
-  content: '';  
+  content: "";
   box-sizing: border-box;
   position: absolute;
   left: 0;
@@ -58,7 +58,7 @@ a {
   100% {
     transform: rotate(360deg);
   }
-} 
+}
 @keyframes rotationBack {
   0% {
     transform: rotate(0deg);
@@ -100,81 +100,86 @@ a {
   width: fit-content;
   top: 0rem;
   right: 1rem;
-  &:hover{
+  &:hover {
     background: transparent;
   }
 }
 @mixin hideTapHighlightColor() {
-	//Prevent highlight colour when element is tapped
-	-webkit-tap-highlight-color: rgba(0,0,0,0);
+  //Prevent highlight colour when element is tapped
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 @mixin hardwareAccel() {
-	//Improve performance on mobile/tablet devices
-	transform: translateZ(0);
+  //Improve performance on mobile/tablet devices
+  transform: translateZ(0);
 }
 
 @mixin improveAntiAlias() {
-	//Improve aliasing on mobile/tablet devices
+  //Improve aliasing on mobile/tablet devices
   box-shadow: 0 0 1px rgba(0, 0, 0, 0);
 }
 
 /* Float */
 .float {
-	transition-duration: .3s;
-	transition-property: transform;
+  transition-duration: 0.3s;
+  transition-property: transform;
 
-	@include hideTapHighlightColor();
-	@include hardwareAccel();
-	@include improveAntiAlias();
+  @include hideTapHighlightColor();
+  @include hardwareAccel();
+  @include improveAntiAlias();
 
-	&:hover {
-		transform: translateY(-5px);
-	}
+  &:hover {
+    transform: translateY(-5px);
+  }
 }
 
-$size:1.4em;
-$dotCount:10;
-$animationTime:2.5s;
-
+$size: 1.4em;
+$dotCount: 10;
+$animationTime: 2.5s;
 
 // Creating Circle and Animation Delay
-@for $i from 1 through 10{
-  .peeek-loading li:nth-child(#{$i}){
-	  $deg:($i - 1)*(360deg/$dotCount);
-	  transform: rotate($deg); 
-	  animation-delay: $animationTime*$i/$dotCount/2;
+@for $i from 1 through 10 {
+  .peeek-loading li:nth-child(#{$i}) {
+    $deg: ($i - 1) * (360deg / $dotCount);
+    transform: rotate($deg);
+    animation-delay: $animationTime * $i/$dotCount/2;
   }
-  .peeek-loading li:nth-child(#{$i}):after{
-	  animation-delay: $animationTime*$i/$dotCount/2;
+  .peeek-loading li:nth-child(#{$i}):after {
+    animation-delay: $animationTime * $i/$dotCount/2;
   }
 }
 
 // Animations
-.peeek-loading li{
+.peeek-loading li {
   animation: dotAnimation $animationTime infinite;
 }
 @keyframes dotAnimation {
-0%, 55%, 100%    { 
-	padding: 0 0 $size*4 0;
-	}
-5%,50%   { 
-	padding: $size*2 0;
-	}
-} 
+  0%,
+  55%,
+  100% {
+    padding: 0 0 $size * 4 0;
+  }
+  5%,
+  50% {
+    padding: $size * 2 0;
+  }
+}
 
-.peeek-loading li:after{
+.peeek-loading li:after {
   animation: dotAnimationTwo $animationTime infinite;
 }
 @-webkit-keyframes dotAnimationTwo {
-0%, 55%, 100%   { 
-	opacity:1;
-	transform: scale(1);
-	}
-5%,50%  { 
-	opacity: .5;
-	transform: scale(0.5);
-	}
+  0%,
+  55%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  5%,
+  50% {
+    opacity: 0.5;
+    transform: scale(0.5);
+  }
 }
 .tabs-container {
   display: flex;
@@ -207,5 +212,35 @@ $animationTime:2.5s;
   }
   code {
     color: black !important;
+  }
+}
+.tiptap.ProseMirror {
+  &.ProseMirror-focused {
+    outline: none !important;
+  }
+  ul {
+    li {
+      display: block !important;
+      p::before {
+        content: "🖤";
+      }
+    }
+  }
+  /* Remove default list style */
+  ol {
+    list-style-type: none;
+    counter-reset: item;
+    li {
+      display: block;
+      margin-bottom: 10px; /* Add spacing between list items */
+      &::before {
+        content: counter(item) ". "; /* Display the item number followed by a period and a space */
+        counter-increment: item;
+        display: inline-block;
+      }
+      p {
+        display: inline;
+      }
+    }
   }
 }

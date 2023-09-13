@@ -80,7 +80,10 @@ const MultiChoiceQuestionsPreview = (props: MCQProps) => {
                 answer,
               )}`}
             >
-              {replaceHtmlComma(option)}
+              <div
+                className="text-center dark:text-gray-200"
+                dangerouslySetInnerHTML={{ __html: replaceHtmlComma(option) }}
+              />
             </button>
           ))}
         </div>
