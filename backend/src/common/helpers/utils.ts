@@ -15,7 +15,7 @@ export const handleScorePerQuestion = (streak: number, time: number, isCorrect: 
     return 0;
 }
 export function filterNonNullEmpty(arr) {
-    const result = arr.filter(item => item !== null && item !== "");
+    const result = arr.filter(item => item !== null && item !== "" && item !== "<p></p>");
     return result;
 }
 export function getStartOfWeek(currentDate: Date) {
