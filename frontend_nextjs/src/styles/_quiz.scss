@@ -66,7 +66,8 @@
     @apply bg-red-600;
   }
   .option {
-    @apply  hover:bg-orange-700 px-4 py-2 border border-[#745696] border-solid w-full dark:text-gray-300 min-w-[20rem]
+    @apply  hover:bg-orange-700 px-4 py-2 border border-[#745696] border-solid w-full dark:text-gray-300 min-w-[20rem] hover:text-white
+    
   }
 }
 .flicker {

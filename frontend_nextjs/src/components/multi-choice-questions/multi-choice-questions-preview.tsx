@@ -49,9 +49,9 @@ const MultiChoiceQuestionsPreview = (props: MCQProps) => {
     );
   }
   return (
-    <div className="flex md:items-center flex-col py-4">
+    <div className="flex md:items-center flex-col">
       <div
-        className="text-center dark:text-gray-200 w-[60vw] text-lg"
+        className="text-center dark:text-gray-200 text-primary-900 w-[60vw] text-lg html-text"
         dangerouslySetInnerHTML={{ __html: title }}
       />
       {picture && (
@@ -81,7 +81,7 @@ const MultiChoiceQuestionsPreview = (props: MCQProps) => {
               )}`}
             >
               <div
-                className="text-center dark:text-gray-200"
+                className="text-center dark:text-gray-200 text-primary-900"
                 dangerouslySetInnerHTML={{ __html: replaceHtmlComma(option) }}
               />
             </button>

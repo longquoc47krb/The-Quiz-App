@@ -37,7 +37,7 @@ function MyQuizzes() {
     <>
       {reversedArray.length > 0 && (
         <div>
-          <h1 className="m-4 text-2xl text-gray-400 font-medium section">
+          <h1 className="m-4 text-2xl dark:text-gray-400 text-primary-900 font-medium section">
             My quizzes
           </h1>
           <Splide

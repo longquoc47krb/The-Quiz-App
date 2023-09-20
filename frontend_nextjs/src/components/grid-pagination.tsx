@@ -43,7 +43,7 @@ function GridPagination({totalPages, currentPage, setCurrentPage, handlePrevPage
                 key={pageIndex}
                 onClick={() => setCurrentPage(pageIndex)}
                 className={`${
-                  pageIndex === currentPage ? 'dark:opacity-40 text-white' : 'bg-gray-200 text-black'
+                  pageIndex === currentPage ? 'dark:opacity-40 bg-primary-900 text-white' : 'bg-gray-200 text-black'
                 } rounded w-10 h-10 text-center ${handleBtnBackground(pageIndex)}`}
               >
                 {pageIndex + 1}

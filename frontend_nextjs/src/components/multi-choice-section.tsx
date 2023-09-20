@@ -197,7 +197,7 @@ function MultichoiceQuestionSection({
     setModalIsOpen(false);
   };
   return (
-    <div className="flex flex-col items-center justify-center relative">
+    <div className="flex flex-col items-center justify-center relative bg-primary-900/5 rounded-md py-4">
        <audio ref={correctRef} className="hidden"/>
        <audio ref={incorrectRef} className="hidden"/>
        <audio ref={congratsRef} className="hidden"/>

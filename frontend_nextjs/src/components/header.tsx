@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useClickAway } from "@uidotdev/usehooks";
+import ThemeSwitch from "./theme-switch";
 const Header = () => {
   const { user, setCurrentUser, removeCurrentUser } = useAuth();
   const [toggle, setToggle] = useState(false);
@@ -32,7 +33,8 @@ const Header = () => {
   return (
     <header className="header">
         {/* <DarkModeSwitch/> */}
-        <h1 onClick={()=>router.push('/')} className="flex items-center text-white font-bold cursor-pointer text-xl">Quizaholic</h1>
+        <h1 onClick={()=>router.push('/')} className="flex items-center dark:text-white text-primary-900 font-bold cursor-pointer text-xl">Quizaholic</h1>
+        <div className="flex items-center gap-x-4"> <ThemeSwitch/>
         {user ? (
           <div className="text-gray-200 font-medium text-base flex items-center gap-x-4">
             <img
@@ -52,6 +54,7 @@ const Header = () => {
           <span>Login with Google</span>
         </button>
         )}
+        </div>
         <AnimatePresence>
       {toggle && user && (
         <motion.div ref={ref} initial={{opacity: 0 }} animate={{opacity: 1}} exit={{opacity: 0}} transition={{duration: 0.5}}className="absolute w-max top-14 right-10 z-50">

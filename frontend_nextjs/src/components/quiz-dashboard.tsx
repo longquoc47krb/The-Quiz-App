@@ -33,7 +33,7 @@ const QuizDashboard : NextPage<QuizProps> = ({ quizzes }) => {
   return <div>
      { quizzesArray.length > 0 && <div>
        <div className="flex items-center gap-x-2">
-         <h1 className="m-4 text-2xl text-gray-400 font-medium section">Discover</h1>
+         <h1 className="m-4 text-2xl dark:text-gray-400 text-primary-900 font-medium section">Discover</h1>
          <CustomPopover onSelectTopic={setTopics}/>
        </div>
        <Splide options={{start:0, perPage: isSmallDevice ? 1 : 3, gap: "1rem" , width: isSmallDevice ? '90vw' : 'calc(100vw - 8rem)', arrows: false, height: "100%"}} tag="div" style={{paddingTop: "1em", paddingLeft: 8}}>

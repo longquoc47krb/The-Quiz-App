@@ -46,7 +46,7 @@ function QuizEntity(props: QuizProps) {
         />
       )}
       {
-        isCompleted && <span className="absolute top-6 right-4 text-green-500"><LuCheckCircle className="inline-block mb-1 mr-1"/>Completed</span>
+        isCompleted && <span className="absolute top-6 right-4 text-green-500"><LuCheckCircle className="inline-block mb-1 mr-1"/></span>
       }
       <div>
         <h1 className="text-3xl font-medium line-clamp-1 w-[90%]">{title}</h1>

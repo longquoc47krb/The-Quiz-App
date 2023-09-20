@@ -99,7 +99,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
   const questions = useWatch({ control, name: "questions" });
 
   // if data exists
-
+ 
   useEffect(() => {
     if (isUpdate && existingQuizData) {
       // Set the form data with existing quiz data for update
@@ -153,6 +153,9 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
       setValue("questions", defaultQuestions);
     }
   }, [isUploadFromDevice]);
+  useEffect(()=>{
+    setValue(`questions[${currentPage}].correctOption`, questions[currentPage]?.options[0]);
+  },[])
 
   const values = getValues();
   const onUpdateSubmit: SubmitHandler<UpdateQuizDto> = async (
@@ -239,7 +242,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
               <button
                 type="button"
                 onClick={goToNextStep}
-                className="text-center dark:bg-primary-800 bg-primary text-white px-4 py-2 rounded mt-4 hover:bg-violet-950"
+                className="text-center bg-primary-800 bg-primary text-white px-4 py-2 rounded mt-4 hover:bg-violet-950"
               >
                 Next
               </button>
@@ -260,7 +263,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                   (currentPage + 1) * questionsPerPage
                 )
                 ?.map((question, index) => (
-                  <div key={question.id} className="mt-4 border rounded p-4">
+                  <div key={question.id} className="mt-4 border rounded p-4 border-gray-800">
                     <label className="block mb-2">
                       Question {currentPage + 1}:
                     </label>
@@ -285,7 +288,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                     </label>
                     <div className="grid grid-cols-2 justify-center">
                       {question.options.map((option, optionIndex) => (
-                        <label key={optionIndex} className="block mb-2 mr-2 bg-black/25 p-2">
+                        <label key={optionIndex} className="block mb-2 mr-2 dark:bg-black/25 bg-gray-400 p-2 rounded-sm">
                           Option {optionIndex + 1}:
                           <Controller
                         name={`questions.${currentPage}.options.${optionIndex}`}
@@ -356,27 +359,27 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
                   type="button"
                   onClick={() =>
                     append({
-                      text: "",
-                      options: ["", "", "", ""],
-                      correctOption: "",
-                      explain: "",
+                      text: "<p></p>",
+                      options: ["<p></p>", "<p></p>", "<p></p>", "<p></p>"],
+                      correctOption: "<p></p>",
+                      explain: "<p></p>",
                     })
                   }
-                  className="bg-primary dark:bg-primary-800 text-white text-center px-4 py-2 rounded mt-4"
+                  className="bg-primary-800 hover:bg-primary-800/50 text-white text-center px-4 py-2 rounded mt-4"
                 >
                   Add Question
                 </button>
                 <button
                   type="button"
                   onClick={() => addItems(5)}
-                  className="bg-primary dark:bg-primary-800/40 text-white text-center px-4 py-2 rounded mt-4 w-fit"
+                  className="bg-primary-800 hover:bg-primary-800/50 text-white text-center px-4 py-2 rounded mt-4 w-fit"
                 >
                   +5
                 </button>
                 <button
                   type="button"
                   onClick={() => addItems(10)}
-                  className="bg-primary dark:bg-primary-800/40 text-white text-center px-4 py-2 rounded mt-4 w-fit"
+                  className="bg-primary-800 hover:bg-primary-800/50 text-white text-center px-4 py-2 rounded mt-4 w-fit"
                 >
                   +10
                 </button>
@@ -384,7 +387,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
               <button
                 type="button"
                 onClick={goToPreviousStep}
-                className="text-center dark:bg-orange-500 text-gray-800 px-4 py-2 rounded mt-4 hover:bg-gray-400 dark:text-gray-300"
+                className="text-center bg-orange-500 hover:bg-orange-600 text-gray-800 px-4 py-2 rounded mt-4 hover:bg-gray-400 dark:text-gray-300"
               >
                 Previous
               </button>
@@ -412,7 +415,7 @@ const CreateQuizForm = (props: CreateUpdateQuizProps) => {
   };
   return (
     <main className="mx-auto px-4">
-      <h2 className="text-5xl text-white font-bold mb-4">
+      <h2 className="text-5xl dark:text-white text-primary-900 font-bold mb-4">
         {isUpdate ? "Update" : "Create"} Quiz Form
       </h2>
       <FormProvider>
