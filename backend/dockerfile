@@ -13,8 +13,10 @@ RUN npm install
 # Copy the rest of your application code to the container
 COPY . .
 
+RUN npm run build
+
 # Expose the port that your Nest.js application will run on (default is 8080)
 EXPOSE 8080
 
-# Start the Nest.js application
-CMD ["npm", "run", "dev"]
+# Start the server using the production build
+CMD [ "node", "dist/main.js" ]
