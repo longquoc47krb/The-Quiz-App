@@ -30,6 +30,8 @@ const Header = () => {
   useEffect(()=>{
     setCurrentUser()
   },[])
+  const currentDomain = window.location.hostname;
+    console.log('Current Domain:', currentDomain);
   return (
     <header className="header">
         {/* <DarkModeSwitch/> */}
@@ -46,13 +48,13 @@ const Header = () => {
             />
           </div>
         ) : (
-          <button
+          currentDomain === "localhost" ? <button
           className="bg-gray-800/30 flex items-center justify-center w-max gap-x-2 mt-4 p-2 rounded-lg m-2 text-white hover:bg-gray-800/70"
           onClick={handleGoogleLogin}
         >
           <FcGoogle />
           <span>Login with Google</span>
-        </button>
+        </button> : <span>Login</span>
         )}
         </div>
         <AnimatePresence>

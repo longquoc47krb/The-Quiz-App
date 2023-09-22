@@ -1,5 +1,22 @@
 version: '2.18.1'
 services:
+  webserver:
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certbot/www:/var/www/certbot/:ro
+    networks:
+      - nginx-net
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/etc:/etc/letsencrypt
+      - ./certbot/var:/var/lib/letsencrypt
+    command: certonly --webroot --webroot-path=/var/www/letsencrypt --email longquoc47krb@gmail.com --agree-tos -d ec2-52-64-50-115.ap-southeast-2.compute.amazonaws.com
   backend:
     build: ./
     container_name: nestjs_api
@@ -9,6 +26,9 @@ services:
       - DATABASE_USERNAME=longq
       - DATABASE_PASSWORD=longq@123456
       - DATABASE_NAME=quizapp
+    restart: unless-stopped
+    networks:
+      - nginx-net
     ports:
       - '8080:8080'
 

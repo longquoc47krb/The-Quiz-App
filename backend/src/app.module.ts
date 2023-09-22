@@ -37,7 +37,7 @@ import { StatsModule } from './modules/stats/stats.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [databaseConfig],
-      envFilePath: `.env.${process.env.NODE_ENV || 'local'}`, // .env.development
+      envFilePath: `.env.${process.env.NODE_ENV || 'production'}`, // .env.development
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
           .valid('development', 'production')
