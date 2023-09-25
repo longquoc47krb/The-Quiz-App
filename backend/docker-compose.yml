@@ -1,35 +1,13 @@
-version: '3'
+version: '2.18.1'
 services:
-  nginx:
-    image: nginx:latest
+  backend:
+    build: ./
+    container_name: nestjs_api
+    environment:
+      - DATABASE_HOST=13.54.6.157
+      - DATABASE_PORT=3306
+      - DATABASE_USERNAME=longq
+      - DATABASE_PASSWORD=longq@123456
+      - DATABASE_NAME=quizapp
     ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./html:/usr/share/nginx/html
-      - ./certbot/etc:/etc/letsencrypt
-      - ./certbot/var:/var/lib/letsencrypt
-    networks:
-      - nginx-net
-
-  certbot:
-    image: certbot/certbot
-    volumes:
-      - ./certbot/etc:/etc/letsencrypt
-      - ./certbot/var:/var/lib/letsencrypt
-    networks:
-      - nginx-net
-    command: certonly --webroot --webroot-path=/var/www/letsencrypt --email longquoc47krb@gmail.com --agree-tos -d ec2-52-64-50-115.ap-southeast-2.compute.amazonaws.com
-
-  nestjs:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    networks:
-      - nginx-net
-
-networks:
-  nginx-net:
+      - '8080:80'
